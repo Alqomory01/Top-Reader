@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Upload Manuscript</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff; --brand-glow: rgba(81,112,255,0.15);
+    --surface: #0d0f14; --surface2: #131620; --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0; --muted: #7a7f94; --input-bg: #0a0c10;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; }
+
+  .sidebar { width: 250px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 32px 0; }
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 24px 28px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .logo-icon { width: 32px; height: 32px; background: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif; box-shadow: 0 0 14px rgba(81,112,255,0.4); }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem; color: #fff; }
+  .steps-list { list-style: none; }
+  .step-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; cursor: pointer; }
+  .step-item.active { background: rgba(81,112,255,0.08); }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; border: 1.5px solid var(--border); color: var(--muted); }
+  .step-item.done .step-num { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .step-item.active .step-num { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 10px rgba(81,112,255,0.45); }
+  .step-label { font-size: 0.845rem; color: var(--muted); }
+  .step-item.active .step-label { color: #fff; font-weight: 500; }
+  .step-item.done .step-label { color: var(--text); }
+
+  .main { flex: 1; overflow-y: auto; padding: 40px 52px; }
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .page-sub { color: var(--muted); font-size: 0.875rem; }
+
+  .upload-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 800px; }
+
+  /* UPLOAD DROP ZONE */
+  .drop-zone-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; }
+  .drop-zone-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+  .drop-zone {
+    border: 2px dashed rgba(81,112,255,0.3); border-radius: 14px;
+    padding: 48px 24px; text-align: center; cursor: pointer;
+    background: rgba(81,112,255,0.03); transition: all 0.25s;
+    min-height: 200px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+  }
+  .drop-zone:hover { border-color: var(--brand); background: var(--brand-glow); }
+  .drop-icon { font-size: 2.5rem; margin-bottom: 4px; }
+  .drop-main { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+  .drop-main span { color: var(--brand); }
+  .drop-sub { font-size: 0.78rem; color: var(--muted); }
+
+  /* DETAILS FORM */
+  .details-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+  input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; padding: 11px 14px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+  input::placeholder { color: var(--muted); }
+  input:focus, select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(81,112,255,0.12); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7f94' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+
+  .copyright-notice { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
+  .copyright-notice input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--brand); }
+  .copyright-text { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+  .actions { display: flex; justify-content: space-between; margin-top: 8px; max-width: 800px; }
+  .btn-ghost-sm { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; font-size: 0.875rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-primary { background: var(--brand); border: none; color: #fff; padding: 11px 28px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 20px rgba(81,112,255,0.3); transition: all 0.2s; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">TR</div>
+    <span class="logo-name">TopReader</span>
+  </div>
+  <ul class="steps-list">
+    <li class="step-item done"><div class="step-num">✓</div><span class="step-label">Personal Information</span></li>
+    <li class="step-item done"><div class="step-num">✓</div><span class="step-label">Verification</span></li>
+    <li class="step-item done"><div class="step-num">✓</div><span class="step-label">Author Studio</span></li>
+    <li class="step-item active"><div class="step-num">4</div><span class="step-label">Upload Material</span></li>
+    <li class="step-item"><div class="step-num">5</div><span class="step-label">Metadata</span></li>
+    <li class="step-item"><div class="step-num">6</div><span class="step-label">Pricing & Access</span></li>
+    <li class="step-item"><div class="step-num">7</div><span class="step-label">Review & Submit</span></li>
+  </ul>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Upload Your Manuscript</div>
+    <div class="page-sub">Please upload your book or learning material</div>
+  </div>
+
+  <div class="upload-layout">
+    <div class="drop-zone-card">
+      <div class="drop-zone-label">Manuscript File</div>
+      <div class="drop-zone">
+        <div class="drop-icon">☁️</div>
+        <div class="drop-main">Drag and drop your file here<br>or <span>click to browse</span></div>
+        <div class="drop-sub">( PDF, DOCX or EPUB )</div>
+      </div>
+    </div>
+
+    <div class="details-card">
+      <div class="form-group">
+        <label>Book Title</label>
+        <input type="text" placeholder="Enter book title" />
+      </div>
+      <div class="form-group">
+        <label>Course Code</label>
+        <input type="text" placeholder="Enter course code" />
+      </div>
+      <div class="form-group-row">
+        <div class="form-group">
+          <label>Faculty</label>
+          <select><option value="">Select faculty</option><option>Engineering</option><option>Medicine</option><option>Law</option></select>
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select><option value="">Select department</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Semester</label>
+        <select><option value="">Select semester</option><option>First Semester</option><option>Second Semester</option></select>
+      </div>
+      <div class="copyright-notice">
+        <input type="checkbox" id="copy" />
+        <label class="copyright-text" for="copy">I confirm that I own the copyright to this work and agree to the publishing terms.</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions" style="max-width:800px; margin-top:24px;">
+    <button class="btn-ghost-sm">Save Draft</button>
+    <button class="btn-primary">Continue →</button>
+  </div>
+</main>
+</body>
+</html>

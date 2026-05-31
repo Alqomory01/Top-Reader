@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Analytics Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff; --brand-glow: rgba(81,112,255,0.15);
+    --surface: #0d0f14; --surface2: #131620; --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0; --muted: #7a7f94; --input-bg: #0a0c10;
+    --green: #22c55e; --red: #ef4444; --amber: #f59e0b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 0; display: flex; flex-direction: column; }
+  .sidebar-logo { display: flex; align-items: center; gap: 9px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .logo-icon { width: 32px; height: 32px; background: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif; box-shadow: 0 0 14px rgba(81,112,255,0.4); }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: #fff; }
+  .logo-sub { font-size: 0.58rem; color: var(--muted); display: block; }
+  nav ul { list-style: none; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; cursor: pointer; transition: background 0.2s; border-radius: 0; font-size: 0.84rem; color: var(--muted); }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(81,112,255,0.1); color: var(--brand-light); }
+  .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; }
+
+  /* MAIN */
+  .main { flex: 1; overflow-y: auto; padding: 0; }
+
+  /* TOP BAR */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 1px solid var(--border); }
+  .topbar-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .select-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; padding: 7px 30px 7px 12px; outline: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7f94' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; cursor: pointer; }
+  .btn-export { background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.25); color: var(--brand-light); padding: 7px 16px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+  /* CONTENT */
+  .content { padding: 28px 32px; }
+
+  /* STAT CARDS */
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .stat-name { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+  .stat-icon { font-size: 1rem; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.45rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .stat-change { font-size: 0.75rem; font-weight: 500; }
+  .stat-change.up { color: var(--green); }
+  .stat-change.down { color: var(--red); }
+
+  /* CHART + DONUT ROW */
+  .charts-row { display: grid; grid-template-columns: 1fr 280px; gap: 18px; margin-bottom: 24px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .chart-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 18px; }
+
+  /* Simple SVG line chart */
+  .chart-area { position: relative; height: 140px; }
+  .chart-area svg { width: 100%; height: 100%; }
+
+  /* Y labels */
+  .chart-labels { display: flex; justify-content: space-between; margin-top: 8px; }
+  .chart-labels span { font-size: 0.7rem; color: var(--muted); }
+
+  /* DONUT */
+  .donut-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .donut-chart-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto 16px; }
+  .donut-svg { transform: rotate(-90deg); }
+  .donut-svg circle { fill: none; stroke-width: 18; }
+  .donut-legend { display: flex; flex-direction: column; gap: 7px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-val { margin-left: auto; color: var(--text); font-weight: 500; }
+
+  /* BOTTOM ROW */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+
+  .performer-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .performer-row:last-child { border-bottom: none; }
+  .performer-rank { width: 22px; height: 22px; border-radius: 6px; background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--brand-light); font-weight: 700; flex-shrink: 0; }
+  .performer-name { font-size: 0.83rem; color: var(--text); flex: 1; }
+  .performer-views { font-size: 0.78rem; color: var(--muted); }
+  .performer-bar { width: 60px; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .performer-fill { height: 100%; background: var(--brand); border-radius: 2px; }
+
+  /* AUDIENCE */
+  .audience-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .audience-figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .aud-item { background: var(--surface2); border-radius: 10px; padding: 16px; text-align: center; }
+  .aud-icon { font-size: 1.5rem; margin-bottom: 6px; }
+  .aud-pct { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+  .aud-label { font-size: 0.72rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">TR</div>
+    <div>
+      <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;color:#fff;">TopReader</span>
+      <span class="logo-sub">Digital Library Store</span>
+    </div>
+  </div>
+  <nav><ul>
+    <li class="nav-item"><span class="nav-icon">🏠</span> Dashboard</li>
+    <li class="nav-item"><span class="nav-icon">📚</span> My Publications</li>
+    <li class="nav-item active"><span class="nav-icon">📊</span> Analytics</li>
+    <li class="nav-item"><span class="nav-icon">🎁</span> Promotions</li>
+    <li class="nav-item"><span class="nav-icon">✏️</span> Revisions</li>
+    <li class="nav-item"><span class="nav-icon">💰</span> Earnings</li>
+    <li class="nav-item"><span class="nav-icon">🔔</span> Notifications</li>
+    <li class="nav-item"><span class="nav-icon">⚙️</span> Settings</li>
+    <li class="nav-item" style="margin-top:auto"><span class="nav-icon">🚪</span> Logout</li>
+  </ul></nav>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Analytics Overview</div>
+    <div class="topbar-right">
+      <select class="select-pill">
+        <option>This Month</option>
+        <option>Last Month</option>
+        <option>This Year</option>
+      </select>
+      <button class="btn-export">⬇ Export Report</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-header"><span class="stat-name">Total Views</span><span class="stat-icon">👁</span></div>
+        <div class="stat-value">12,430</div>
+        <div class="stat-change up">▲ 4.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span class="stat-name">Total Downloads</span><span class="stat-icon">⬇</span></div>
+        <div class="stat-value">5,210</div>
+        <div class="stat-change up">▲ 15.7%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span class="stat-name">Total Sales</span><span class="stat-icon">🛒</span></div>
+        <div class="stat-value">₦1.24M</div>
+        <div class="stat-change up">▲ 9.6%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span class="stat-name">Total Revenue</span><span class="stat-icon">💳</span></div>
+        <div class="stat-value">₦872K</div>
+        <div class="stat-change up">▲ 14.2%</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Views Over Time</div>
+        <div class="chart-area">
+          <svg viewBox="0 0 500 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5170ff" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#5170ff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="30" x2="500" y2="30" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="0" y1="60" x2="500" y2="60" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="0" y1="90" x2="500" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <!-- Area fill -->
+            <path d="M0,90 C50,80 80,50 120,45 C160,40 180,70 220,55 C260,40 290,20 340,25 C380,28 420,50 500,35 L500,120 L0,120 Z" fill="url(#grad)"/>
+            <!-- Line -->
+            <path d="M0,90 C50,80 80,50 120,45 C160,40 180,70 220,55 C260,40 290,20 340,25 C380,28 420,50 500,35" fill="none" stroke="#5170ff" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Dots -->
+            <circle cx="120" cy="45" r="4" fill="#5170ff" stroke="var(--bg)" stroke-width="2"/>
+            <circle cx="340" cy="25" r="4" fill="#5170ff" stroke="var(--bg)" stroke-width="2"/>
+            <circle cx="500" cy="35" r="4" fill="#5170ff" stroke="var(--bg)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="chart-labels">
+          <span>May 1</span><span>May 8</span><span>May 15</span><span>May 22</span><span>May 29</span>
+        </div>
+      </div>
+
+      <div class="donut-card">
+        <div class="chart-title">Top Categories</div>
+        <div class="donut-chart-wrap">
+          <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <!-- Education 40% -->
+            <circle cx="60" cy="60" r="45" stroke="#5170ff" stroke-dasharray="113 170" stroke-dashoffset="0"/>
+            <!-- Science 25% -->
+            <circle cx="60" cy="60" r="45" stroke="#22c55e" stroke-dasharray="70.7 212" stroke-dashoffset="-113"/>
+            <!-- Engineering 20% -->
+            <circle cx="60" cy="60" r="45" stroke="#f59e0b" stroke-dasharray="56.5 226" stroke-dashoffset="-183.7"/>
+            <!-- Others 15% -->
+            <circle cx="60" cy="60" r="45" stroke="#7b8eff" stroke-dasharray="42.4 240.8" stroke-dashoffset="-240.2"/>
+          </svg>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#5170ff"></div>Education<span class="legend-val">40%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Science<span class="legend-val">25%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Engineering<span class="legend-val">20%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#7b8eff"></div>Others<span class="legend-val">15%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+      <div class="table-card">
+        <div class="chart-title">Top Performing Books</div>
+        <div class="performer-row">
+          <div class="performer-rank">1</div>
+          <div class="performer-name">Research Methodology</div>
+          <div class="performer-views">3,420 views</div>
+          <div class="performer-bar"><div class="performer-fill" style="width:100%"></div></div>
+        </div>
+        <div class="performer-row">
+          <div class="performer-rank">2</div>
+          <div class="performer-name">Engineering Mathematics</div>
+          <div class="performer-views">1,860 views</div>
+          <div class="performer-bar"><div class="performer-fill" style="width:55%"></div></div>
+        </div>
+        <div class="performer-row">
+          <div class="performer-rank">3</div>
+          <div class="performer-name">Principles of Marketing</div>
+          <div class="performer-views">1,640 views</div>
+          <div class="performer-bar"><div class="performer-fill" style="width:48%"></div></div>
+        </div>
+      </div>
+
+      <div class="audience-card">
+        <div class="chart-title">Audience Breakdown</div>
+        <div class="audience-figures">
+          <div class="aud-item">
+            <div class="aud-icon">🎓</div>
+            <div class="aud-pct">68%</div>
+            <div class="aud-label">Students</div>
+          </div>
+          <div class="aud-item">
+            <div class="aud-icon">✍️</div>
+            <div class="aud-pct">22%</div>
+            <div class="aud-label">Lecturers</div>
+          </div>
+          <div class="aud-item">
+            <div class="aud-icon">🌐</div>
+            <div class="aud-pct">10%</div>
+            <div class="aud-label">Others</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

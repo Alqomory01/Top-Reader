@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Author Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff; --brand-glow: rgba(81,112,255,0.18);
+    --surface: #0d0f14; --surface2: #131620; --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0; --muted: #7a7f94;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px; flex-shrink: 0;
+    background: var(--surface); border-right: 1px solid var(--border);
+    padding: 36px 0; display: flex; flex-direction: column;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 28px 32px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px; background: var(--brand); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif;
+    box-shadow: 0 0 14px rgba(81,112,255,0.4);
+  }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: #fff; }
+  .sidebar-heading { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 28px 12px; }
+  .steps-list { list-style: none; }
+  .step-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 28px; position: relative; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .step-item:hover { background: var(--surface2); }
+  .step-item.active { background: rgba(81,112,255,0.08); }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 600;
+    border: 1.5px solid var(--border); color: var(--muted);
+    transition: all 0.2s;
+  }
+  .step-item.done .step-num { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .step-item.active .step-num { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 12px rgba(81,112,255,0.5); }
+  .step-label { font-size: 0.875rem; color: var(--muted); }
+  .step-item.active .step-label { color: #fff; font-weight: 500; }
+  .step-item.done .step-label { color: var(--text); }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px; }
+  .onboard-card {
+    max-width: 540px; width: 100%; text-align: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 24px; padding: 60px 56px;
+    position: relative; overflow: hidden;
+  }
+  .onboard-card::before {
+    content: '';
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(81,112,255,0.1), transparent 70%);
+    pointer-events: none;
+  }
+  .illus {
+    width: 120px; height: 120px; margin: 0 auto 32px;
+    background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.2);
+    border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(81,112,255,0.25)} 50%{box-shadow:0 0 0 18px rgba(81,112,255,0)} }
+  .tag { display: inline-block; background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.3); color: var(--brand-light); font-size: 0.75rem; padding: 5px 14px; border-radius: 100px; margin-bottom: 22px; letter-spacing: 0.04em; }
+  h2 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; line-height: 1.2; }
+  .desc { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 36px; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .btn-start {
+    background: var(--brand); border: none; color: #fff;
+    padding: 14px 44px; border-radius: 12px; font-size: 1rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 0 28px rgba(81,112,255,0.4);
+    transition: all 0.2s;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 4px 40px rgba(81,112,255,0.55); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">TR</div>
+    <span class="logo-name">TopReader</span>
+  </div>
+  <div class="sidebar-heading">Author Onboarding</div>
+  <ul class="steps-list">
+    <li class="step-item active">
+      <div class="step-num">1</div>
+      <span class="step-label">Personal Information</span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">2</div>
+      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:white">Verification</a></span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">3</div>
+      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:white">Author Studio</a></span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">4</div>
+      <span class="step-label"><a href="uploadmanuscript.html" style="text-decoration:none; color:white">Upload Material</a></span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">5</div>
+      <span class="step-label"><a href="metadata.html" style="text-decoration:none; color:white">Metadata</a></span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">6</div>
+      <span class="step-label">Pricing & Access</span>
+    </li>
+    <li class="step-item">
+      <div class="step-num">7</div>
+      <span class="step-label">Review & Submit</span>
+    </li>
+  </ul>
+</aside>
+
+<main class="main">
+  <div class="onboard-card">
+    <div class="illus">📋</div>
+    <div class="tag">Author Onboarding</div>
+    <h2>Let's get started!</h2>
+    <p class="desc">Please provide your basic information to create your author profile. This helps readers discover you and your published works.</p>
+    <button class="btn-start">Start Now</button>
+  </div>
+</main>
+</body>
+</html>
