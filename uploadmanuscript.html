@@ -68,6 +68,110 @@
   .actions { display: flex; justify-content: space-between; margin-top: 8px; max-width: 800px; }
   .btn-ghost-sm { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; font-size: 0.875rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .btn-primary { background: var(--brand); border: none; color: #fff; padding: 11px 28px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 20px rgba(81,112,255,0.3); transition: all 0.2s; }
+  /* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+/* Large tablets */
+@media (max-width: 1024px) {
+  .main {
+    padding: 32px 28px;
+  }
+
+  .upload-layout {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .actions {
+    max-width: 100%;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  /* Sidebar becomes top horizontal scroll */
+  .sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+  }
+
+  .steps-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  .step-item {
+    min-width: 200px;
+    border-radius: 10px;
+  }
+
+  .main {
+    padding: 24px 18px;
+  }
+
+  .page-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .main {
+    padding: 18px 14px;
+  }
+
+  .page-title {
+    font-size: 1.05rem;
+  }
+
+  .page-sub {
+    font-size: 0.8rem;
+  }
+
+  .upload-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .drop-zone {
+    padding: 32px 16px;
+    min-height: 160px;
+  }
+
+  .drop-main {
+    font-size: 0.82rem;
+    text-align: center;
+  }
+
+  .form-group-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-ghost-sm,
+  .btn-primary {
+    width: 100%;
+  }
+
+  .copyright-notice {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
 </style>
 </head>
 <body>

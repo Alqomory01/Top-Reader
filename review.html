@@ -79,6 +79,126 @@
   .actions { display: flex; justify-content: space-between; margin-top: 28px; }
   .btn-back { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; font-size: 0.875rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .btn-proof { background: var(--brand); border: none; color: #fff; padding: 11px 28px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 20px rgba(81,112,255,0.3); }
+  /* =========================
+   RESPONSIVE — REVIEW & DRM PAGE
+========================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 32px;
+  }
+}
+
+/* Sidebar becomes top bar */
+@media (max-width: 900px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 14px;
+    align-items: center;
+  }
+
+  .sidebar-logo {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: 0 16px;
+    flex-shrink: 0;
+  }
+
+  .steps-list {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-left: 10px;
+  }
+
+  .step-item {
+    white-space: nowrap;
+    padding: 10px 14px;
+    flex-shrink: 0;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .main {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+
+  .page-sub {
+    font-size: 0.8rem;
+  }
+
+  /* Book preview */
+  .book-preview-visual {
+    width: 140px;
+    height: 180px;
+  }
+
+  /* DRM card spacing */
+  .drm-card,
+  .preview-card {
+    padding: 18px;
+  }
+
+  .drm-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .drm-select-row {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .drm-select {
+    width: 100%;
+  }
+
+  /* Buttons */
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-back,
+  .btn-proof {
+    width: 100%;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 420px) {
+  .book-preview-visual {
+    width: 120px;
+    height: 160px;
+  }
+
+  .steps-list {
+    gap: 6px;
+  }
+
+  .step-item {
+    font-size: 0.75rem;
+    padding: 8px 10px;
+  }
+}
 </style>
 </head>
 <body>

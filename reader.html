@@ -88,6 +88,201 @@
   .toolbar-spacer { flex: 1; }
   .nav-btn { display: flex; align-items: center; gap: 5px; padding: 6px 14px; border: 1px solid #e0dfd8; border-radius: 6px; font-size: 0.74rem; color: #1a1d28; background: #fff; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; font-weight: 500; }
   .nav-btn:hover { background: #f0eeea; }
+  /* =========================
+   RESPONSIVE — SUCCESS PAGE
+========================= */
+
+@media (max-width: 1024px) {
+  .page-body {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .left-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 20px;
+    gap: 10px;
+  }
+
+  .step-trail {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .browser-frame {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-body {
+    padding: 24px 16px;
+  }
+
+  .step-pill {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+  }
+
+  .btn-open-reader,
+  .btn-back-lib {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+/* =========================
+   RESPONSIVE — PERSONAL INFO
+========================= */
+
+@media (max-width: 900px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 16px;
+  }
+
+  .steps-list {
+    display: flex;
+    gap: 10px;
+  }
+
+  .step-item {
+    white-space: nowrap;
+  }
+
+  .main {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-primary,
+  .btn-ghost-sm {
+    width: 100%;
+  }
+
+  .form-card {
+    padding: 20px;
+  }
+}
+/* =========================
+   RESPONSIVE — READER MODE
+========================= */
+
+@media (max-width: 1200px) {
+  .page-body {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 40px;
+  }
+
+  .left-panel {
+    text-align: center;
+  }
+
+  .left-desc {
+    margin: 0 auto 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  nav {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 20px;
+    gap: 10px;
+  }
+
+  .nav-book-title {
+    flex: 100%;
+    text-align: center;
+  }
+
+  .page-body {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reader-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .toc {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    border-right: none;
+    border-bottom: 1px solid #e8e8e4;
+  }
+
+  .toc-item {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding: 6px 10px;
+  }
+
+  .toc-item.active {
+    border-bottom-color: var(--amber-btn);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reader-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tool-btn,
+  .nav-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .browser-frame {
+    border-radius: 10px;
+  }
+
+  .page-body {
+    padding: 20px 14px;
+  }
+}
 </style>
 </head>
 <body>

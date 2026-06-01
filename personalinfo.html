@@ -71,6 +71,121 @@
   .btn-ghost-sm:hover { border-color: rgba(255,255,255,0.2); }
   .btn-primary { background: var(--brand); border: none; color: #fff; padding: 11px 30px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 20px rgba(81,112,255,0.3); transition: all 0.2s; }
   .btn-primary:hover { box-shadow: 0 0 32px rgba(81,112,255,0.5); }
+  /* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .main {
+    padding: 40px 40px;
+  }
+
+  .form-card {
+    max-width: 100%;
+  }
+
+  .form-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* Small tablets */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 16px 10px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo {
+    display: none;
+  }
+
+  .steps-list {
+    display: flex;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .step-item {
+    white-space: nowrap;
+    padding: 10px 14px;
+  }
+
+  .main {
+    padding: 30px 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .btn-ghost-sm,
+  .btn-primary {
+    width: 100%;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .main {
+    padding: 22px 16px;
+  }
+
+  .form-title {
+    font-size: 1.2rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .form-card {
+    padding: 22px;
+    border-radius: 14px;
+  }
+
+  label {
+    font-size: 0.78rem;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 0.82rem;
+    padding: 10px 12px;
+  }
+
+  .step-item {
+    font-size: 0.75rem;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .form-title {
+    font-size: 1.1rem;
+  }
+
+  .form-card {
+    padding: 18px;
+  }
+}
 </style>
 </head>
 <body>
