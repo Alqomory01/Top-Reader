@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Access Granted</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff;
+    --border: rgba(255,255,255,0.07); --text: #e8eaf0; --muted: #6b7280;
+    --amber: #c89b2a; --amber-btn: #d4a520; --green: #22c55e;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 800px; height: 400px; background: radial-gradient(ellipse, rgba(34,197,94,0.06) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+
+  nav { position: relative; z-index: 10; display: flex; align-items: center; padding: 0 44px; height: 58px; border-bottom: 1px solid var(--border); background: rgba(3,4,5,0.9); backdrop-filter: blur(20px); gap: 20px; flex-shrink: 0; }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--brand); text-decoration: none; flex-shrink: 0; }
+  .nav-divider { width: 1px; height: 18px; background: var(--border); }
+  .nav-portal { font-size: 0.7rem; font-weight: 600; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; flex-shrink: 0; }
+  .step-trail { display: flex; align-items: center; gap: 5px; flex: 1; }
+  .step-pill { padding: 5px 14px; border-radius: 100px; font-size: 0.73rem; font-weight: 500; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+  .step-pill.active { background: var(--amber-btn); border-color: var(--amber-btn); color: #fff; box-shadow: 0 0 16px rgba(212,165,32,0.35); }
+  .step-pill.done { background: rgba(81,112,255,0.1); border-color: rgba(81,112,255,0.2); color: var(--brand-light); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+  .nav-user { font-size: 0.84rem; color: var(--text); }
+  .btn-nav { background: var(--amber-btn); border: none; color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 16px rgba(212,165,32,0.3); }
+
+  .page-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 60px 80px; gap: 80px; position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+  .step-badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(34,197,94,0.2); background: rgba(34,197,94,0.06); border-radius: 100px; padding: 5px 14px; font-size: 0.72rem; color: #4ade80; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+  .step-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  h1 { font-family: 'Syne', sans-serif; font-size: 3.2rem; font-weight: 800; line-height: 1.06; color: #fff; margin-bottom: 18px; }
+  h1 em { font-style: normal; color: var(--amber); }
+  .left-desc { color: var(--muted); font-size: 1rem; line-height: 1.72; max-width: 400px; margin-bottom: 36px; }
+  .feature-list { display: flex; flex-direction: column; gap: 13px; }
+  .feature-item { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--muted); }
+  .fdot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
+
+  .right-panel { display: flex; align-items: center; justify-content: center; }
+  .browser-frame { width: 100%; max-width: 660px; background: #141820; border-radius: 14px; border: 1px solid rgba(255,255,255,0.09); overflow: hidden; box-shadow: 0 28px 90px rgba(0,0,0,0.75), 0 0 0 1px rgba(34,197,94,0.06); animation: riseUp 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes riseUp { from { opacity:0; transform: translateY(36px); } to { opacity:1; transform: translateY(0); } }
+  .browser-bar { background: #0e1118; padding: 11px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .b-dots { display: flex; gap: 6px; }
+  .b-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .b-dot.r { background: #ff5f57; } .b-dot.y { background: #febc2e; } .b-dot.g { background: #28c840; }
+  .b-url { flex: 1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px 12px; font-size: 0.74rem; color: #5a6070; }
+
+  .app-topbar { background: #fff; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e8e8e4; }
+  .app-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--brand); }
+  .app-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: #fff; }
+
+  .success-body { background: #f3f2ee; padding: 32px 28px; text-align: center; }
+  .success-icon { font-size: 2.8rem; margin-bottom: 14px; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 0.3s; opacity: 0; }
+  @keyframes popIn { from { opacity:0; transform: scale(0.5); } to { opacity:1; transform: scale(1); } }
+  .success-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #1a1d28; margin-bottom: 6px; }
+  .success-sub { font-size: 0.78rem; color: #888; margin-bottom: 24px; line-height: 1.5; }
+
+  .receipt-table { background: #fff; border-radius: 10px; border: 1px solid #ebe9e3; overflow: hidden; margin-bottom: 22px; text-align: left; }
+  .receipt-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px; border-bottom: 1px solid #f0eeea; font-size: 0.8rem; }
+  .receipt-row:last-child { border-bottom: none; }
+  .receipt-key { color: #999; }
+  .receipt-val { color: #1a1d28; font-weight: 500; }
+  .badge-lifetime { background: rgba(34,197,94,0.1); color: #16a34a; border: 1px solid rgba(34,197,94,0.2); padding: 2px 10px; border-radius: 5px; font-size: 0.72rem; font-weight: 600; }
+
+  .action-buttons { display: flex; gap: 12px; justify-content: center; }
+  .btn-open-reader { background: var(--amber-btn); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 18px rgba(212,165,32,0.3); transition: all 0.2s; }
+  .btn-open-reader:hover { box-shadow: 0 6px 26px rgba(212,165,32,0.45); }
+  .btn-back-lib { background: #fff; border: 1.5px solid #e0dfd8; color: #1a1d28; padding: 12px 24px; border-radius: 9px; font-size: 0.88rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .btn-back-lib:hover { border-color: #ccc; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#" class="nav-logo">Top Reader</a>
+  <div class="nav-divider"></div>
+  <span class="nav-portal">Student Portal</span>
+  <div class="step-trail">
+    <div class="step-pill done">✓ Register</div>
+    <div class="step-pill done">✓ Browse</div>
+    <div class="step-pill done">✓ Checkout</div>
+    <div class="step-pill active">04 Read</div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user">Adaeze O.</span>
+    <button class="btn-nav">My Library</button>
+  </div>
+</nav>
+
+<div class="page-body">
+  <div>
+    <div class="step-badge"><div class="step-badge-dot"></div>Step 04 of 04</div>
+    <h1>Access <em>granted</em> successfully</h1>
+    <p class="left-desc">Payment confirmed. Your book is now in your library. A receipt has been sent to your email address.</p>
+    <div class="feature-list">
+      <div class="feature-item"><div class="fdot"></div>Receipt emailed instantly</div>
+      <div class="feature-item"><div class="fdot"></div>Lifetime access to purchased title</div>
+      <div class="feature-item"><div class="fdot"></div>Available on all your devices</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="b-dots"><div class="b-dot r"></div><div class="b-dot y"></div><div class="b-dot g"></div></div>
+        <div class="b-url">app.unilib.edu.ng/payment/success</div>
+      </div>
+      <div class="app-topbar">
+        <span class="app-brand">Top Reader</span>
+        <div class="app-avatar">AO</div>
+      </div>
+      <div class="success-body">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Payment Successful!</div>
+        <p class="success-sub">Your access has been confirmed. A receipt has been sent to ada@unilag.edu.ng</p>
+        <div class="receipt-table">
+          <div class="receipt-row"><span class="receipt-key">Receipt No.</span><span class="receipt-val">#UNL-204031</span></div>
+          <div class="receipt-row"><span class="receipt-key">Book</span><span class="receipt-val">Fundamentals of Physics Vol. 1</span></div>
+          <div class="receipt-row"><span class="receipt-key">Amount Paid</span><span class="receipt-val">₦4,050</span></div>
+          <div class="receipt-row"><span class="receipt-key">Date</span><span class="receipt-val">31 May 2026</span></div>
+          <div class="receipt-row"><span class="receipt-key">Access Type</span><span class="receipt-val"><span class="badge-lifetime">Lifetime ✓</span></span></div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-open-reader"><a href="reader.html" style="text-decoration:none; color:white;">Open Reader →</a></button>
+          <button class="btn-back-lib"><a href="library.html" style="text-decoration:none; color:black;" >Back to Library</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

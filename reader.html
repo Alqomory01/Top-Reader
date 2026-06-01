@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Reader Mode</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff;
+    --border: rgba(255,255,255,0.07); --text: #e8eaf0; --muted: #6b7280;
+    --amber: #c89b2a; --amber-btn: #d4a520;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; top: -5%; left: -5%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(81,112,255,0.06) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+
+  /* TOP NAV — Reader style */
+  nav { position: relative; z-index: 10; display: flex; align-items: center; padding: 0 44px; height: 56px; border-bottom: 1px solid var(--border); background: rgba(3,4,5,0.9); backdrop-filter: blur(20px); gap: 20px; flex-shrink: 0; }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--brand); text-decoration: none; flex-shrink: 0; }
+  .nav-book-title { font-size: 0.78rem; color: var(--muted); flex: 1; }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 0.84rem; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.2s; }
+  .nav-link:hover { color: var(--text); }
+  .btn-sync { background: var(--amber-btn); border: none; color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 16px rgba(212,165,32,0.3); }
+
+  /* READER BADGE */
+  .reader-badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 0.68rem; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* BODY */
+  .page-body { flex: 1; display: grid; grid-template-columns: 380px 1fr; gap: 60px; align-items: start; padding: 48px 60px; position: relative; z-index: 1; max-width: 1440px; margin: 0 auto; width: 100%; }
+
+  /* LEFT INFO */
+  .left-panel { padding-top: 8px; }
+  .reader-badge-wrap { margin-bottom: 28px; }
+  h1 { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 6px; }
+  h1 em { font-style: normal; color: var(--amber); }
+  .left-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.72; max-width: 320px; margin-bottom: 32px; }
+  .feature-list { display: flex; flex-direction: column; gap: 12px; }
+  .feature-item { display: flex; align-items: center; gap: 12px; font-size: 0.88rem; color: var(--muted); }
+  .fdot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); flex-shrink: 0; box-shadow: 0 0 8px rgba(81,112,255,0.5); }
+
+  /* RIGHT — READER MOCKUP */
+  .reader-outer { display: flex; flex-direction: column; gap: 0; }
+  .browser-frame { width: 100%; background: #141820; border-radius: 14px; border: 1px solid rgba(255,255,255,0.09); overflow: hidden; box-shadow: 0 28px 90px rgba(0,0,0,0.75); animation: riseUp 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes riseUp { from { opacity:0; transform: translateY(36px); } to { opacity:1; transform: translateY(0); } }
+  .browser-bar { background: #0e1118; padding: 11px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .b-dots { display: flex; gap: 6px; }
+  .b-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .b-dot.r { background: #ff5f57; } .b-dot.y { background: #febc2e; } .b-dot.g { background: #28c840; }
+  .b-url { flex: 1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px 12px; font-size: 0.74rem; color: #5a6070; }
+
+  /* Reader chrome */
+  .reader-chrome { background: #fff; }
+  .reader-chrome-top { display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; border-bottom: 1px solid #e8e8e4; }
+  .rc-book-name { font-size: 0.82rem; font-weight: 600; color: #1a1d28; }
+  .rc-chapter { font-size: 0.78rem; color: #888; }
+  .rc-page { font-size: 0.78rem; color: var(--brand); font-weight: 600; }
+
+  /* Progress bar */
+  .progress-bar-wrap { padding: 8px 18px; background: #f8f7f3; border-bottom: 1px solid #e8e8e4; display: flex; align-items: center; justify-content: space-between; }
+  .progress-track { flex: 1; height: 4px; background: #e0dfd8; border-radius: 2px; overflow: hidden; margin-right: 12px; }
+  .progress-fill { height: 100%; width: 30%; background: var(--amber-btn); border-radius: 2px; }
+  .progress-label { font-size: 0.68rem; color: #aaa; white-space: nowrap; }
+  .time-left { font-size: 0.68rem; color: #aaa; }
+
+  /* Reader layout */
+  .reader-layout { display: grid; grid-template-columns: 160px 1fr; background: #f5f4ef; }
+
+  /* TOC sidebar */
+  .toc { padding: 16px 14px; border-right: 1px solid #e8e8e4; background: #fff; }
+  .toc-label { font-size: 0.63rem; font-weight: 700; color: #bbb; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .toc-item { font-size: 0.75rem; color: #999; padding: 6px 0; cursor: pointer; border-left: 2px solid transparent; padding-left: 8px; transition: all 0.15s; line-height: 1.4; }
+  .toc-item:hover { color: #555; }
+  .toc-item.active { color: var(--amber-btn); border-left-color: var(--amber-btn); font-weight: 500; }
+
+  /* Content */
+  .reader-content { padding: 20px 24px; min-height: 240px; }
+  .chapter-title { font-family: 'Lora', serif; font-size: 1.05rem; font-weight: 600; color: #1a1d28; margin-bottom: 14px; }
+  .reader-para { font-family: 'Lora', serif; font-size: 0.82rem; color: #444; line-height: 1.8; margin-bottom: 14px; }
+  .highlight-text { background: rgba(212,165,32,0.18); border-left: 3px solid var(--amber-btn); padding: 8px 10px; border-radius: 0 5px 5px 0; font-family: 'Lora', serif; font-size: 0.82rem; color: #333; line-height: 1.75; margin-bottom: 14px; font-style: italic; }
+
+  /* Bottom toolbar */
+  .reader-toolbar { background: #fff; border-top: 1px solid #e8e8e4; padding: 10px 18px; display: flex; align-items: center; gap: 8px; }
+  .tool-btn { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1px solid #e0dfd8; border-radius: 6px; font-size: 0.74rem; color: #555; background: #fff; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: all 0.2s; }
+  .tool-btn:hover { border-color: #ccc; background: #f8f7f3; }
+  .toolbar-spacer { flex: 1; }
+  .nav-btn { display: flex; align-items: center; gap: 5px; padding: 6px 14px; border: 1px solid #e0dfd8; border-radius: 6px; font-size: 0.74rem; color: #1a1d28; background: #fff; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; font-weight: 500; }
+  .nav-btn:hover { background: #f0eeea; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#" class="nav-logo">Top Reader</a>
+  <span class="nav-book-title">Fundamentals of Physics Vol. 1 — Chapter 3</span>
+  <div class="nav-right">
+    <a href="#" class="nav-link">← My Library</a>
+    <a href="#" class="nav-link">Download Offline</a>
+    <button class="btn-sync">Sync Progress</button>
+  </div>
+</nav>
+
+<div class="page-body">
+  <div class="left-panel">
+    <div class="reader-badge-wrap">
+      <div class="reader-badge">📖 Reader Mode</div>
+    </div>
+    <h1>Read, highlight &amp; <em>annotate</em></h1>
+    <p class="left-desc">Use the tools to bookmark pages, add notes, and highlight text. Progress syncs automatically across devices.</p>
+    <div class="feature-list">
+      <div class="feature-item"><div class="fdot"></div>Highlight &amp; annotate passages</div>
+      <div class="feature-item"><div class="fdot"></div>Bookmark important pages</div>
+      <div class="feature-item"><div class="fdot"></div>Download for offline reading</div>
+      <div class="feature-item"><div class="fdot"></div>Progress synced across devices</div>
+    </div>
+  </div>
+
+  <div class="reader-outer">
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="b-dots"><div class="b-dot r"></div><div class="b-dot y"></div><div class="b-dot g"></div></div>
+        <div class="b-url">app.unilib.edu.ng/reader/phy101-vol1</div>
+      </div>
+
+      <div class="reader-chrome">
+        <div class="reader-chrome-top">
+          <span class="rc-book-name">Fundamentals of Physics Vol. 1</span>
+          <span class="rc-chapter">Chapter 3 of 42</span>
+          <span class="rc-page">Pg. 87 / 290</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <span class="progress-label">30% complete</span>
+          <span class="time-left" style="margin-left:16px;">Est. 4h 20m remaining</span>
+        </div>
+
+        <div class="reader-layout">
+          <div class="toc">
+            <div class="toc-label">Contents</div>
+            <div class="toc-item">Ch. 1 — Measurement</div>
+            <div class="toc-item">Ch. 2 — Motion in a Line</div>
+            <div class="toc-item active">Ch. 3 — Newton's Laws…</div>
+            <div class="toc-item">Ch. 4 — Forces &amp; Motion</div>
+            <div class="toc-item">Ch. 5 — Gravitation</div>
+          </div>
+          <div class="reader-content">
+            <div class="chapter-title">3.2 — Newton's Laws of Motion</div>
+            <p class="reader-para">Every object in a state of uniform motion tends to remain in that state unless an external force is applied to it. This forms the cornerstone of classical mechanics.</p>
+            <div class="highlight-text">The net force on an object is equal to the rate of change of its momentum — this is the fundamental relationship governing all mechanical systems.</div>
+            <p class="reader-para">These principles are essential for understanding everything from projectile motion to orbital mechanics, and will be applied throughout this course.</p>
+          </div>
+        </div>
+
+        <div class="reader-toolbar">
+          <button class="tool-btn">🔖 Bookmark</button>
+          <button class="tool-btn">🖊 Highlight</button>
+          <button class="tool-btn">✏️ Add Note</button>
+          <button class="tool-btn">💾 Save Offline</button>
+          <div class="toolbar-spacer"></div>
+          <button class="nav-btn">← Prev Page</button>
+          <button class="nav-btn">Next Page →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
