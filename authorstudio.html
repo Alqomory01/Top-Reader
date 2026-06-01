@@ -90,6 +90,230 @@
 
   .btn-save { width: 100%; background: var(--brand); border: none; color: #fff; padding: 13px; border-radius: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 0 20px rgba(81,112,255,0.3); transition: all 0.2s; }
   .btn-save:hover { box-shadow: 0 0 32px rgba(81,112,255,0.5); }
+  /* =========================
+   TABLET RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+
+body {
+  flex-direction: column;
+}
+
+.sidebar {
+  width: 100%;
+  border-right: none;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.sidebar-logo {
+  padding: 0 24px 24px;
+  margin-bottom: 20px;
+}
+
+.steps-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.step-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface2);
+  padding: 14px 18px;
+}
+
+.main {
+  padding: 32px 24px;
+}
+
+.studio-grid {
+  grid-template-columns: 1fr;
+}
+
+.right-panel {
+  order: -1;
+}
+
+.completion-card {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.btn-save {
+  max-width: 420px;
+  margin: 0 auto;
+}
+}
+
+
+/* =========================
+ MOBILE RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+body {
+  flex-direction: column;
+}
+
+.sidebar {
+  width: 100%;
+  padding: 20px 0;
+}
+
+.sidebar-logo {
+  justify-content: center;
+  text-align: center;
+}
+
+.steps-list {
+  grid-template-columns: 1fr;
+  padding: 0 16px;
+}
+
+.step-item {
+  padding: 14px 16px;
+}
+
+.step-label {
+  font-size: 0.82rem;
+}
+
+.main {
+  padding: 24px 16px;
+}
+
+.page-title {
+  font-size: 1.2rem;
+}
+
+.page-sub {
+  font-size: 0.82rem;
+}
+
+.form-card,
+.completion-card {
+  padding: 22px;
+  border-radius: 16px;
+}
+
+.profile-photo-row {
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 1.3rem;
+}
+
+.photo-actions {
+  width: 100%;
+}
+
+.btn-change {
+  width: 100%;
+}
+
+.form-grid {
+  grid-template-columns: 1fr;
+}
+
+.social-grid {
+  grid-template-columns: 1fr;
+}
+
+.tags-row {
+  gap: 10px;
+}
+
+.tag-pill {
+  font-size: 0.72rem;
+  padding: 6px 10px;
+}
+
+.donut-wrap {
+  width: 100px;
+  height: 100px;
+}
+
+.donut-svg {
+  width: 100px;
+  height: 100px;
+}
+
+.donut-label {
+  font-size: 1.1rem;
+}
+
+.btn-save {
+  width: 100%;
+}
+}
+
+
+/* =========================
+ SMALL MOBILE DEVICES
+========================= */
+@media (max-width: 480px) {
+
+.sidebar-logo {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logo-name {
+  font-size: 0.9rem;
+}
+
+.main {
+  padding: 20px 12px;
+}
+
+.form-card,
+.completion-card {
+  padding: 18px;
+}
+
+.page-title {
+  font-size: 1.05rem;
+}
+
+.page-sub {
+  font-size: 0.78rem;
+}
+
+label {
+  font-size: 0.75rem;
+}
+
+input,
+textarea {
+  font-size: 0.82rem;
+  padding: 10px 12px;
+}
+
+textarea {
+  height: 100px;
+}
+
+.completion-title {
+  font-size: 0.82rem;
+}
+
+.check-row {
+  font-size: 0.75rem;
+}
+
+.btn-save {
+  padding: 12px;
+  font-size: 0.85rem;
+}
+}
 </style>
 </head>
 <body>

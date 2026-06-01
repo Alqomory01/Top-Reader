@@ -88,6 +88,171 @@
     transition: all 0.2s;
   }
   .btn-start:hover { transform: translateY(-2px); box-shadow: 0 4px 40px rgba(81,112,255,0.55); }
+
+  /* =========================
+   TABLET RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+
+body {
+  flex-direction: column;
+}
+
+.sidebar {
+  width: 100%;
+  border-right: none;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.sidebar-logo {
+  padding: 0 24px 24px;
+  margin-bottom: 20px;
+}
+
+.sidebar-heading {
+  padding: 0 24px 12px;
+}
+
+.steps-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.step-item {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface2);
+}
+
+.main {
+  padding: 40px 24px;
+}
+
+.onboard-card {
+  max-width: 100%;
+}
+}
+
+
+/* =========================
+ MOBILE RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+body {
+  flex-direction: column;
+}
+
+.sidebar {
+  width: 100%;
+  padding: 20px 0;
+}
+
+.sidebar-logo {
+  justify-content: center;
+  text-align: center;
+}
+
+.sidebar-heading {
+  text-align: center;
+}
+
+.steps-list {
+  grid-template-columns: 1fr;
+  padding: 0 16px;
+}
+
+.step-item {
+  padding: 14px 16px;
+}
+
+.step-label {
+  font-size: 0.82rem;
+}
+
+.main {
+  padding: 30px 16px;
+}
+
+.onboard-card {
+  padding: 40px 24px;
+  border-radius: 18px;
+}
+
+.illus {
+  width: 90px;
+  height: 90px;
+  font-size: 2.5rem;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+.desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.btn-start {
+  width: 100%;
+  padding: 14px 20px;
+}
+}
+
+
+/* =========================
+ SMALL MOBILE DEVICES
+========================= */
+@media (max-width: 480px) {
+
+.sidebar-logo {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logo-name {
+  font-size: 0.95rem;
+}
+
+.onboard-card {
+  padding: 32px 18px;
+}
+
+.illus {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+}
+
+.tag {
+  font-size: 0.68rem;
+  padding: 5px 12px;
+}
+
+.desc {
+  font-size: 0.85rem;
+}
+
+.step-item {
+  gap: 10px;
+}
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  font-size: 0.68rem;
+}
+}
 </style>
 </head>
 <body>

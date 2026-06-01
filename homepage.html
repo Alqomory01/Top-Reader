@@ -243,6 +243,199 @@
     margin-bottom: 4px;
   }
   .stat-label { font-size: 0.85rem; color: var(--muted); }
+
+  /* =========================
+   TABLET RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+
+nav {
+  padding: 0 24px;
+}
+
+nav ul {
+  gap: 18px;
+}
+
+.hero {
+  grid-template-columns: 1fr;
+  padding: 60px 24px;
+  gap: 60px;
+  text-align: center;
+}
+
+.hero-left {
+  padding-right: 0;
+}
+
+.hero-desc {
+  max-width: 100%;
+  margin: 0 auto 36px;
+}
+
+.hero-ctas {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+.hero-visual {
+  width: 100%;
+  max-width: 420px;
+}
+
+.books-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stats-bar {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stat-item {
+  padding: 24px;
+}
+
+.featured-section {
+  padding: 50px 24px;
+}
+}
+
+
+/* =========================
+ MOBILE RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+nav {
+  flex-direction: column;
+  height: auto;
+  padding: 18px;
+  gap: 18px;
+}
+
+nav ul {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.nav-actions {
+  width: 100%;
+  justify-content: center;
+}
+
+.hero {
+  padding: 50px 20px;
+  min-height: auto;
+}
+
+h1 {
+  font-size: 2.2rem;
+  line-height: 1.2;
+}
+
+.hero-desc {
+  font-size: 0.95rem;
+}
+
+.hero-ctas {
+  flex-direction: column;
+  width: 100%;
+}
+
+.btn-hero,
+.btn-outline {
+  width: 100%;
+}
+
+.hero-visual {
+  height: 350px;
+}
+
+.grad-circle {
+  width: 240px;
+  height: 240px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50px;
+}
+
+.mortar-icon {
+  font-size: 3.5rem;
+}
+
+.fbook:nth-child(2),
+.fbook:nth-child(3),
+.fbook:nth-child(4),
+.fbook:nth-child(5) {
+  width: 65px;
+  height: 90px;
+}
+
+.books-grid {
+  grid-template-columns: 1fr;
+}
+
+.stats-bar {
+  grid-template-columns: 1fr;
+}
+
+.stat-item {
+  border-right: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.section-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+}
+
+
+/* =========================
+ SMALL MOBILE DEVICES
+========================= */
+@media (max-width: 480px) {
+
+h1 {
+  font-size: 1.8rem;
+}
+
+.hero-badge {
+  font-size: 0.68rem;
+}
+
+.logo {
+  flex-direction: column;
+  text-align: center;
+}
+
+.hero-visual {
+  height: 300px;
+}
+
+.grad-circle {
+  width: 200px;
+  height: 200px;
+}
+
+.fbook:nth-child(2),
+.fbook:nth-child(3),
+.fbook:nth-child(4),
+.fbook:nth-child(5) {
+  width: 55px;
+  height: 75px;
+}
+}
 </style>
 </head>
 <body>
