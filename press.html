@@ -583,8 +583,8 @@ body {
       <div class="nav-group-label">Publications</div>
       <button class="nav-item" onclick="navigate('press-publications', this)"><span class="ni">📚</span> Publication Requests <span class="nav-badge red">4</span></button>
       <button class="nav-item" onclick="navigate('press-upload', this)"><span class="ni">⬆</span> Upload Book</button>
-      <button class="nav-item" onclick="navigate('press-metadata', this)"><span class="ni">🏷</span> Metadata Approval <span class="nav-badge">3</span></button>
-      <button class="nav-item" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packages</button>
+      <!-- <button class="nav-item" onclick="navigate('press-metadata', this)"><span class="ni">🏷</span> Metadata Approval <span class="nav-badge">3</span></button> -->
+      <!-- <button class="nav-item" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packages</button> -->
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Commerce</div>
@@ -723,8 +723,8 @@ body {
               <tr>
                 <td><div class="bold">Language &amp; Identity</div><div class="sub mono">978-000-1161 · Linguistics</div></td>
                 <td><div>B. Owusu</div></td>
-                <td><span class="badge b-approved">Approved</span></td>
-                <td><div class="btn-group"><button class="btn blue" onclick="navigate('press-upload', null)">Publish</button></div></td>
+                <td><span class="badge b-approved">published</span></td>
+                <td><div class="btn-group"><button class="btn blue" onclick="navigate('press-upload', null)">upload & Publish</button></div></td>
               </tr>
             </tbody>
           </table>
@@ -799,8 +799,8 @@ body {
           <tbody>
             <tr><td><div class="bold">Urban Ecologies of the Sahel</div><div class="sub">Submitted Jun 3, 2026</div></td><td>A. Okonkwo</td><td>Geography</td><td class="mono">–</td><td><span class="tag tag-a">Open Access</span></td><td><span class="badge b-pending">Pending</span></td><td><div class="btn-group"><button class="btn green">Approve</button><button class="btn red">Cancel</button></div></td></tr>
             <tr><td><div class="bold">Postcolonial Finance Theory</div><div class="sub">Submitted Jun 1, 2026</div></td><td>D. Mensah</td><td>Economics</td><td class="mono">–</td><td><span class="tag tag-g">Paid</span></td><td><span class="badge b-pending">Pending</span></td><td><div class="btn-group"><button class="btn green">Approve</button><button class="btn red">Cancel</button></div></td></tr>
-            <tr><td><div class="bold">Digital Pedagogy in African HE</div><div class="sub">Submitted May 28, 2026</div></td><td>F. Eze</td><td>Education</td><td class="mono">978-000-1182</td><td><span class="tag tag-g">paid</span></td><td><span class="badge b-review">Editorial review in Progress</span></td><td><div class="btn-group"><button class="btn accent">Upload&publish</button><button class="btn green">Cancel</button></div></td></tr>
-            <tr><td><div class="bold">Language Policy &amp; Identity</div><div class="sub">Submitted May 20, 2026</div></td><td>B. Owusu</td><td>Linguistics</td><td class="mono">978-000-1161</td><td><span class="tag tag-a">Open Access</span></td><td><span class="badge b-approved"><a id="publish"><button class="btn blue" onclick="navigate('press-upload', null)">Publish</button></a></span></td><td><div class="btn-group"><button class="btn blue">Remove from distribution</button></div></td></tr>
+            <tr><td><div class="bold">Digital Pedagogy in African HE</div><div class="sub">Submitted May 28, 2026</div></td><td>F. Eze</td><td>Education</td><td class="mono">978-000-1182</td><td><span class="tag tag-g">paid</span></td><td><span class="badge b-review">Editorial review in Progress</span></td><td><div class="btn-group"><button class="btn accent" onclick="navigate('press-upload', null)">Upload&publish</button><button class="btn green">Cancel</button></div></td></tr>
+            <tr><td><div class="bold">Language Policy &amp; Identity</div><div class="sub">Submitted May 20, 2026</div></td><td>B. Owusu</td><td>Linguistics</td><td class="mono">978-000-1161</td><td><span class="tag tag-a">Open Access</span></td><td><span class="badge b-approved"><a id="publish"><button class="btn blue" >Published</button></a></span></td><td><div class="btn-group"><button class="btn blue">Remove from distribution</button></div></td></tr>
             <tr><td><div class="bold">Bioethics &amp; Genomic Research</div><div class="sub">Submitted May 15, 2026</div></td><td>C. Adeyemi</td><td>Life Sciences</td><td class="mono">978-000-1148</td><td><span class="tag tag-g">Paid</span></td><td><span class="badge b-live">Pending</span></td><td><div class="btn-group"><button class="btn green">Approve</button><button class="btn red">Cancel</button></div></td></tr>
           </tbody>
         </table>
