@@ -1,0 +1,44 @@
+name: Deploy Next.js App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.2.0
+
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+
+          script: |
+            echo "🚀 Starting deployment..."
+
+            cd /var/www/Top-Reader
+
+            echo "📥 Pulling latest code..."
+            git pull origin master
+
+            echo "📂 Moving to app folder..."
+            cd my-app
+
+            echo "📦 Installing dependencies..."
+            npm install
+
+            echo "🏗️ Building Next.js app..."
+            npm run build
+
+            echo "♻️ Restarting app with PM2..."
+
+            pm2 restart top-reader || pm2 start npm --name "top-reader" -- start
+
+            pm2 save
+
+            echo "✅ Deployment completed!"
