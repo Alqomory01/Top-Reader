@@ -98,7 +98,7 @@
   </div>
   <div class="nav-right">
     <a href="#" class="nav-link">Help</a>
-    <span class="nav-user">Adaeze O.</span>
+    <span class="nav-user" id="nav-username">Adaeze O.</span>
     <button class="btn-nav">My Library</button>
   </div>
 </nav>
@@ -122,7 +122,8 @@
         <div class="b-url">app.unilib.edu.ng/library</div>
       </div>
       <div class="app-topbar">
-        <span class="app-brand">Top Reader</span>
+        <div style="display:flex; flex-direction:column"><span class="app-brand">Top Reader</span>
+        <a href="homepage.html">&lArr; Go Back</a></div>
         <div class="app-nav-links">
           <a href="#" class="active-link">Library</a>
           <a href="#">My Books</a>
@@ -130,16 +131,46 @@
         </div>
         <div class="app-right-row">
           <button class="notif-btn">🔔</button>
-          <div class="app-avatar">AO</div>
+          <div class="app-avatar" id="app-avatar">AO</div>
         </div>
       </div>
       <div class="app-body">
-        <p class="greeting">Good morning, <strong>Adaeze</strong> — Sciences, 200L</p>
-        <div class="search-bar">
+        <p class="greeting">
+          Greetings, <strong id="greeting-name" style="color:var(--brand);"></strong>
+          — <span id="greeting-meta"></span>
+        </p>
           <span>🔍</span>
-          <input type="text" placeholder="Search by title, author, course code, keyword…" />
+        <div id="welcome-banner" style="
+  background:linear-gradient(135deg, rgba(81,112,255,0.12), rgba(81,112,255,0.04));
+  border:1px solid rgba(81,112,255,0.2); border-radius:10px;
+  padding:14px 16px; display:flex; align-items:center;
+  gap:14px; margin-bottom:16px;
+">
+  <div style="
+    width:42px; height:42px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg,var(--brand),#8b5cf6);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.85rem; font-weight:700; color:rgb(22, 3, 3);
+  " id="banner-initials">AO</div>
+  <div>
+    <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:0.88rem; color:#1a1d28;">
+      Welcome, <span id="banner-name"></span> 👋
+    </div>
+    <div style="font-size:0.74rem; color:#888; margin-top:2px;">
+      <span id="banner-faculty"></span> · Access granted
+      <span style="color:#16a34a; font-weight:600;">✓</span>
+    </div>
+  </div>
+</div>
+
+          <input style="
+          background:linear-gradient(135deg, rgba(81,112,255,0.12), rgba(81,112,255,0.04));
+          border:1px solid rgba(81,112,255,0.2); border-radius:10px;
+          padding:14px 16px; display:flex; align-items:center;
+          gap:14px; margin-bottom:16px; outline:none;
+        "  type="text" placeholder="Search by title, author, course code, keyword…" />
         </div>
-        <div class="filter-tabs">
+        <div class="filter-tabs" style="margin-top:12px">
           <button class="filter-tab active">All Materials</button>
           <button class="filter-tab">My Faculty</button>
           <button class="filter-tab">Free / Assigned</button>
@@ -181,5 +212,28 @@
     </div>
   </div>
 </div>
+<script>
+  // Load profile saved after OTP confirmation
+  const profile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+  const name    = profile.full_name    || 'Student';
+  const faculty = profile.faculty      || 'Faculty';
+  const level   = profile.level        || '';          // backend should return this
+  const initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const firstName = name.split(' ')[0];
+  const shortName = name.split(' ').map((w,i) => i===0 ? w : w[0]+'.').join(' ');
+
+  // Inject into navbar
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('nav-username').textContent  = shortName;
+    document.getElementById('app-avatar').textContent    = initials;
+    document.getElementById('greeting-name').textContent = firstName;
+    document.getElementById('greeting-meta').textContent = `${faculty}${level ? ', ' + level : ''}`;
+
+    // Welcome banner
+    document.getElementById('banner-name').textContent    = name;
+    document.getElementById('banner-faculty').textContent = faculty;
+    document.getElementById('banner-initials').textContent = initials;
+  });
+</script>
 </body>
 </html>
