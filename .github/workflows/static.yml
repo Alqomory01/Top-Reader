@@ -1,4 +1,4 @@
-name: Deploy Next.js App
+name: Deploy Static Website
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Server via SSH
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1.2.0
 
         with:
@@ -19,26 +19,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
 
           script: |
-            echo "🚀 Starting deployment..."
+            echo "🚀 Deploying update..."
 
-            cd /var/www/Top-Reader
+            cd /var/www/top-reader
 
-            echo "📥 Pulling latest code..."
             git pull origin master
 
-            echo "📂 Moving to app folder..."
-            cd my-app
+            echo "✅ Files updated"
 
-            echo "📦 Installing dependencies..."
-            npm install
+            sudo systemctl reload nginx
 
-            echo "🏗️ Building Next.js app..."
-            npm run build
-
-            echo "♻️ Restarting app with PM2..."
-
-            pm2 restart top-reader || pm2 start npm --name "top-reader" -- start
-
-            pm2 save
-
-            echo "✅ Deployment completed!"
+            echo "🌐 Website refreshed"
