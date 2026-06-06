@@ -29,7 +29,27 @@
   --sidebar: 252px;
   --radius: 12px;
 }
+/* Light Theme */
+body.light-theme {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface2: #f1f3f5;
+  --border: #dfe3e8;
+  --border2: #c9d1d9;
 
+  --text: #1f2937;
+  --text2: #4b5563;
+  --text3: #6b7280;
+
+  --accent: #d4a017;
+  --accent-dim: rgba(212,160,23,.12);
+  --accent-dim2: rgba(212,160,23,.06);
+
+  --green: #16a34a;
+  --red: #dc2626;
+  --blue: #2563eb;
+  --purple: #7c3aed;
+}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -641,6 +661,9 @@ body {
     </div>
     <div class="notif-btn">🔔<div class="notif-dot"></div></div>
     <button class="tbar-btn primary" id="primary-action" onclick="handlePrimary()">+ New</button>
+    <button class="tbar-btn ghost" onclick="toggleTheme()">
+      🌙 Theme
+  </button>
   </header>
 
   <div class="content">
@@ -1382,6 +1405,25 @@ body {
 
   // Alert close
   document.querySelectorAll('.alert-close').forEach(b => b.addEventListener('click', e => e.target.closest('.ob-banner')?.remove()));
+  function toggleTheme() {
+    document.body.classList.toggle("light-theme");
+
+    const currentTheme =
+        document.body.classList.contains("light-theme")
+        ? "light"
+        : "dark";
+
+    localStorage.setItem("theme", currentTheme);
+}
+
+// Load saved theme
+window.addEventListener("load", () => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+        document.body.classList.add("light-theme");
+    }
+});
 </script>
 </body>
 </html>
