@@ -614,7 +614,7 @@
         <div class="panel-body">
           <div style="display:flex;gap:18px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);">
             <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--warm-gold);display:inline-block;border-radius:1px;"></span>Gross</span>
-            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--sage);display:inline-block;border-radius:1px;"></span>Net</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--sage);display:inline-block;border-radius:1px;"></span>Income</span>
           </div>
           <div class="chart-area" id="revenueChart">
             <!-- JS rendered below -->
@@ -1229,7 +1229,7 @@ function showBookPackSetup() {
 }
   const months = ['Jan','Feb','Mar','Apr','May','Jun'];
   const gross  = [620, 680, 740, 810, 760, 670];
-  const net    = [450, 490, 535, 590, 548, 497];
+  const Income    = [450, 490, 535, 590, 548, 497];
   const maxVal = Math.max(...gross);
 
   const chartEl  = document.getElementById('revenueChart');

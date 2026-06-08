@@ -282,20 +282,26 @@
   </div>
   <nav>
     <div class="nav-section">Overview</div>
-    <a class="nav-item" href="bookshop_press_dashboard.html"><span class="icon">◉</span> Dashboard</a>
-    <a class="nav-item" href="#"><span class="icon">📊</span> Analytics</a>
+    <a class="nav-item active" href="bookshop.html"><span class="icon">◉</span> Dashboard</a>
+    <a class="nav-item" onclick="navigate('analytics', this)" ><span class="icon">📊</span> Analytics</a>
     <div class="nav-section">Catalogue</div>
-    <a class="nav-item" href="#"><span class="icon">🏪</span> Storefront Setup</a>
-    <a class="nav-item" href="press_author_metadata.html"><span class="icon">📖</span> Press/Author Metadata</a>
-    <a class="nav-item" href="#"><span class="icon">📦</span> Book Packs</a>
+    <!-- <a class="nav-item" href="#" onclick="showStorefrontSetup()">
+      <span class="icon">🏪</span>
+      Storefront Setup
+  </a> -->
+    <a class="nav-item" href='bookshopreview.html' ><span class="icon">📖</span> Press/Author Metadata</a>
+    <a class="nav-item" onclick="showBookPackSetup()" style="background-color:rgba(224,168,50,0.12)" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packages</a>
     <a class="nav-item" href="#"><span class="icon">✅</span> Publish Listings</a>
+
     <div class="nav-section">Pricing</div>
-    <a class="nav-item active" href="#"><span class="icon">💲</span> Set & Approve Pricing</a>
+    <a class="nav-item" href="approvepricing.html"><span class="icon">💲</span> Set & Approve Pricing</a>
     <a class="nav-item" href="#"><span class="icon">🏷️</span> Discounts & Revenue Share</a>
+
     <div class="nav-section">Finance</div>
     <a class="nav-item" href="#"><span class="icon">💰</span> Sales & Revenue</a>
-    <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
-    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a>
+    <!-- <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
+    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a> -->
+
     <div class="nav-section">Marketing</div>
     <a class="nav-item" href="#"><span class="icon">📣</span> Campaigns</a>
   </nav>
@@ -663,7 +669,144 @@ function statusBadge(s) {
   const map={Pending:'badge-pending',Approved:'badge-approved','Needs Review':'badge-review',Active:'badge-active'};
   return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
 }
+function showBookPackSetup() {
+    document.querySelector('.topbar-title').textContent =
+        'Book Pack Management';
 
+    document.querySelector('.content').innerHTML = `
+        <div class="page-section">
+
+            <!-- Semester Information -->
+            <div class="card mb-5">
+                <div class="card-header">
+                    <h5>Semester Details</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Semester</label>
+                    <select class="form-control">
+                        <option>First Semester</option>
+                        <option>Second Semester</option>
+                    </select>
+
+                    <label class="form-label mt-3">Faculty</label>
+                    <select class="form-control">
+                        <option>Select Faculty</option>
+                    </select>
+
+                    <label class="form-label mt-3">Department</label>
+                    <select class="form-control">
+                        <option>Select Department</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Course Selection -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Course List</h5>
+                </div>
+                <div class="card-body">
+                    <select multiple class="form-control style="min-height: 220px;">
+                        <option>CSC 101 - Introduction to Computing</option>
+                        <option>MTH 101 - Elementary Mathematics</option>
+                        <option>GST 101 - Communication Skills</option>
+                    </select>
+                    <small class="text-muted">
+                        Select all courses included in this book pack.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Included Books -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Included Books</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary mb-3">
+                        + Add Book
+                    </button>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Course</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookPackBooks">
+                                <tr>
+                                    <td>Introduction to Computing</td>
+                                    <td>John Doe</td>
+                                    <td>CSC 101</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Package Pricing</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Package Price (₦)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter package price"
+                    />
+                </div>
+            </div>
+            <!-- Package name -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Package Pricing</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Package Price (₦)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter package price"
+                    />
+                </div>
+            </div>
+            <!-- Preview -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Book Pack Preview</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Semester:</strong> First Semester</p>
+                    <p><strong>Faculty:</strong> Science</p>
+                    <p><strong>Department:</strong> Computer Science</p>
+                    <p><strong>Courses:</strong> 5 Selected</p>
+                    <p><strong>Books:</strong> 8 Included</p>
+                    <p><strong>Price:</strong> ₦25,000</p>
+                </div>
+            </div>
+
+            <!-- Publish -->
+            <div class="text-end ">
+                <button class="btn btn-success btn-lg p-3 bg-#e8b84b">
+                    Create Package
+                </button>
+            </div>
+
+        </div>
+    `;
+}
 // ─────────────────── Table ───────────────────
 function renderTable() {
   const tbody=document.getElementById('tableBody'), empty=document.getElementById('emptyState');
