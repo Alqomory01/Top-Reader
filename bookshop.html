@@ -553,8 +553,8 @@
 
     <div class="nav-section">Finance</div>
     <a class="nav-item" href="#"><span class="icon">💰</span> Sales & Revenue</a>
-    <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
-    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a>
+    <!-- <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
+    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a> -->
 
     <div class="nav-section">Marketing</div>
     <a class="nav-item" href="#"><span class="icon">📣</span> Campaigns</a>
@@ -1188,7 +1188,20 @@ function showBookPackSetup() {
                     />
                 </div>
             </div>
-
+            <!-- Package name -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Package Pricing</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Package Price (₦)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter package price"
+                    />
+                </div>
+            </div>
             <!-- Preview -->
             <div class="card mb-4">
                 <div class="card-header">
@@ -1207,7 +1220,7 @@ function showBookPackSetup() {
             <!-- Publish -->
             <div class="text-end ">
                 <button class="btn btn-success btn-lg p-3 bg-#e8b84b">
-                    Publish Listing
+                    Create Package
                 </button>
             </div>
 
