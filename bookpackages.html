@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Book Packages · Bookshop Press</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --cream: #ede8db;
+    --warm-gold: #c8962a;
+    --rust: #b04c2f;
+    --sage: #5a7a5a;
+    --slate: #4a5568;
+    --muted: #8a7e70;
+    --border: #d4c9b5;
+    --card-bg: #faf7f2;
+    --highlight: #fff8e7;
+    --red-badge: #b04c2f;
+    --green-badge: #3a6b3a;
+    --shadow: 0 2px 12px rgba(26,18,8,0.08);
+    --shadow-lg: 0 8px 32px rgba(26,18,8,0.13);
+    --sidebar-bg: #1a1208;
+  }
+  [data-theme="dark"] {
+    --ink: #f0e8d8;
+    --paper: #0d0d0f;
+    --cream: #181820;
+    --warm-gold: #e0a832;
+    --rust: #e06040;
+    --sage: #6aaa6a;
+    --slate: #a0aab8;
+    --muted: #666680;
+    --border: #2a2a38;
+    --card-bg: #14141c;
+    --highlight: #1e1a10;
+    --red-badge: #e06040;
+    --green-badge: #5aaa5a;
+    --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    --sidebar-bg: #0a0a0e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 240px; height: 100vh;
+    background: var(--sidebar-bg);
+    display: flex; flex-direction: column;
+    z-index: 100;
+    border-right: 3px solid var(--warm-gold);
+  }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(200,150,42,0.25); }
+  .sidebar-logo .brand { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 900; color: var(--warm-gold); letter-spacing: 0.03em; line-height: 1.1; }
+  .sidebar-logo .sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 4px; }
+  .sidebar-role { padding: 14px 24px; background: rgba(200,150,42,0.08); border-bottom: 1px solid rgba(200,150,42,0.15); }
+  .sidebar-role .role-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+  .sidebar-role .role-name { font-size: 0.82rem; color: #e8dfc8; font-weight: 500; margin-top: 2px; }
+  nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+  .nav-section { font-family: 'DM Mono', monospace; font-size: 0.57rem; color: rgba(200,150,42,0.55); letter-spacing: 0.18em; text-transform: uppercase; padding: 14px 24px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 24px; color: #c8c0b0; font-size: 0.82rem; cursor: pointer; transition: background 0.15s, color 0.15s; border-left: 3px solid transparent; text-decoration: none; }
+  .nav-item:hover { background: rgba(200,150,42,0.07); color: var(--warm-gold); }
+  .nav-item.active { background: rgba(200,150,42,0.12); color: var(--warm-gold); border-left-color: var(--warm-gold); font-weight: 500; }
+  .nav-item .icon { font-size: 0.95rem; width: 18px; text-align: center; opacity: 0.85; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(200,150,42,0.18); font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+
+  /* Main */
+  .main { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Topbar */
+  .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 14px 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--ink); }
+  .topbar-meta { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-badge { background: var(--rust); color: #fff; font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 4px 10px; border-radius: 2px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .topbar-avatar { width: 32px; height: 32px; background: var(--warm-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
+  .theme-toggle { display: flex; align-items: center; gap: 7px; background: var(--card-bg); border: 1px solid var(--border); padding: 5px 12px 5px 8px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; transition: border-color 0.15s, color 0.15s; border-radius: 2px; }
+  .theme-toggle:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .theme-toggle .toggle-track { width: 30px; height: 16px; background: var(--border); border-radius: 8px; position: relative; transition: background 0.25s; flex-shrink: 0; }
+  .theme-toggle .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: var(--warm-gold); border-radius: 50%; transition: transform 0.25s; }
+  [data-theme="dark"] .theme-toggle .toggle-thumb { transform: translateX(14px); }
+  [data-theme="dark"] .theme-toggle { background: #14141c; border-color: #2a2a38; color: #9890a8; }
+
+  /* Content */
+  .content { padding: 32px 36px; flex: 1; }
+
+  /* Page header */
+  .page-hdr { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+  .page-hdr-left { }
+  .page-hdr-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--ink); }
+  .page-hdr-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px; }
+  .page-hdr-right { display: flex; gap: 10px; align-items: center; }
+
+  .btn-primary {
+    background: var(--warm-gold); color: var(--ink); border: none;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 18px; cursor: pointer; font-weight: 500;
+    transition: opacity 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; box-shadow: 0 4px 16px rgba(200,150,42,0.25); }
+  .btn-outline {
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 18px; cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+
+  /* Summary strip */
+  .summary-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
+  }
+  .strip-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-top: 3px solid var(--warm-gold);
+    padding: 16px 18px; box-shadow: var(--shadow);
+    animation: fadeUp 0.4s ease both;
+  }
+  .strip-card:nth-child(2) { animation-delay:0.07s; border-top-color: var(--rust); }
+  .strip-card:nth-child(3) { animation-delay:0.14s; border-top-color: var(--sage); }
+  .strip-card:nth-child(4) { animation-delay:0.21s; border-top-color: var(--slate); }
+  .strip-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .strip-value { font-family: 'Playfair Display', serif; font-size: 1.65rem; font-weight: 700; color: var(--ink); line-height: 1; }
+
+  /* Filter bar */
+  .filter-bar {
+    background: var(--card-bg); border: 1px solid var(--border);
+    padding: 14px 20px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  .filter-bar label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .filter-select {
+    background: var(--paper); border: 1px solid var(--border); color: var(--ink);
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; padding: 6px 10px;
+    outline: none; cursor: pointer; min-width: 140px;
+    transition: border-color 0.15s;
+  }
+  .filter-select:focus { border-color: var(--warm-gold); }
+  .search-box {
+    flex: 1; min-width: 200px; background: var(--paper); border: 1px solid var(--border);
+    color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    padding: 6px 12px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--warm-gold); }
+  .search-box::placeholder { color: var(--muted); }
+  .filter-divider { width: 1px; height: 24px; background: var(--border); }
+  .view-toggle { display: flex; border: 1px solid var(--border); overflow: hidden; }
+  .view-btn { background: none; border: none; padding: 6px 10px; cursor: pointer; color: var(--muted); font-size: 0.85rem; transition: background 0.15s, color 0.15s; }
+  .view-btn.active { background: var(--warm-gold); color: var(--ink); }
+
+  /* Table panel */
+  .panel { background: var(--card-bg); border: 1px solid var(--border); box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
+  .panel-head { padding: 16px 22px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); }
+  .panel-action { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--warm-gold); cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--warm-gold); background: none; padding: 4px 8px; transition: background 0.15s, color 0.15s; }
+  .panel-action:hover { background: var(--warm-gold); color: var(--ink); }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  .data-table td { font-size: 0.8rem; padding: 11px 14px; border-bottom: 1px solid var(--cream); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tbody tr { transition: background 0.12s; }
+  .data-table tbody tr:hover td { background: var(--highlight); }
+  [data-theme="dark"] .data-table tbody tr:hover td { background: #1e1e2a; }
+
+  /* Expand row */
+  .expand-row td { padding: 0 !important; background: var(--highlight) !important; border-bottom: 2px solid var(--warm-gold) !important; }
+  [data-theme="dark"] .expand-row td { background: #1a1a10 !important; }
+  .expand-inner { padding: 18px 22px; display: none; }
+  .expand-inner.open { display: block; }
+
+  /* Book pills inside expand */
+  .book-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .book-pill {
+    background: var(--paper); border: 1px solid var(--border);
+    padding: 6px 12px; font-size: 0.75rem; color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+    transition: border-color 0.15s;
+  }
+  .book-pill:hover { border-color: var(--warm-gold); }
+  .book-pill-id { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  .book-pill-format { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--muted); background: var(--cream); padding: 2px 6px; border-radius: 2px; }
+
+  /* Expand meta */
+  .expand-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+  .expand-meta-item { }
+  .expand-meta-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px; }
+  .expand-meta-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+
+  /* Badges */
+  .badge { font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 3px 8px; border-radius: 2px; letter-spacing: 0.08em; text-transform: uppercase; display: inline-block; }
+  .badge-active { background: #d1edda; color: var(--green-badge); border: 1px solid #a3d4b0; }
+  .badge-draft { background: #fff3cd; color: #856404; border: 1px solid #f0c040; }
+  .badge-archived { background: #f0f0f0; color: #666; border: 1px solid #ccc; }
+  [data-theme="dark"] .badge-active { background: #0a200a; color: #6aaa6a; border-color: #1a5a1a; }
+  [data-theme="dark"] .badge-draft { background: #2a2000; color: #e0c060; border-color: #5a4800; }
+  [data-theme="dark"] .badge-archived { background: #1a1a22; color: #666680; border-color: #2a2a38; }
+
+  /* Faculty tag */
+  .faculty-tag { display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--slate); }
+  .faculty-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .f-sciences { background: #5a9a9a; }
+  .f-law { background: #9a5a9a; }
+  .f-socsci { background: #9a7a5a; }
+  .f-medicine { background: #c05a5a; }
+  .f-engineering { background: #5a6a9a; }
+  .f-arts { background: #9a8a5a; }
+
+  /* Expand trigger */
+  .expand-trigger { cursor: pointer; user-select: none; }
+  .expand-icon { display: inline-block; font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; margin-right: 4px; }
+  .expanded .expand-icon { transform: rotate(90deg); }
+
+  /* Progress mini */
+  .mini-bar-wrap { background: var(--cream); height: 4px; border-radius: 2px; width: 80px; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 6px; }
+  .mini-bar-fill { height: 100%; background: var(--warm-gold); border-radius: 2px; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 60px 20px; }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state p { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); }
+  .page-info { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 5px 10px; cursor: pointer; transition: all 0.15s; }
+  .page-btn:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .page-btn.active { background: var(--warm-gold); border-color: var(--warm-gold); color: var(--ink); }
+
+  /* Inline action buttons */
+  .tbl-btn { border: 1px solid var(--border); background: none; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 4px 9px; cursor: pointer; letter-spacing: 0.06em; transition: all 0.15s; }
+  .tbl-btn:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .tbl-btn.danger:hover { border-color: var(--rust); color: var(--rust); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  @media (max-width: 1100px) { .summary-strip { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Press<br>Bookshop</div>
+    <div class="sub">Retailer Portal</div>
+  </div>
+  <div class="sidebar-role">
+    <div class="role-label">Active Role</div>
+    <div class="role-name">📚 Bookshop Administrator</div>
+  </div>
+  <nav>
+    <div class="nav-section">Overview</div>
+    <a class="nav-item active" href="bookshop.html"><span class="icon">◉</span> Dashboard</a>
+    <a class="nav-item" onclick="navigate('analytics', this)" ><span class="icon">📊</span> Analytics</a>
+    <div class="nav-section">Catalogue</div>
+    <!-- <a class="nav-item" href="#" onclick="showStorefrontSetup()">
+      <span class="icon">🏪</span>
+      Storefront Setup
+  </a> -->
+    <a class="nav-item" href='bookshopreview.html' ><span class="icon">📖</span> Press/Author Metadata</a>
+    <a class="nav-item" href="bookpackages.html" style="background-color:rgba(224,168,50,0.12)" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packages</a>
+    <a class="nav-item" href="#"><span class="icon">✅</span> Publish Listings</a>
+
+    <div class="nav-section">Pricing</div>
+    <a class="nav-item" href="approvepricing.html"><span class="icon">💲</span> Set & Approve Pricing</a>
+    <a class="nav-item" href="#"><span class="icon">🏷️</span> Discounts & Revenue Share</a>
+
+    <div class="nav-section">Finance</div>
+    <a class="nav-item" href="#"><span class="icon">💰</span> Sales & Revenue</a>
+    <!-- <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
+    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a> -->
+
+    <div class="nav-section">Marketing</div>
+    <a class="nav-item" href="#"><span class="icon">📣</span> Campaigns</a>
+  </nav>
+  <div class="sidebar-footer">v2.4.1 · Bookshop OS</div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Book Packages</div>
+      <div class="topbar-meta">CATALOGUE · All packaged titles &nbsp;|&nbsp; Last synced 4 min ago</div>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        <span id="themeLabel">Light</span>
+      </button>
+      <span class="topbar-badge">⚠ 3 Pending Reviews</span>
+      <div class="topbar-avatar">P</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Page header -->
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <div class="page-hdr-title">Packaged Book Listings</div>
+        <div class="page-hdr-sub">All books assigned to active, draft, or archived packages</div>
+      </div>
+      <div class="page-hdr-right">
+        <button class="btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn-primary" onclick="alert('New package wizard coming soon')">+ New Package</button>
+      </div>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="summary-strip">
+      <div class="strip-card">
+        <div class="strip-label">Total Packages</div>
+        <div class="strip-value">9</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-label">Books Packaged</div>
+        <div class="strip-value">52</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-label">Active Packages</div>
+        <div class="strip-value">6</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-label">Avg. Titles / Pack</div>
+        <div class="strip-value">5.8</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <label>Filter by</label>
+      <select class="filter-select" id="filterFaculty" onchange="applyFilters()">
+        <option value="">All Faculties</option>
+        <option value="Sciences">Sciences</option>
+        <option value="Law">Law</option>
+        <option value="Social Sciences">Social Sciences</option>
+        <option value="Medicine">Medicine</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Arts &amp; Humanities">Arts &amp; Humanities</option>
+      </select>
+      <select class="filter-select" id="filterSemester" onchange="applyFilters()">
+        <option value="">All Semesters</option>
+        <option value="S1">Semester 1</option>
+        <option value="S2">Semester 2</option>
+      </select>
+      <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="Active">Active</option>
+        <option value="Draft">Draft</option>
+        <option value="Archived">Archived</option>
+      </select>
+      <div class="filter-divider"></div>
+      <input class="search-box" id="searchBox" type="text" placeholder="Search packages or books…" oninput="applyFilters()">
+      <div class="filter-divider"></div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewPackages" onclick="setView('packages')">📦 Packages</button>
+        <button class="view-btn" id="viewBooks" onclick="setView('books')">📖 All Books</button>
+      </div>
+    </div>
+
+    <!-- Packages table -->
+    <div class="panel" id="packagesView">
+      <div class="panel-head">
+        <div class="panel-title">All Packages <span id="countBadge" style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-left:8px;"></span></div>
+        <button class="panel-action" onclick="expandAll()">Expand All</button>
+      </div>
+      <table class="data-table" id="packagesTable">
+        <thead>
+          <tr>
+            <th style="width:28px;"></th>
+            <th>Package Name</th>
+            <th>Faculty</th>
+            <th>Semester</th>
+            <th>Books</th>
+            <th>Package Price</th>
+            <th>Savings</th>
+            <th>Sales</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="packagesBody"></tbody>
+      </table>
+      <div class="pagination" id="packPagination">
+        <div class="page-info" id="pageInfo"></div>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+
+    <!-- All Books flat table -->
+    <div class="panel" id="booksView" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">All Books in Packages <span id="booksCount" style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-left:8px;"></span></div>
+        <button class="panel-action">Export</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Format</th>
+            <th>Course</th>
+            <th>Package</th>
+            <th>Faculty</th>
+            <th>Unit Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="booksBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Theme ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+}
+
+// ── Data ──
+const packages = [
+  {
+    id: 'PKG-001', name: 'Science S1 Bundle', faculty: 'Sciences', semester: 'S1',
+    status: 'Active', price: 25000, originalTotal: 32000, sales: 214, revenue: 5350000,
+    books: [
+      { id:'BK-0011', title:'General Chemistry I', author:'Prof. O. Adeola', format:'PDF', course:'CHM 101', price:4500 },
+      { id:'BK-0012', title:'Introduction to Biology', author:'Dr. N. Osei', format:'Print', course:'BIO 101', price:3800 },
+      { id:'BK-0013', title:'Elementary Mathematics I', author:'Prof. T. Balogun', format:'PDF', course:'MTH 101', price:4200 },
+      { id:'BK-0014', title:'Physics Principles', author:'Dr. A. Chukwu', format:'PDF', course:'PHY 101', price:4800 },
+      { id:'BK-0015', title:'Introduction to Computing', author:'Dr. E. Nkemdirim', format:'Pay-per-Chapter', course:'CSC 101', price:3500 },
+      { id:'BK-0016', title:'Communication in Science', author:'Dr. B. Adesanya', format:'PDF', course:'GST 101', price:2800 },
+      { id:'BK-0017', title:'Technical Drawing Basics', author:'Prof. K. Olawale', format:'Print', course:'CVE 101', price:3200 },
+      { id:'BK-0018', title:'Statistics for Science', author:'Dr. F. Nwosu', format:'PDF', course:'STA 101', price:3400 },
+    ]
+  },
+  {
+    id: 'PKG-002', name: 'Law Bundle S1', faculty: 'Law', semester: 'S1',
+    status: 'Active', price: 18500, originalTotal: 22500, sales: 87, revenue: 1609500,
+    books: [
+      { id:'BK-0021', title:'Introduction to Nigerian Law', author:'Prof. C. Nwofor', format:'Print', course:'LAW 101', price:5000 },
+      { id:'BK-0022', title:'Constitutional Law I', author:'Dr. A. Eze', format:'PDF', course:'LAW 201', price:4800 },
+      { id:'BK-0023', title:'Intro to Civil Law', author:'Prof. B. Okafor', format:'Print', course:'LAW 102', price:4500 },
+      { id:'BK-0024', title:'Legal Research Methods', author:'Dr. U. Obiora', format:'PDF', course:'LAW 103', price:3800 },
+      { id:'BK-0025', title:'Criminal Law Fundamentals', author:'Prof. I. Diala', format:'Pay-per-Chapter', course:'LAW 104', price:4200 },
+    ]
+  },
+  {
+    id: 'PKG-003', name: 'Econ Core Pack', faculty: 'Social Sciences', semester: 'S1',
+    status: 'Draft', price: 15000, originalTotal: 18200, sales: 0, revenue: 0,
+    books: [
+      { id:'BK-0031', title:'Modern Linguistics', author:'Dr. F. Adeyemi', format:'PDF', course:'LNG 101', price:3200 },
+      { id:'BK-0032', title:'Macro Econ. Vol. 1', author:'Dr. T. Eze', format:'PDF', course:'ECN 101', price:3500 },
+      { id:'BK-0033', title:'Macro Econ. Vol. 2', author:'Dr. T. Eze', format:'Pay-per-Chapter', course:'ECN 102', price:3500 },
+      { id:'BK-0034', title:'Introduction to Sociology', author:'Prof. M. Abiodun', format:'Print', course:'SOC 101', price:3200 },
+      { id:'BK-0035', title:'Political Science Basics', author:'Dr. S. Ojo', format:'PDF', course:'POL 101', price:2900 },
+      { id:'BK-0036', title:'Research Methods', author:'Prof. B. Nwachukwu', format:'PDF', course:'GST 201', price:2800 },
+    ]
+  },
+  {
+    id: 'PKG-004', name: 'Med Pack A', faculty: 'Medicine', semester: 'S1',
+    status: 'Active', price: 42000, originalTotal: 56000, sales: 163, revenue: 6846000,
+    books: [
+      { id:'BK-0041', title:'The Organic Chemist', author:'Dr. A. Nwose', format:'PDF', course:'BCH 201', price:8500 },
+      { id:'BK-0042', title:'Clinical Pharmacology', author:'Prof. O. Banjo', format:'Print', course:'PHA 301', price:12000 },
+      { id:'BK-0043', title:'Human Anatomy I', author:'Dr. L. Adekunle', format:'PDF', course:'ANA 101', price:7500 },
+      { id:'BK-0044', title:'Physiology Basics', author:'Prof. R. Okonkwo', format:'Print', course:'PHS 101', price:6800 },
+      { id:'BK-0045', title:'Microbiology for Health', author:'Dr. G. Okafor', format:'PDF', course:'MIC 201', price:5200 },
+      { id:'BK-0046', title:'Medical Biochemistry', author:'Prof. A. Dada', format:'Print', course:'BCH 101', price:6000 },
+      { id:'BK-0047', title:'Pathology Intro', author:'Dr. P. Oyelaran', format:'PDF', course:'PAT 301', price:5500 },
+      { id:'BK-0048', title:'Community Health & Hygiene', author:'Prof. C. Ibe', format:'PDF', course:'COM 201', price:4800 },
+      { id:'BK-0049', title:'Epidemiology Principles', author:'Dr. E. Nwoye', format:'Pay-per-Chapter', course:'EPI 201', price:4500 },
+      { id:'BK-0050', title:'Health Informatics', author:'Dr. J. Afolabi', format:'PDF', course:'HIN 201', price:3800 },
+    ]
+  },
+  {
+    id: 'PKG-005', name: 'Social Sciences Bundle', faculty: 'Social Sciences', semester: 'S2',
+    status: 'Active', price: 18000, originalTotal: 23000, sales: 142, revenue: 2556000,
+    books: [
+      { id:'BK-0051', title:'Geography of West Africa', author:'Prof. A. Bello', format:'Print', course:'GEO 101', price:4000 },
+      { id:'BK-0052', title:'Introduction to Anthropology', author:'Dr. K. Osei', format:'PDF', course:'ANT 101', price:3500 },
+      { id:'BK-0053', title:'Political Economy', author:'Prof. N. Chukwuemeka', format:'Print', course:'POL 201', price:4200 },
+      { id:'BK-0054', title:'Social Statistics', author:'Dr. I. Musa', format:'PDF', course:'SOC 201', price:3600 },
+      { id:'BK-0055', title:'Development Studies', author:'Prof. O. Ibrahim', format:'Pay-per-Chapter', course:'DVS 201', price:3800 },
+      { id:'BK-0056', title:'Environmental Science', author:'Dr. C. Obi', format:'PDF', course:'ENV 101', price:3900 },
+    ]
+  },
+  {
+    id: 'PKG-006', name: 'Economics Core Pack', faculty: 'Social Sciences', semester: 'S2',
+    status: 'Active', price: 12500, originalTotal: 15300, sales: 98, revenue: 1225000,
+    books: [
+      { id:'BK-0061', title:'Microeconomics Fundamentals', author:'Dr. T. Eze', format:'PDF', course:'ECN 201', price:4200 },
+      { id:'BK-0062', title:'International Trade', author:'Prof. A. Obi', format:'Print', course:'ECN 301', price:4500 },
+      { id:'BK-0063', title:'Public Finance', author:'Dr. B. Lawal', format:'PDF', course:'ECN 202', price:3800 },
+      { id:'BK-0064', title:'Econometrics I', author:'Prof. M. Jegede', format:'PDF', course:'ECN 401', price:4000 },
+    ]
+  },
+  {
+    id: 'PKG-007', name: 'Education Essentials', faculty: 'Arts & Humanities', semester: 'S1',
+    status: 'Active', price: 14000, originalTotal: 17500, sales: 76, revenue: 1064000,
+    books: [
+      { id:'BK-0071', title:'Foundations of Education', author:'Prof. R. Afolabi', format:'Print', course:'EDU 101', price:3800 },
+      { id:'BK-0072', title:'Child Psychology', author:'Dr. O. Salami', format:'PDF', course:'EDU 201', price:3500 },
+      { id:'BK-0073', title:'Curriculum Development', author:'Prof. N. Okonkwo', format:'Print', course:'EDU 301', price:3600 },
+      { id:'BK-0074', title:'Educational Technology', author:'Dr. F. Adeyemi', format:'PDF', course:'EDU 202', price:3200 },
+      { id:'BK-0075', title:'Inclusive Education', author:'Prof. A. Okafor', format:'PDF', course:'EDU 203', price:3400 },
+    ]
+  },
+  {
+    id: 'PKG-008', name: 'Humanities Selection', faculty: 'Arts & Humanities', semester: 'S2',
+    status: 'Active', price: 22000, originalTotal: 29300, sales: 55, revenue: 1210000,
+    books: [
+      { id:'BK-0081', title:'African Literature I', author:'Dr. C. Achike', format:'Print', course:'LIT 101', price:4500 },
+      { id:'BK-0082', title:'Nigerian History', author:'Prof. I. Obiora', format:'PDF', course:'HIS 101', price:4000 },
+      { id:'BK-0083', title:'Modern Linguistics', author:'Dr. F. Adeyemi', format:'PDF', course:'LNG 201', price:3800 },
+      { id:'BK-0084', title:'Introduction to Philosophy', author:'Prof. E. Ogundipe', format:'Print', course:'PHL 101', price:4200 },
+      { id:'BK-0085', title:'Art History Survey', author:'Dr. B. Obasi', format:'PDF', course:'ART 101', price:4100 },
+      { id:'BK-0086', title:'Cultural Studies', author:'Prof. M. Nwachukwu', format:'PDF', course:'CUS 201', price:4300 },
+      { id:'BK-0087', title:'Theatre & Performance', author:'Dr. A. Lawal', format:'Print', course:'THP 101', price:4400 },
+    ]
+  },
+  {
+    id: 'PKG-009', name: 'Engineering Fundamentals', faculty: 'Engineering', semester: 'S1',
+    status: 'Archived', price: 21000, originalTotal: 26800, sales: 312, revenue: 6552000,
+    books: [
+      { id:'BK-0091', title:'Engineering Mathematics I', author:'Prof. S. Ogunjimi', format:'PDF', course:'ENG 101', price:5000 },
+      { id:'BK-0092', title:'Engineering Drawing', author:'Dr. K. Nwosu', format:'Print', course:'ENG 102', price:4800 },
+      { id:'BK-0093', title:'Material Science Basics', author:'Prof. T. Adeleke', format:'PDF', course:'ENG 201', price:4500 },
+      { id:'BK-0094', title:'Fluid Mechanics', author:'Dr. O. Ihejirika', format:'PDF', course:'ENG 301', price:5200 },
+      { id:'BK-0095', title:'Thermodynamics I', author:'Prof. A. Fadahunsi', format:'Print', course:'ENG 302', price:4700 },
+      { id:'BK-0096', title:'Introduction to Electronics', author:'Dr. C. Ugwu', format:'PDF', course:'ELT 101', price:4600 },
+    ]
+  },
+];
+
+// ── State ──
+let currentView = 'packages';
+let filteredPackages = [...packages];
+let expandedRows = new Set();
+let allExpanded = false;
+const PAGE_SIZE = 9;
+let currentPage = 1;
+
+// ── Colours per faculty ──
+const facultyMeta = {
+  'Sciences':        { dot: 'f-sciences',    label: 'Sciences' },
+  'Law':             { dot: 'f-law',         label: 'Law' },
+  'Social Sciences': { dot: 'f-socsci',      label: 'Social Sci.' },
+  'Medicine':        { dot: 'f-medicine',    label: 'Medicine' },
+  'Engineering':     { dot: 'f-engineering', label: 'Engineering' },
+  'Arts & Humanities':{ dot: 'f-arts',       label: 'Arts & Hum.' },
+};
+
+function facultyTag(faculty) {
+  const m = facultyMeta[faculty] || { dot:'f-socsci', label: faculty };
+  return `<span class="faculty-tag"><span class="faculty-dot ${m.dot}"></span>${m.label}</span>`;
+}
+
+function badgeHtml(status) {
+  const map = { Active:'badge-active', Draft:'badge-draft', Archived:'badge-archived' };
+  return `<span class="badge ${map[status]||'badge-draft'}">${status}</span>`;
+}
+
+function fmt(n) { return '₦' + n.toLocaleString('en-NG'); }
+
+// ── Render packages table ──
+function renderPackages() {
+  const body = document.getElementById('packagesBody');
+  body.innerHTML = '';
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = filteredPackages.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('countBadge').textContent = `(${filteredPackages.length})`;
+
+  if (filteredPackages.length === 0) {
+    body.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📦</div><p>No packages match your filters.</p></div></td></tr>`;
+    renderPagination();
+    return;
+  }
+
+  slice.forEach(pkg => {
+    const savings = Math.round(((pkg.originalTotal - pkg.price) / pkg.originalTotal) * 100);
+    const isExpanded = expandedRows.has(pkg.id);
+
+    // Main row
+    const tr = document.createElement('tr');
+    tr.className = 'expand-trigger' + (isExpanded ? ' expanded' : '');
+    tr.id = 'row-' + pkg.id;
+    tr.onclick = (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      toggleExpand(pkg.id);
+    };
+    tr.innerHTML = `
+      <td style="padding-left:14px;"><span class="expand-icon">▶</span></td>
+      <td style="font-weight:500;">${pkg.name}<br><span style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);">${pkg.id}</span></td>
+      <td>${facultyTag(pkg.faculty)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--slate);">${pkg.semester === 'S1' ? 'Sem. 1' : 'Sem. 2'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.8rem;">${pkg.books.length} titles</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.8rem;font-weight:500;">${fmt(pkg.price)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sage);">${savings}% off</td>
+      <td>
+        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;">${pkg.sales} orders</span>
+        <div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${Math.min(100,Math.round(pkg.sales/350*100))}%"></div></div>
+      </td>
+      <td>${badgeHtml(pkg.status)}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:nowrap;">
+          <button class="tbl-btn" onclick="editPackage('${pkg.id}')">Edit</button>
+          <button class="tbl-btn danger" onclick="archivePackage('${pkg.id}')">Archive</button>
+        </div>
+      </td>
+    `;
+    body.appendChild(tr);
+
+    // Expand row
+    const exp = document.createElement('tr');
+    exp.className = 'expand-row';
+    exp.id = 'exp-' + pkg.id;
+    exp.innerHTML = `<td colspan="10"><div class="expand-inner ${isExpanded ? 'open' : ''}" id="inner-${pkg.id}"></div></td>`;
+    body.appendChild(exp);
+
+    if (isExpanded) populateExpand(pkg);
+  });
+
+  renderPagination();
+}
+
+function populateExpand(pkg) {
+  const inner = document.getElementById('inner-' + pkg.id);
+  if (!inner) return;
+  const savings = fmt(pkg.originalTotal - pkg.price);
+  inner.innerHTML = `
+    <div class="expand-meta" style="margin-bottom:14px;">
+      <div class="expand-meta-item">
+        <div class="expand-meta-label">Original Total</div>
+        <div class="expand-meta-value" style="text-decoration:line-through;color:var(--muted);">${fmt(pkg.originalTotal)}</div>
+      </div>
+      <div class="expand-meta-item">
+        <div class="expand-meta-label">Package Price</div>
+        <div class="expand-meta-value" style="color:var(--warm-gold);">${fmt(pkg.price)}</div>
+      </div>
+      <div class="expand-meta-item">
+        <div class="expand-meta-label">Student Saves</div>
+        <div class="expand-meta-value" style="color:var(--sage);">${savings}</div>
+      </div>
+      <div class="expand-meta-item">
+        <div class="expand-meta-label">Total Revenue</div>
+        <div class="expand-meta-value">${fmt(pkg.revenue)}</div>
+      </div>
+      <div class="expand-meta-item">
+        <div class="expand-meta-label">Orders</div>
+        <div class="expand-meta-value">${pkg.sales}</div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Included Books (${pkg.books.length})</div>
+    <div class="book-list">
+      ${pkg.books.map(b => `
+        <div class="book-pill">
+          <span class="book-pill-id">${b.id}</span>
+          <span>${b.title}</span>
+          <span style="color:var(--muted);font-size:0.72rem;">— ${b.author}</span>
+          <span class="book-pill-format">${b.format}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--ink);">${fmt(b.price)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function toggleExpand(id) {
+  const innerEl = document.getElementById('inner-' + id);
+  const rowEl = document.getElementById('row-' + id);
+  const pkg = packages.find(p => p.id === id);
+  if (!innerEl || !rowEl || !pkg) return;
+
+  if (expandedRows.has(id)) {
+    expandedRows.delete(id);
+    innerEl.classList.remove('open');
+    rowEl.classList.remove('expanded');
+  } else {
+    expandedRows.add(id);
+    innerEl.classList.add('open');
+    rowEl.classList.add('expanded');
+    populateExpand(pkg);
+  }
+}
+
+function expandAll() {
+  allExpanded = !allExpanded;
+  const btn = document.querySelector('.panel-action');
+  btn.textContent = allExpanded ? 'Collapse All' : 'Expand All';
+  if (allExpanded) {
+    filteredPackages.forEach(p => expandedRows.add(p.id));
+  } else {
+    expandedRows.clear();
+  }
+  renderPackages();
+}
+
+// ── Render all books flat ──
+function renderBooks() {
+  const body = document.getElementById('booksBody');
+  body.innerHTML = '';
+  let allBooks = [];
+  packages.forEach(pkg => {
+    pkg.books.forEach(b => allBooks.push({ ...b, package: pkg.name, faculty: pkg.faculty, pkgStatus: pkg.status }));
+  });
+
+  // Apply search
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const faculty = document.getElementById('filterFaculty').value;
+  if (q) allBooks = allBooks.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.id.toLowerCase().includes(q));
+  if (faculty) allBooks = allBooks.filter(b => b.faculty === faculty);
+
+  document.getElementById('booksCount').textContent = `(${allBooks.length})`;
+
+  allBooks.forEach(b => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);">${b.id}</span></td>
+      <td style="font-weight:500;">${b.title}</td>
+      <td style="color:var(--slate);">${b.author}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:0.68rem;background:var(--cream);padding:2px 7px;border-radius:2px;">${b.format}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);">${b.course}</td>
+      <td style="font-size:0.78rem;">${b.package}</td>
+      <td>${facultyTag(b.faculty)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.78rem;">${fmt(b.price)}</td>
+      <td>${badgeHtml(b.pkgStatus)}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// ── Filters ──
+function applyFilters() {
+  const faculty = document.getElementById('filterFaculty').value;
+  const semester = document.getElementById('filterSemester').value;
+  const status = document.getElementById('filterStatus').value;
+  const q = document.getElementById('searchBox').value.toLowerCase();
+
+  filteredPackages = packages.filter(pkg => {
+    if (faculty && pkg.faculty !== faculty) return false;
+    if (semester && pkg.semester !== semester) return false;
+    if (status && pkg.status !== status) return false;
+    if (q) {
+      const match = pkg.name.toLowerCase().includes(q) ||
+        pkg.id.toLowerCase().includes(q) ||
+        pkg.books.some(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+      if (!match) return false;
+    }
+    return true;
+  });
+
+  currentPage = 1;
+  if (currentView === 'packages') renderPackages();
+  else renderBooks();
+}
+
+// ── Pagination ──
+function renderPagination() {
+  const total = filteredPackages.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const start = (currentPage - 1) * PAGE_SIZE + 1;
+  const end = Math.min(currentPage * PAGE_SIZE, total);
+  document.getElementById('pageInfo').textContent = `Showing ${total === 0 ? 0 : start}–${end} of ${total} packages`;
+
+  const btns = document.getElementById('pageBtns');
+  btns.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const b = document.createElement('button');
+    b.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    b.textContent = i;
+    b.onclick = () => { currentPage = i; renderPackages(); };
+    btns.appendChild(b);
+  }
+}
+
+// ── View toggle ──
+function setView(v) {
+  currentView = v;
+  document.getElementById('packagesView').style.display = v === 'packages' ? '' : 'none';
+  document.getElementById('booksView').style.display = v === 'books' ? '' : 'none';
+  document.getElementById('viewPackages').classList.toggle('active', v === 'packages');
+  document.getElementById('viewBooks').classList.toggle('active', v === 'books');
+  if (v === 'books') renderBooks();
+}
+
+// ── Dummy actions ──
+function editPackage(id) { alert(`Edit package ${id} — wizard coming soon.`); }
+function archivePackage(id) {
+  if (confirm(`Archive package ${id}?`)) {
+    const pkg = packages.find(p => p.id === id);
+    if (pkg) { pkg.status = 'Archived'; applyFilters(); }
+  }
+}
+function exportCSV() {
+  let csv = 'Package ID,Name,Faculty,Semester,Books,Price,Status,Sales,Revenue\n';
+  packages.forEach(p => {
+    csv += `${p.id},"${p.name}","${p.faculty}",${p.semester},${p.books.length},${p.price},${p.status},${p.sales},${p.revenue}\n`;
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/csv,' + encodeURIComponent(csv);
+  a.download = 'book_packages.csv';
+  a.click();
+}
+
+// ── Init ──
+applyFilters();
+</script>
+</body>
+</html>
