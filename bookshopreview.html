@@ -320,7 +320,7 @@
       <div class="page-header-right">
         <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
         <button class="btn btn-primary" onclick="openAddModal()">+ Add Entry</button>
-        <button class="btn btn-primary" onclick="openAddNewModal()">Create Book Pack</button>
+        
       </div>
     </div>
 
@@ -466,86 +466,7 @@
     </div>
   </div>
 </div>
-<div class="modal-backdrop" id="reviewModal" onclick="handleModalBackdrop(event,'reviewModal')">
-  <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-head-title" id="modalTitle">Review Metadata</div>
-      <button class="modal-close-btn" onclick="closeModal('reviewModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="section-divider">Semester Details</div>
-      <div class="field-grid">
-        <div class="field">
-            <label class="field-label">Semester</label>
-            <select class="field-select" id="f-format">
-                <option>First Semester</option>
-                <option>Second Semester</option>
-            </select>
 
-            <label class="form-label mt-3">Faculty</label>
-            <select class="form-control">
-                <option>Select Faculty</option>
-            </select>
-
-            <label class="form-label mt-3">Department</label>
-            <select class="form-control">
-                <option>Select Department</option>
-            </select>
-    </div>
-          <input class="field-input" id="f-bookId" placeholder="e.g. BK-0041"/>
-        </div>
-        <div class="field">
-          <div class="field-label">Format</div>
-          <select class="field-select" id="f-format">
-            <option>PDF</option>
-            <option>Print</option>
-            <option>Pay-per-Chapter</option>
-            <option>ePub</option>
-          </select>
-        </div>
-        <div class="field full">
-          <div class="field-label">Title</div>
-          <input class="field-input" id="f-title" placeholder="Full book title"/>
-        </div>
-        <div class="field full">
-          <div class="field-label">Author</div>
-          <input class="field-input" id="f-author" placeholder="Author name(s)"/>
-        </div>
-      </div>
-
-      <div class="section-divider">Course & Listing</div>
-      <div class="field-grid">
-        <div class="field full">
-          <div class="field-label">Course Mapping</div>
-          <input class="field-input" id="f-courseMapping" placeholder="e.g. CHE301, PHY201 — comma separated"/>
-          <div class="field-note">Enter one or more course codes this book maps to.</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Listing Status</div>
-          <select class="field-select" id="f-status">
-            <option>Needs Review</option>
-            <option>Pending</option>
-            <option>Approved</option>
-            <option>Published</option>
-          </select>
-        </div>
-        <div class="field">
-          <div class="field-label">ISBN / Ref No.</div>
-          <input class="field-input" id="f-isbn" placeholder="Optional"/>
-        </div>
-        <div class="field full">
-          <div class="field-label">Review Notes</div>
-          <textarea class="field-textarea" id="f-notes" placeholder="Add reviewer notes or reasons for rejection/approval…"></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('reviewModal')">Cancel</button>
-      <button class="btn btn-danger" id="modalRejectBtn" onclick="modalAction('reject')">Reject</button>
-      <button class="btn btn-outline" id="modalApproveBtn" onclick="modalAction('approve')">Approve</button>
-      <button class="btn btn-primary" onclick="saveEntry()">Save Changes</button>
-    </div>
-  </div>
 </div>
 
 <!-- ── Toast ── -->
