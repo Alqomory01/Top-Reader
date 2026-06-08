@@ -274,7 +274,8 @@
   </nav>
   <div class="sidebar-footer">v2.4.1 · Bookshop OS</div>
 </aside>
-
+<!-- the status when removed from circulation shoulde be what status -->
+<!--  in the case of removing from circulation it should be on a different page -->
 <!-- Main -->
 <div class="main">
   <!-- Topbar -->
@@ -499,13 +500,14 @@ function populateCourseFilter() {
 
 // ── Stats ─────────────────────────────────────────────────────
 function renderStats() {
-  const counts = { 'Needs Review':0, Pending:0, Approved:0, Published:0 };
+  const counts = { 'Editorial Review in Progress':0, Pending:0, Approved:0, Published:0 };
   entries.forEach(e => { if (counts[e.status] !== undefined) counts[e.status]++; });
   document.getElementById('statsRow').innerHTML = [
     { label:'Total Entries',  val: entries.length,         sub:'all formats',        color:'var(--warm-gold)' },
-    { label:'Needs Review',   val: counts['Needs Review'], sub:'require attention',  color:'var(--rust)' },
+    { label:'Editorial Review in Progress',   val: counts['Editorial Review in Progress'], sub:'require attention',  color:'var(--rust)' },
     { label:'Pending',        val: counts['Pending'],      sub:'awaiting decision',  color:'#c8962a' },
-    { label:'Approved / Live',val: counts['Approved']+counts['Published'], sub:'approved + published', color:'var(--sage)' },
+    { label:'published',val: counts['published']+counts['Published'], sub:'approved + published', color:'var(--sage)' },
+    { label:'Sale on hold ',val: counts['Sale on hold']+counts['Sale on hold'], sub:'Sale on hold', color:'var(--sage)' },
   ].map(s => `
     <div class="stat-card" style="border-top:3px solid ${s.color}">
       <div class="stat-label">${s.label}</div>
