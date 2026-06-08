@@ -133,7 +133,6 @@
     font-weight: 500;
   }
   .nav-item .icon { font-size: 0.95rem; width: 18px; text-align: center; opacity: 0.85; }
-
   .sidebar-footer {
     padding: 16px 24px;
     border-top: 1px solid rgba(200,150,42,0.18);
@@ -394,6 +393,23 @@
     background: var(--warm-gold);
     transition: width 0.6s ease;
   }
+  /* cards */
+  .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title { font-size: 14px; font-weight: 600; flex: 1; }
+.card-link { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 500; }
+.card-body { padding: 0; }
 
   /* ── Quick actions ── */
   .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -480,6 +496,12 @@
     border-radius: 50%;
     transition: transform 0.25s;
   }
+  .page-section {
+    padding: 30px;
+}
+.card-body {
+    padding: 2rem;
+}
   [data-theme="dark"] .theme-toggle .toggle-track { background: #333348; }
   [data-theme="dark"] .theme-toggle .toggle-thumb { transform: translateX(14px); }
   [data-theme="dark"] .theme-toggle { background: #14141c; border-color: #2a2a38; color: #9890a8; }
@@ -515,15 +537,14 @@
   <nav>
     <div class="nav-section">Overview</div>
     <a class="nav-item active" href="#"><span class="icon">◉</span> Dashboard</a>
-    <button class="nav-item" onclick="navigate('analytics', this)" ><span class="icon">📊</span> Analytics</button>
-    <button class="nav-item" onclick="navigate('press-publications', this)"><span class="ni">📚</span> Publication Requests <span class="nav-badge red">4</span></button>
+    <a class="nav-item" onclick="navigate('analytics', this)" ><span class="icon">📊</span> Analytics</a>
     <div class="nav-section">Catalogue</div>
     <a class="nav-item" href="#" onclick="showStorefrontSetup()">
       <span class="icon">🏪</span>
       Storefront Setup
   </a>
-    <button class="nav-item" onclick="event.stopPropagation(); window.location.href='bookshopreview.html'" ><span class="icon">📖</span> Press/Author Metadata</button>
-    <button class="nav-item" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packs</button>
+    <a class="nav-item" href='bookshopreview.html' ><span class="icon">📖</span> Press/Author Metadata</a>
+    <a class="nav-item" onclick="showBookPackSetup()" style="background-color:rgba(224,168,50,0.12)" onclick="navigate('press-packages', this)"><span class="ni">📦</span> Book Packages</a>
     <a class="nav-item" href="#"><span class="icon">✅</span> Publish Listings</a>
 
     <div class="nav-section">Pricing</div>
@@ -705,7 +726,7 @@
   <!-- ── PRESS: BOOK PACKAGES ── -->
   <div class="view" id="view-press-packages">
     <div class="sec-hdr">
-      <div><div class="sec-hdr-title">Book Packs</div><div class="sec-hdr-sub">Bundle titles and set package prices</div></div>
+      <div><div class="sec-hdr-title">Book Packages</div><div class="sec-hdr-sub">Bundle titles and set package prices</div></div>
       <div class="sec-hdr-actions"><button class="tbar-btn primary">+ New Package</button></div>
     </div>
     <div class="card">
@@ -1082,7 +1103,131 @@
     </div>
     `;
 }
+function showBookPackSetup() {
+    document.querySelector('.topbar-title').textContent =
+        'Book Pack Management';
 
+    document.querySelector('.content').innerHTML = `
+        <div class="page-section">
+
+            <!-- Semester Information -->
+            <div class="card mb-5">
+                <div class="card-header">
+                    <h5>Semester Details</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Semester</label>
+                    <select class="form-control">
+                        <option>First Semester</option>
+                        <option>Second Semester</option>
+                    </select>
+
+                    <label class="form-label mt-3">Faculty</label>
+                    <select class="form-control">
+                        <option>Select Faculty</option>
+                    </select>
+
+                    <label class="form-label mt-3">Department</label>
+                    <select class="form-control">
+                        <option>Select Department</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Course Selection -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Course List</h5>
+                </div>
+                <div class="card-body">
+                    <select multiple class="form-control style="min-height: 220px;">
+                        <option>CSC 101 - Introduction to Computing</option>
+                        <option>MTH 101 - Elementary Mathematics</option>
+                        <option>GST 101 - Communication Skills</option>
+                    </select>
+                    <small class="text-muted">
+                        Select all courses included in this book pack.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Included Books -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Included Books</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary mb-3">
+                        + Add Book
+                    </button>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Course</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookPackBooks">
+                                <tr>
+                                    <td>Introduction to Computing</td>
+                                    <td>John Doe</td>
+                                    <td>CSC 101</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Package Pricing</h5>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Package Price (₦)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter package price"
+                    />
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Book Pack Preview</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Semester:</strong> First Semester</p>
+                    <p><strong>Faculty:</strong> Science</p>
+                    <p><strong>Department:</strong> Computer Science</p>
+                    <p><strong>Courses:</strong> 5 Selected</p>
+                    <p><strong>Books:</strong> 8 Included</p>
+                    <p><strong>Price:</strong> ₦25,000</p>
+                </div>
+            </div>
+
+            <!-- Publish -->
+            <div class="text-end ">
+                <button class="btn btn-success btn-lg p-3 bg-#e8b84b">
+                    Publish Listing
+                </button>
+            </div>
+
+        </div>
+    `;
+}
   const months = ['Jan','Feb','Mar','Apr','May','Jun'];
   const gross  = [620, 680, 740, 810, 760, 670];
   const net    = [450, 490, 535, 590, 548, 497];
