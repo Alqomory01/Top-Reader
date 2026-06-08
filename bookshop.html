@@ -614,7 +614,7 @@
         <div class="panel-body">
           <div style="display:flex;gap:18px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);">
             <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--warm-gold);display:inline-block;border-radius:1px;"></span>Gross</span>
-            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--sage);display:inline-block;border-radius:1px;"></span>Income</span>
+            <!-- <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--sage);display:inline-block;border-radius:1px;"></span>Income</span> -->
           </div>
           <div class="chart-area" id="revenueChart">
             <!-- JS rendered below -->
@@ -1237,34 +1237,31 @@ function showBookPackSetup() {
 
   months.forEach((m, i) => {
     const gH = Math.round((gross[i] / maxVal) * 130);
-    const nH = Math.round((net[i]   / maxVal) * 130);
 
     const grp = document.createElement('div');
-    grp.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:0;';
+    grp.style.cssText =
+        'flex:1;display:flex;flex-direction:column;align-items:center;gap:0;';
 
     const wrap = document.createElement('div');
-    wrap.style.cssText = 'width:100%;display:flex;align-items:flex-end;gap:3px;height:140px;';
+    wrap.style.cssText =
+        'width:100%;display:flex;align-items:flex-end;height:140px;';
 
     const b1 = document.createElement('div');
     b1.className = 'bar gross';
     b1.style.height = gH + 'px';
+    b1.style.width = '100%';
     b1.title = `${m} Gross: ₦${gross[i]}K`;
 
-    const b2 = document.createElement('div');
-    b2.className = 'bar net';
-    b2.style.height = nH + 'px';
-    b2.title = `${m} Net: ₦${net[i]}K`;
-
     wrap.appendChild(b1);
-    wrap.appendChild(b2);
     grp.appendChild(wrap);
     chartEl.appendChild(grp);
 
     const lbl = document.createElement('div');
-    lbl.style.cssText = 'flex:1;text-align:center;font-family:"DM Mono",monospace;font-size:0.58rem;color:var(--muted);';
+    lbl.style.cssText =
+        'flex:1;text-align:center;font-family:"DM Mono",monospace;font-size:0.58rem;color:var(--muted);';
     lbl.textContent = m;
     labelsEl.appendChild(lbl);
-  });
+});
 </script>
 </body>
 </html>
