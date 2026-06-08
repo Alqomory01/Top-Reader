@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Set & Approve Pricing — Bookshop Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #1a1208; --paper: #f5f0e8; --cream: #ede8db;
+    --warm-gold: #c8962a; --rust: #b04c2f; --sage: #5a7a5a;
+    --slate: #4a5568; --muted: #8a7e70; --border: #d4c9b5;
+    --card-bg: #faf7f2; --highlight: #fff8e7;
+    --shadow: 0 2px 12px rgba(26,18,8,0.08);
+    --sidebar-bg: #1a1208;
+  }
+  [data-theme="dark"] {
+    --ink: #f0e8d8; --paper: #0d0d0f; --cream: #181820;
+    --warm-gold: #e0a832; --rust: #e06040; --sage: #6aaa6a;
+    --slate: #a0aab8; --muted: #666680; --border: #2a2a38;
+    --card-bg: #14141c; --highlight: #1e1a10;
+    --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --sidebar-bg: #0a0a0e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; z-index: 100; border-right: 3px solid var(--warm-gold); }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(200,150,42,0.25); }
+  .sidebar-logo .brand { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 900; color: var(--warm-gold); line-height: 1.1; }
+  .sidebar-logo .sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 4px; }
+  .sidebar-role { padding: 14px 24px; background: rgba(200,150,42,0.08); border-bottom: 1px solid rgba(200,150,42,0.15); }
+  .sidebar-role .role-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+  .sidebar-role .role-name { font-size: 0.82rem; color: #e8dfc8; font-weight: 500; margin-top: 2px; }
+  [data-theme="dark"] .sidebar-role .role-name { color: #c8c0d8; }
+  nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+  .nav-section { font-family: 'DM Mono', monospace; font-size: 0.57rem; color: rgba(200,150,42,0.55); letter-spacing: 0.18em; text-transform: uppercase; padding: 14px 24px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 24px; color: #c8c0b0; font-size: 0.82rem; cursor: pointer; transition: background 0.15s, color 0.15s; border-left: 3px solid transparent; text-decoration: none; }
+  .nav-item:hover { background: rgba(200,150,42,0.07); color: var(--warm-gold); }
+  .nav-item.active { background: rgba(200,150,42,0.12); color: var(--warm-gold); border-left-color: var(--warm-gold); font-weight: 500; }
+  [data-theme="dark"] .nav-item { color: #9890a8; }
+  [data-theme="dark"] .nav-item:hover, [data-theme="dark"] .nav-item.active { color: var(--warm-gold); }
+  .nav-item .icon { font-size: 0.95rem; width: 18px; text-align: center; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(200,150,42,0.18); font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+
+  /* ── Main ── */
+  .main { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── Topbar ── */
+  .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 14px 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  [data-theme="dark"] .topbar { background: #0f0f17; }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; }
+  .topbar-meta { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-avatar { width: 32px; height: 32px; background: var(--warm-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
+  [data-theme="dark"] .topbar-avatar { color: #0d0d0f; }
+
+  /* ── Theme toggle ── */
+  .theme-toggle { display: flex; align-items: center; gap: 7px; background: var(--card-bg); border: 1px solid var(--border); padding: 5px 12px 5px 8px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; transition: border-color 0.15s; border-radius: 2px; }
+  .theme-toggle:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .toggle-track { width: 30px; height: 16px; background: var(--border); border-radius: 8px; position: relative; flex-shrink: 0; transition: background 0.25s; }
+  .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: var(--warm-gold); border-radius: 50%; transition: transform 0.25s; }
+  [data-theme="dark"] .toggle-track { background: #333348; }
+  [data-theme="dark"] .toggle-thumb { transform: translateX(14px); }
+  [data-theme="dark"] .theme-toggle { background: #14141c; border-color: #2a2a38; color: #9890a8; }
+
+  /* ── Content ── */
+  .content { padding: 32px 36px; flex: 1; }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+  .breadcrumb a { color: var(--warm-gold); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* ── Page header ── */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 14px; }
+  .page-header-left h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; }
+  .page-header-left p { color: var(--muted); font-size: 0.84rem; margin-top: 4px; }
+  .page-header-right { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  /* ── Buttons ── */
+  .btn { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 16px; border-radius: 2px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+  .btn-primary { background: var(--warm-gold); color: var(--ink); border-color: var(--warm-gold); font-weight: 600; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-outline { background: transparent; color: var(--warm-gold); border-color: var(--warm-gold); }
+  .btn-outline:hover { background: var(--warm-gold); color: var(--ink); }
+  .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-ghost:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .btn-danger { background: transparent; color: var(--rust); border-color: var(--rust); }
+  .btn-danger:hover { background: var(--rust); color: #fff; }
+  .btn-success { background: transparent; color: var(--sage); border-color: var(--sage); }
+  .btn-success:hover { background: var(--sage); color: #fff; }
+
+  /* ── Stats ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-top: 3px solid var(--warm-gold); padding: 16px 18px; box-shadow: var(--shadow); }
+  .stat-card:nth-child(2) { border-top-color: var(--rust); }
+  .stat-card:nth-child(3) { border-top-color: #c8962a; }
+  .stat-card:nth-child(4) { border-top-color: var(--sage); }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .stat-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); margin-top: 4px; }
+
+  /* ── Filter bar ── */
+  .filter-bar { background: var(--card-bg); border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; box-shadow: var(--shadow); }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+  .filter-select, .filter-input { font-family: 'DM Mono', monospace; font-size: 0.72rem; background: var(--paper); border: 1px solid var(--border); color: var(--ink); padding: 7px 10px; border-radius: 2px; transition: border-color 0.15s; }
+  .filter-select:focus, .filter-input:focus { outline: none; border-color: var(--warm-gold); }
+  .filter-input { width: 210px; }
+  .filter-divider { width: 1px; height: 24px; background: var(--border); }
+  .filter-count { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-left: auto; }
+
+  /* ── Panel & Table ── */
+  .panel { background: var(--card-bg); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .panel-head { padding: 16px 22px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .panel-title { font-family: 'Playfair Display', serif; font-size: 0.98rem; font-weight: 700; }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+  .data-table th:hover { color: var(--warm-gold); }
+  .data-table th.no-sort { cursor: default; }
+  .data-table th.no-sort:hover { color: var(--muted); }
+  .data-table td { font-size: 0.8rem; padding: 11px 14px; border-bottom: 1px solid var(--cream); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--highlight); }
+  [data-theme="dark"] .data-table tr:hover td { background: #1e1e2a; }
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  /* ── Pricing type pills ── */
+  .price-type { font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; display: inline-block; white-space: nowrap; }
+  .pt-fixed   { background: #e8f0ff; color: #2a4acc; border: 1px solid #b0c0f0; }
+  .pt-free    { background: #d1edda; color: #3a6b3a; border: 1px solid #a3d4b0; }
+  .pt-chapter { background: #fff3cd; color: #856404; border: 1px solid #f0c040; }
+  [data-theme="dark"] .pt-fixed   { background: #001838; color: #60a8f0; border-color: #003880; }
+  [data-theme="dark"] .pt-free    { background: #0a200a; color: #6aaa6a; border-color: #1a5a1a; }
+  [data-theme="dark"] .pt-chapter { background: #2a2000; color: #e0c060; border-color: #5a4800; }
+
+  /* ── Status badges ── */
+  .badge { font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 3px 9px; border-radius: 2px; letter-spacing: 0.08em; text-transform: uppercase; display: inline-block; white-space: nowrap; }
+  .badge-pending  { background: #fff3cd; color: #856404; border: 1px solid #f0c040; }
+  .badge-approved { background: #d1edda; color: #3a6b3a; border: 1px solid #a3d4b0; }
+  .badge-review   { background: #fce8e3; color: #b04c2f; border: 1px solid #f0b8a8; }
+  .badge-active   { background: #e0eefd; color: #1a5fa8; border: 1px solid #a8ccf0; }
+  [data-theme="dark"] .badge-pending  { background: #2a2000; color: #e0c060; border-color: #5a4800; }
+  [data-theme="dark"] .badge-approved { background: #0a200a; color: #6aaa6a; border-color: #1a5a1a; }
+  [data-theme="dark"] .badge-review   { background: #220a00; color: #e06040; border-color: #5a1a00; }
+  [data-theme="dark"] .badge-active   { background: #001830; color: #60a8e0; border-color: #004870; }
+
+  /* ── Row actions ── */
+  .row-actions { display: flex; gap: 6px; }
+  .action-btn { font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 4px 9px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.15s; white-space: nowrap; background: transparent; }
+  .action-edit    { color: var(--warm-gold); border-color: var(--warm-gold); }
+  .action-edit:hover { background: var(--warm-gold); color: var(--ink); }
+  .action-approve { color: var(--sage); border-color: var(--sage); }
+  .action-approve:hover { background: var(--sage); color: #fff; }
+  .action-reject  { color: var(--rust); border-color: var(--rust); }
+  .action-reject:hover { background: var(--rust); color: #fff; }
+
+  /* ── Pagination ── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+  .page-info { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 5px 10px; border: 1px solid var(--border); background: var(--card-bg); color: var(--muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+  .page-btn:hover, .page-btn.active { border-color: var(--warm-gold); color: var(--warm-gold); }
+  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* ── Modal ── */
+  .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; }
+  .modal-backdrop.open { display: flex; }
+  .modal-box { background: var(--card-bg); border: 1px solid var(--border); border-top: 3px solid var(--warm-gold); width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.25); animation: modalIn 0.22s ease; }
+  @keyframes modalIn { from { opacity:0; transform:translateY(20px) scale(0.97); } to { opacity:1; transform:none; } }
+  .modal-head { padding: 22px 26px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-head-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+  .modal-close-btn { background: none; border: none; font-size: 1.2rem; color: var(--muted); cursor: pointer; padding: 2px 6px; transition: color 0.15s; }
+  .modal-close-btn:hover { color: var(--ink); }
+  .modal-body { padding: 26px 26px 8px; }
+  .modal-footer { padding: 16px 26px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* ── Section divider ── */
+  .section-divider { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-gold); padding: 8px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+
+  /* ── Form grid ── */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field.third { grid-column: span 1; }
+  .field-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .field-input, .field-select, .field-textarea {
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    padding: 9px 12px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 2px; color: var(--ink); transition: border-color 0.15s;
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus { outline: none; border-color: var(--warm-gold); }
+  .field-textarea { resize: vertical; min-height: 68px; }
+  .field-note { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); }
+
+  /* ── Currency prefix ── */
+  .input-prefix-wrap { display: flex; align-items: stretch; }
+  .input-prefix { font-family: 'DM Mono', monospace; font-size: 0.78rem; background: var(--cream); border: 1px solid var(--border); border-right: none; padding: 9px 10px; color: var(--muted); white-space: nowrap; border-radius: 2px 0 0 2px; display: flex; align-items: center; }
+  [data-theme="dark"] .input-prefix { background: #1e1e2a; }
+  .input-prefix-wrap .field-input { border-radius: 0 2px 2px 0; flex: 1; }
+
+  /* ── Pricing type selector ── */
+  .type-selector { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 22px; }
+  .type-opt { border: 1.5px solid var(--border); background: var(--paper); padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s; border-radius: 2px; }
+  .type-opt:hover { border-color: var(--warm-gold); }
+  .type-opt.selected { border-color: var(--warm-gold); background: var(--highlight); box-shadow: 0 0 0 1px var(--warm-gold); }
+  .type-opt .to-emoji { font-size: 1.4rem; margin-bottom: 6px; }
+  .type-opt .to-name { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+  .type-opt .to-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+  [data-theme="dark"] .type-opt.selected { background: #1e1a10; }
+
+  /* ── Chapter rows ── */
+  .chapter-section { margin-bottom: 20px; }
+  .chapter-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 10px; }
+  .chapter-row .field { margin: 0; }
+  .remove-chapter-btn { font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 9px 10px; background: transparent; border: 1px solid var(--rust); color: var(--rust); cursor: pointer; border-radius: 2px; transition: all 0.15s; white-space: nowrap; }
+  .remove-chapter-btn:hover { background: var(--rust); color: #fff; }
+  .add-chapter-btn { font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 7px 14px; background: transparent; border: 1px dashed var(--border); color: var(--muted); cursor: pointer; width: 100%; text-align: center; transition: all 0.15s; border-radius: 2px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .add-chapter-btn:hover { border-color: var(--warm-gold); color: var(--warm-gold); }
+
+  /* ── Revenue share slider ── */
+  .rev-share-wrap { background: var(--paper); border: 1px solid var(--border); padding: 18px 16px; border-radius: 2px; }
+  .rev-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; height: 18px; margin: 12px 0 8px; border-radius: 2px; overflow: hidden; }
+  .rev-bar-press { background: var(--warm-gold); height: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono',monospace; font-size: 0.58rem; color: var(--ink); font-weight: 600; }
+  .rev-bar-shop { background: var(--slate); height: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono',monospace; font-size: 0.58rem; color: #fff; font-weight: 600; }
+  .rev-labels { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  input[type=range] { width: 100%; accent-color: var(--warm-gold); cursor: pointer; margin-top: 8px; }
+
+  /* ── Discount tag ── */
+  .discount-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .d-tag { font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 4px 10px; background: var(--highlight); border: 1px solid var(--warm-gold); color: var(--warm-gold); border-radius: 2px; display: flex; align-items: center; gap: 6px; }
+  .d-tag button { background: none; border: none; color: var(--rust); cursor: pointer; font-size: 0.7rem; padding: 0; line-height: 1; }
+
+  /* ── Preview card ── */
+  .price-preview { background: var(--paper); border: 1px solid var(--border); padding: 16px 18px; border-radius: 2px; margin-bottom: 20px; }
+  .price-preview-title { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .preview-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--cream); font-size: 0.82rem; }
+  .preview-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .preview-row .pr-label { color: var(--slate); }
+  .preview-row .pr-val { font-family: 'DM Mono', monospace; font-weight: 500; }
+  .preview-row.total .pr-label { font-weight: 600; color: var(--ink); }
+  .preview-row.total .pr-val { color: var(--warm-gold); font-size: 1rem; }
+
+  /* ── Toast ── */
+  .toast { position: fixed; bottom: 28px; right: 28px; z-index: 99999; background: var(--ink); color: var(--paper); font-family: 'DM Mono', monospace; font-size: 0.72rem; padding: 12px 20px; border-left: 3px solid var(--warm-gold); box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; transform: translateY(12px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; max-width: 340px; }
+  .toast.show { opacity: 1; transform: none; }
+  .toast.success { border-left-color: var(--sage); }
+  .toast.error   { border-left-color: var(--rust); }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .main { margin-left: 0; }
+    .sidebar { display: none; }
+    .stats-row { grid-template-columns: repeat(2,1fr); }
+    .field-grid { grid-template-columns: 1fr; }
+    .type-selector { grid-template-columns: 1fr; }
+    .chapter-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Press<br>Bookshop</div>
+    <div class="sub">Retailer Portal</div>
+  </div>
+  <div class="sidebar-role">
+    <div class="role-label">Active Role</div>
+    <div class="role-name">📚 Bookshop Administrator</div>
+  </div>
+  <nav>
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="bookshop_press_dashboard.html"><span class="icon">◉</span> Dashboard</a>
+    <a class="nav-item" href="#"><span class="icon">📊</span> Analytics</a>
+    <div class="nav-section">Catalogue</div>
+    <a class="nav-item" href="#"><span class="icon">🏪</span> Storefront Setup</a>
+    <a class="nav-item" href="press_author_metadata.html"><span class="icon">📖</span> Press/Author Metadata</a>
+    <a class="nav-item" href="#"><span class="icon">📦</span> Book Packs</a>
+    <a class="nav-item" href="#"><span class="icon">✅</span> Publish Listings</a>
+    <div class="nav-section">Pricing</div>
+    <a class="nav-item active" href="#"><span class="icon">💲</span> Set & Approve Pricing</a>
+    <a class="nav-item" href="#"><span class="icon">🏷️</span> Discounts & Revenue Share</a>
+    <div class="nav-section">Finance</div>
+    <a class="nav-item" href="#"><span class="icon">💰</span> Sales & Revenue</a>
+    <a class="nav-item" href="#"><span class="icon">🔄</span> Reconciliation & Payouts</a>
+    <a class="nav-item" href="#"><span class="icon">🧾</span> Refund / Adjustments</a>
+    <div class="nav-section">Marketing</div>
+    <a class="nav-item" href="#"><span class="icon">📣</span> Campaigns</a>
+  </nav>
+  <div class="sidebar-footer">v2.4.1 · Bookshop OS</div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Set & Approve Pricing</div>
+      <div class="topbar-meta">PRICING · Manage base prices, types, discounts &amp; revenue share</div>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        <span id="themeLabel">Light</span>
+      </button>
+      <div class="topbar-avatar">P</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="breadcrumb">
+      <a href="bookshop_press_dashboard.html">Dashboard</a>
+      <span>›</span><span>Pricing</span><span>›</span>
+      <span>Set &amp; Approve Pricing</span>
+    </div>
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Set &amp; Approve Pricing</h1>
+        <p>Configure base price, pricing type, discounts and commission/revenue share per title.</p>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn btn-outline" onclick="bulkApprove()">✓ Approve Selected</button>
+        <button class="btn btn-primary" onclick="openAddModal()">+ Set Pricing</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Search</span>
+        <input class="filter-input" id="searchInput" placeholder="Title, Book ID…" oninput="applyFilters()"/>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+          <option value="">All</option>
+          <option>Fixed</option>
+          <option>Free</option>
+          <option>Pay-per-Chapter</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+          <option value="">All</option>
+          <option>Pending</option>
+          <option>Approved</option>
+          <option>Needs Review</option>
+          <option>Active</option>
+        </select>
+      </div>
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+
+    <!-- Table -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Pricing Entries</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-danger" style="font-size:0.6rem;padding:6px 12px;" onclick="bulkReject()">✕ Reject Selected</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="pricingTable">
+          <thead>
+            <tr>
+              <th class="no-sort" style="width:36px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"/></th>
+              <th onclick="sortBy('bookId')">Book ID <span id="sort-bookId"></span></th>
+              <th onclick="sortBy('title')">Title <span id="sort-title"></span></th>
+              <th onclick="sortBy('pricingType')">Pricing Type <span id="sort-pricingType"></span></th>
+              <th onclick="sortBy('basePrice')">Base Price <span id="sort-basePrice"></span></th>
+              <th onclick="sortBy('discount')">Discount <span id="sort-discount"></span></th>
+              <th>Effective Price</th>
+              <th>Rev. Share</th>
+              <th onclick="sortBy('status')">Status <span id="sort-status"></span></th>
+              <th class="no-sort">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-icon">💲</div>
+        <p>No pricing entries match your filters.</p>
+      </div>
+      <div class="pagination" id="paginationBar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Pricing Modal ── -->
+<div class="modal-backdrop" id="pricingModal" onclick="handleBackdrop(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-head-title" id="modalTitle">Set Pricing</div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Book info -->
+      <div class="section-divider">Book Reference</div>
+      <div class="field-grid" style="margin-bottom:22px;">
+        <div class="field">
+          <div class="field-label">Book ID</div>
+          <input class="field-input" id="f-bookId" placeholder="e.g. BK-0041"/>
+        </div>
+        <div class="field">
+          <div class="field-label">Title</div>
+          <input class="field-input" id="f-title" placeholder="Book title"/>
+        </div>
+      </div>
+
+      <!-- Pricing type -->
+      <div class="section-divider">Pricing Type</div>
+      <div class="type-selector" id="typeSelector">
+        <div class="type-opt selected" data-type="Fixed" onclick="selectType(this)">
+          <div class="to-emoji">💲</div>
+          <div class="to-name">Fixed</div>
+          <div class="to-desc">Single set price</div>
+        </div>
+        <div class="type-opt" data-type="Free" onclick="selectType(this)">
+          <div class="to-emoji">🎁</div>
+          <div class="to-name">Free</div>
+          <div class="to-desc">No charge to reader</div>
+        </div>
+        <div class="type-opt" data-type="Pay-per-Chapter" onclick="selectType(this)">
+          <div class="to-emoji">📑</div>
+          <div class="to-name">Pay-per-Chapter</div>
+          <div class="to-desc">Price each chapter</div>
+        </div>
+      </div>
+
+      <!-- Base price (shown for Fixed) -->
+      <div id="basePriceSection">
+        <div class="section-divider">Base Price</div>
+        <div class="field-grid" style="margin-bottom:22px;">
+          <div class="field">
+            <div class="field-label">Base Price (₦)</div>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">₦</span>
+              <input class="field-input" type="number" id="f-basePrice" min="0" step="100" placeholder="0" oninput="updatePreview()"/>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Currency</div>
+            <select class="field-select" id="f-currency">
+              <option>NGN (₦)</option>
+              <option>USD ($)</option>
+              <option>GBP (£)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pay-per-Chapter rows -->
+      <div id="chapterSection" style="display:none;">
+        <div class="section-divider">Chapter Pricing</div>
+        <div class="chapter-section" id="chapterRows"></div>
+        <button class="add-chapter-btn" onclick="addChapterRow()">+ Add Chapter</button>
+        <div style="height:18px;"></div>
+      </div>
+
+      <!-- Discounts -->
+      <div class="section-divider">Discounts</div>
+      <div class="field-grid" style="margin-bottom:10px;">
+        <div class="field">
+          <div class="field-label">Discount Type</div>
+          <select class="field-select" id="f-discountType">
+            <option value="">None</option>
+            <option>Percentage (%)</option>
+            <option>Fixed Amount (₦)</option>
+            <option>Coupon Code</option>
+            <option>Bulk / Pack</option>
+            <option>Faculty Discount</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Discount Value</div>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix" id="discountPrefix">%</span>
+            <input class="field-input" type="text" id="f-discountValue" placeholder="e.g. 10 or SAVE20" oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div class="field full" style="margin-top:-4px;">
+          <button class="btn btn-ghost" style="width:fit-content;font-size:0.62rem;padding:6px 14px;" onclick="addDiscount()">+ Add Discount Rule</button>
+          <div class="discount-tags" id="discountTags"></div>
+        </div>
+      </div>
+
+      <!-- Commission / Revenue share -->
+      <div class="section-divider">Commission &amp; Revenue Share</div>
+      <div class="rev-share-wrap" style="margin-bottom:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Press / Author</span>
+          <span style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Bookshop</span>
+        </div>
+        <div class="rev-bars">
+          <div class="rev-bar-press" id="revBarPress" style="width:70%;">70%</div>
+          <div class="rev-bar-shop"  id="revBarShop"  style="width:30%;">30%</div>
+        </div>
+        <input type="range" id="revSlider" min="0" max="100" value="70" oninput="updateRevShare(this.value)"/>
+        <div class="rev-labels">
+          <span>Press: <strong id="revPressVal">70%</strong></span>
+          <span>Bookshop commission: <strong id="revShopVal">30%</strong></span>
+        </div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="field">
+            <div class="field-label">Commission Rate Override (%)</div>
+            <input class="field-input" type="number" id="f-commissionRate" min="0" max="100" step="0.5" placeholder="Auto from slider" oninput="syncCommission()"/>
+            <div class="field-note">Leave blank to use slider value.</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Commission Notes</div>
+            <input class="field-input" id="f-commissionNotes" placeholder="e.g. Faculty rate override"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval & notes -->
+      <div class="section-divider">Approval</div>
+      <div class="field-grid" style="margin-bottom:22px;">
+        <div class="field">
+          <div class="field-label">Listing Status</div>
+          <select class="field-select" id="f-status">
+            <option>Pending</option>
+            <option>Approved</option>
+            <option>Needs Review</option>
+            <option>Active</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Effective Date</div>
+          <input class="field-input" type="date" id="f-effectiveDate"/>
+        </div>
+        <div class="field full">
+          <div class="field-label">Reviewer Notes</div>
+          <textarea class="field-textarea" id="f-notes" placeholder="Reason for approval / rejection, pricing rationale…"></textarea>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="section-divider">Pricing Preview</div>
+      <div class="price-preview" id="pricePreview"></div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="rejectBtn" onclick="modalAction('reject')">Reject</button>
+      <button class="btn btn-success" id="approveBtn" onclick="modalAction('approve')">Approve</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Pricing</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────── Data ───────────────────
+let entries = [
+  { id:1,  bookId:'BK-0041', title:'The Organic Chemist',     pricingType:'Fixed',           basePrice:8500,  chapters:[],                                   discounts:['10% Student'],       revShare:70, commissionRate:30, commissionNotes:'', status:'Pending',      effectiveDate:'2025-09-01', notes:'' },
+  { id:2,  bookId:'BK-0038', title:'Intro to Civil Law',      pricingType:'Fixed',           basePrice:7200,  chapters:[],                                   discounts:['5% Bulk'],           revShare:70, commissionRate:30, commissionNotes:'', status:'Approved',     effectiveDate:'2025-08-15', notes:'Metadata complete.' },
+  { id:3,  bookId:'BK-0035', title:'Macro Economics Vol. 2',  pricingType:'Pay-per-Chapter', basePrice:0,     chapters:[{name:'Ch 1',price:800},{name:'Ch 2',price:900},{name:'Ch 3',price:750}], discounts:['15% Faculty'], revShare:65, commissionRate:35, commissionNotes:'Faculty rate', status:'Pending', effectiveDate:'2025-09-01', notes:'' },
+  { id:4,  bookId:'BK-0031', title:'Modern Linguistics',      pricingType:'Free',            basePrice:0,     chapters:[],                                   discounts:[],                    revShare:100,commissionRate:0,  commissionNotes:'Open access', status:'Active', effectiveDate:'2025-01-01', notes:'Open access title.' },
+  { id:5,  bookId:'BK-0028', title:'Clinical Pharmacology',   pricingType:'Fixed',           basePrice:12000, chapters:[],                                   discounts:[],                    revShare:75, commissionRate:25, commissionNotes:'', status:'Needs Review', effectiveDate:'',           notes:'Author bio missing.' },
+  { id:6,  bookId:'BK-0025', title:'Engineering Mathematics', pricingType:'Fixed',           basePrice:9500,  chapters:[],                                   discounts:['10% Coupon SAVE10'], revShare:70, commissionRate:30, commissionNotes:'', status:'Approved',     effectiveDate:'2025-08-01', notes:'' },
+  { id:7,  bookId:'BK-0022', title:'Public Health Nutrition', pricingType:'Pay-per-Chapter', basePrice:0,     chapters:[{name:'Ch 1',price:600},{name:'Ch 2',price:600}], discounts:[], revShare:68, commissionRate:32, commissionNotes:'', status:'Pending', effectiveDate:'2025-09-15', notes:'' },
+  { id:8,  bookId:'BK-0019', title:'Constitutional Law',      pricingType:'Fixed',           basePrice:6800,  chapters:[],                                   discounts:['5% Student'],        revShare:72, commissionRate:28, commissionNotes:'', status:'Active',       effectiveDate:'2025-01-20', notes:'' },
+  { id:9,  bookId:'BK-0016', title:'Cell Biology Essentials', pricingType:'Fixed',           basePrice:7500,  chapters:[],                                   discounts:[],                    revShare:70, commissionRate:30, commissionNotes:'', status:'Needs Review', effectiveDate:'',           notes:'Course mapping unclear.' },
+  { id:10, bookId:'BK-0013', title:'African Literature I',    pricingType:'Free',            basePrice:0,     chapters:[],                                   discounts:[],                    revShare:100,commissionRate:0,  commissionNotes:'Grant funded', status:'Active', effectiveDate:'2025-03-01', notes:'' },
+];
+
+let filteredIds = entries.map(e=>e.id);
+let currentEditId = null;
+let sortField = null, sortAsc = true;
+let currentPage = 1;
+const PAGE_SIZE = 8;
+let selected = new Set();
+let currentDiscounts = [];
+let currentChapters  = [];
+
+// ─────────────────── Stats ───────────────────
+function renderStats() {
+  const counts = { Pending:0, 'Needs Review':0, Approved:0, Active:0 };
+  entries.forEach(e => { if (counts[e.status]!==undefined) counts[e.status]++; });
+  document.getElementById('statsRow').innerHTML = [
+    { label:'Total Entries',   val:entries.length,                        sub:'all pricing rules',   col:'var(--warm-gold)' },
+    { label:'Needs Attention', val:counts['Pending']+counts['Needs Review'], sub:'pending + needs review', col:'var(--rust)' },
+    { label:'Approved / Live', val:counts['Approved']+counts['Active'],   sub:'approved + active',   col:'var(--sage)' },
+    { label:'Pay-per-Chapter', val:entries.filter(e=>e.pricingType==='Pay-per-Chapter').length, sub:'chapter-based titles', col:'var(--slate)' },
+  ].map(s=>`<div class="stat-card" style="border-top-color:${s.col}"><div class="stat-label">${s.label}</div><div class="stat-value">${s.val}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
+}
+
+// ─────────────────── Filters ─────────────────
+function applyFilters() {
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const typ = document.getElementById('typeFilter').value;
+  const sts = document.getElementById('statusFilter').value;
+  filteredIds = entries.filter(e => {
+    const mq = !q || [e.bookId,e.title].some(v=>v.toLowerCase().includes(q));
+    const mt = !typ || e.pricingType===typ;
+    const ms = !sts || e.status===sts;
+    return mq && mt && ms;
+  }).map(e=>e.id);
+  currentPage=1; selected.clear(); renderTable();
+}
+
+// ─────────────────── Sort ────────────────────
+function sortBy(field) {
+  if (sortField===field) sortAsc=!sortAsc; else { sortField=field; sortAsc=true; }
+  ['bookId','title','pricingType','basePrice','discount','status'].forEach(f => {
+    const el=document.getElementById('sort-'+f); if(el) el.textContent = f===field?(sortAsc?' ↑':' ↓'):'';
+  });
+  filteredIds.sort((a,b)=>{
+    const ea=entries.find(e=>e.id===a), eb=entries.find(e=>e.id===b);
+    const va=field==='basePrice'?ea[field]:ea[field]+'', vb=field==='basePrice'?eb[field]:eb[field]+'';
+    if(field==='basePrice') return sortAsc?va-vb:vb-va;
+    return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+  });
+  renderTable();
+}
+
+// ─────────────────── Helpers ─────────────────
+function effectivePrice(e) {
+  if (e.pricingType==='Free') return 0;
+  if (e.pricingType==='Pay-per-Chapter') return e.chapters.reduce((s,c)=>s+c.price,0);
+  let p=e.basePrice;
+  e.discounts.forEach(d => {
+    const pct=d.match(/(\d+)%/); const fix=d.match(/₦(\d+)/);
+    if(pct) p=p*(1-pct[1]/100); else if(fix) p=p-parseInt(fix[1]);
+  });
+  return Math.max(0,Math.round(p));
+}
+
+function fmtPrice(n,free=false) {
+  if(free||n===0) return '<span style="color:var(--sage);font-weight:600;">FREE</span>';
+  return '₦'+n.toLocaleString();
+}
+
+function typePill(t) {
+  const map={Fixed:'pt-fixed',Free:'pt-free','Pay-per-Chapter':'pt-chapter'};
+  return `<span class="price-type ${map[t]||''}">${t}</span>`;
+}
+
+function statusBadge(s) {
+  const map={Pending:'badge-pending',Approved:'badge-approved','Needs Review':'badge-review',Active:'badge-active'};
+  return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
+}
+
+// ─────────────────── Table ───────────────────
+function renderTable() {
+  const tbody=document.getElementById('tableBody'), empty=document.getElementById('emptyState');
+  const total=filteredIds.length, pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  if(currentPage>pages) currentPage=pages;
+  const slice=filteredIds.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+  document.getElementById('filterCount').textContent=`Showing ${total} of ${entries.length} entries`;
+
+  if(!slice.length) { tbody.innerHTML=''; empty.style.display='block'; }
+  else {
+    empty.style.display='none';
+    tbody.innerHTML=slice.map(id=>{
+      const e=entries.find(x=>x.id===id);
+      const ep=effectivePrice(e);
+      const discStr=e.discounts.length?e.discounts.join(', '):'—';
+      const chk=selected.has(id)?'checked':'';
+      const canAct=e.status!=='Active';
+      return `<tr>
+        <td><input type="checkbox" ${chk} onchange="toggleRow(${id},this)"/></td>
+        <td><span class="mono">${e.bookId}</span></td>
+        <td><strong>${e.title}</strong></td>
+        <td>${typePill(e.pricingType)}</td>
+        <td><span class="mono">${e.pricingType==='Free'?'—':e.pricingType==='Pay-per-Chapter'?'Per chapter':'₦'+e.basePrice.toLocaleString()}</span></td>
+        <td><span style="font-size:0.78rem;color:var(--slate);">${discStr}</span></td>
+        <td><span class="mono" style="color:var(--warm-gold);font-weight:600;">${e.pricingType==='Free'?'FREE':'₦'+ep.toLocaleString()}</span></td>
+        <td><span class="mono">${e.revShare}% / ${100-e.revShare}%</span></td>
+        <td>${statusBadge(e.status)}</td>
+        <td><div class="row-actions">
+          <button class="action-btn action-edit" onclick="openEditModal(${id})">Edit</button>
+          ${canAct?`<button class="action-btn action-approve" onclick="quickApprove(${id})">✓</button>`:''}
+          ${canAct?`<button class="action-btn action-reject"  onclick="quickReject(${id})">✕</button>`:''}
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+  renderPagination(pages);
+  document.getElementById('selectAll').checked=slice.length&&slice.every(id=>selected.has(id));
+}
+
+// ─────────────────── Pagination ──────────────
+function renderPagination(pages) {
+  const total=filteredIds.length, start=(currentPage-1)*PAGE_SIZE+1, end=Math.min(currentPage*PAGE_SIZE,total);
+  let btns=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=pages;p++) btns+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  btns+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+  document.getElementById('paginationBar').innerHTML=`<span class="page-info">${total>0?`${start}–${end} of ${total}`:'No results'}</span><div class="page-btns">${btns}</div>`;
+}
+function goPage(p){ currentPage=p; renderTable(); }
+
+// ─────────────────── Selection ───────────────
+function toggleRow(id,el){ el.checked?selected.add(id):selected.delete(id); }
+function toggleSelectAll(el){ const sl=filteredIds.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE); sl.forEach(id=>el.checked?selected.add(id):selected.delete(id)); renderTable(); }
+
+// ─────────────────── Quick actions ───────────
+function quickApprove(id){ entries.find(e=>e.id===id).status='Approved'; renderStats(); renderTable(); showToast('Pricing approved.','success'); }
+function quickReject(id){ entries.find(e=>e.id===id).status='Needs Review'; renderStats(); renderTable(); showToast('Flagged for review.','error'); }
+function bulkApprove(){ if(!selected.size){showToast('No entries selected.');return;} selected.forEach(id=>{const e=entries.find(x=>x.id===id);if(e&&e.status!=='Active')e.status='Approved';}); selected.clear(); renderStats(); renderTable(); showToast('Selected entries approved.','success'); }
+function bulkReject(){ if(!selected.size){showToast('No entries selected.');return;} selected.forEach(id=>{const e=entries.find(x=>x.id===id);if(e)e.status='Needs Review';}); selected.clear(); renderStats(); renderTable(); showToast('Selected entries flagged.','error'); }
+
+// ─────────────────── Modal ───────────────────
+function resetModal() {
+  currentDiscounts=[]; currentChapters=[]; chapterCount=0;
+  document.getElementById('f-bookId').value='';
+  document.getElementById('f-title').value='';
+  document.getElementById('f-basePrice').value='';
+  document.getElementById('f-currency').value='NGN (₦)';
+  document.getElementById('f-discountType').value='';
+  document.getElementById('f-discountValue').value='';
+  document.getElementById('f-commissionRate').value='';
+  document.getElementById('f-commissionNotes').value='';
+  document.getElementById('f-status').value='Pending';
+  document.getElementById('f-notes').value='';
+  document.getElementById('f-effectiveDate').value='';
+  document.getElementById('discountTags').innerHTML='';
+  document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('.type-opt[data-type="Fixed"]').classList.add('selected');
+  updateTypeUI('Fixed');
+  updateRevShare(70); document.getElementById('revSlider').value=70;
+  renderChapterRows(); updatePreview();
+}
+
+function openAddModal() {
+  currentEditId=null;
+  resetModal();
+  document.getElementById('modalTitle').textContent='Set Pricing';
+  document.getElementById('rejectBtn').style.display='none';
+  document.getElementById('approveBtn').style.display='none';
+  document.getElementById('pricingModal').classList.add('open');
+}
+
+function openEditModal(id) {
+  currentEditId=id;
+  const e=entries.find(x=>x.id===id);
+  resetModal();
+  document.getElementById('modalTitle').textContent=`Edit Pricing — ${e.bookId}`;
+  document.getElementById('f-bookId').value=e.bookId;
+  document.getElementById('f-title').value=e.title;
+  document.getElementById('f-basePrice').value=e.basePrice||'';
+  document.getElementById('f-status').value=e.status;
+  document.getElementById('f-notes').value=e.notes||'';
+  document.getElementById('f-effectiveDate').value=e.effectiveDate||'';
+  document.getElementById('f-commissionRate').value=e.commissionRate||'';
+  document.getElementById('f-commissionNotes').value=e.commissionNotes||'';
+  // type
+  document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('selected'));
+  const tOpt=document.querySelector(`.type-opt[data-type="${e.pricingType}"]`);
+  if(tOpt) tOpt.classList.add('selected');
+  updateTypeUI(e.pricingType);
+  // discounts
+  currentDiscounts=[...e.discounts];
+  renderDiscountTags();
+  // chapters
+  currentChapters=e.chapters.map(c=>({...c}));
+  renderChapterRows();
+  // rev share
+  updateRevShare(e.revShare); document.getElementById('revSlider').value=e.revShare;
+  const isActive=e.status==='Active';
+  document.getElementById('rejectBtn').style.display=isActive?'none':'';
+  document.getElementById('approveBtn').style.display=isActive?'none':'';
+  document.getElementById('pricingModal').classList.add('open');
+  updatePreview();
+}
+
+function closeModal() { document.getElementById('pricingModal').classList.remove('open'); }
+function handleBackdrop(e){ if(e.target.id==='pricingModal') closeModal(); }
+
+// ─────────────────── Type UI ─────────────────
+function selectType(el) {
+  document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  updateTypeUI(el.dataset.type);
+  updatePreview();
+}
+function updateTypeUI(type) {
+  document.getElementById('basePriceSection').style.display = type==='Pay-per-Chapter'||type==='Free' ? 'none':'block';
+  document.getElementById('chapterSection').style.display   = type==='Pay-per-Chapter' ? 'block':'none';
+}
+
+// ─────────────────── Chapters ────────────────
+let chapterCount=0;
+function renderChapterRows() {
+  const wrap=document.getElementById('chapterRows');
+  wrap.innerHTML=currentChapters.map((c,i)=>`
+    <div class="chapter-row" id="chrow-${i}">
+      <div class="field"><div class="field-label">Chapter Name</div><input class="field-input" value="${c.name}" oninput="updateChapter(${i},'name',this.value)" placeholder="e.g. Chapter ${i+1}"/></div>
+      <div class="field"><div class="field-label">Price (₦)</div>
+        <div class="input-prefix-wrap"><span class="input-prefix">₦</span><input class="field-input" type="number" value="${c.price}" min="0" oninput="updateChapter(${i},'price',+this.value);updatePreview()" placeholder="0"/></div>
+      </div>
+      <button class="remove-chapter-btn" onclick="removeChapter(${i})">✕ Remove</button>
+    </div>`).join('');
+  updatePreview();
+}
+function addChapterRow(){ currentChapters.push({name:`Chapter ${currentChapters.length+1}`,price:0}); renderChapterRows(); }
+function removeChapter(i){ currentChapters.splice(i,1); renderChapterRows(); }
+function updateChapter(i,field,val){ currentChapters[i][field]=val; updatePreview(); }
+
+// ─────────────────── Discounts ───────────────
+function addDiscount() {
+  const type=document.getElementById('f-discountType').value;
+  const val =document.getElementById('f-discountValue').value.trim();
+  if(!type||!val){showToast('Select a discount type and enter a value.','error');return;}
+  const label=`${val}${type.includes('%')?'%':''} ${type.replace(' (%)','').replace(' (₦)','')}`;
+  currentDiscounts.push(label.trim());
+  document.getElementById('f-discountValue').value='';
+  renderDiscountTags(); updatePreview();
+}
+function removeDiscount(i){ currentDiscounts.splice(i,1); renderDiscountTags(); updatePreview(); }
+function renderDiscountTags(){
+  document.getElementById('discountTags').innerHTML=currentDiscounts.map((d,i)=>
+    `<span class="d-tag">${d}<button onclick="removeDiscount(${i})">✕</button></span>`).join('');
+}
+
+// sync discount prefix
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('f-discountType').addEventListener('change',function(){
+    document.getElementById('discountPrefix').textContent=this.value.includes('₦')?'₦':'%';
+  });
+});
+
+// ─────────────────── Rev share ───────────────
+function updateRevShare(v) {
+  v=+v;
+  document.getElementById('revBarPress').style.width=v+'%';
+  document.getElementById('revBarPress').textContent=v+'%';
+  document.getElementById('revBarShop').style.width=(100-v)+'%';
+  document.getElementById('revBarShop').textContent=(100-v)+'%';
+  document.getElementById('revPressVal').textContent=v+'%';
+  document.getElementById('revShopVal').textContent=(100-v)+'%';
+  document.getElementById('f-commissionRate').placeholder=`${100-v} (from slider)`;
+  updatePreview();
+}
+function syncCommission() {
+  const v=document.getElementById('f-commissionRate').value;
+  if(v!==''){ const shop=Math.min(100,Math.max(0,+v)); updateRevShare(100-shop); document.getElementById('revSlider').value=100-shop; }
+}
+
+// ─────────────────── Preview ─────────────────
+function updatePreview() {
+  const type=document.querySelector('.type-opt.selected')?.dataset.type||'Fixed';
+  const base=parseFloat(document.getElementById('f-basePrice').value)||0;
+  const rev =+document.getElementById('revSlider').value||70;
+  let effective=0;
+
+  if(type==='Free') { effective=0; }
+  else if(type==='Pay-per-Chapter') { effective=currentChapters.reduce((s,c)=>s+(+c.price||0),0); }
+  else {
+    effective=base;
+    currentDiscounts.forEach(d=>{
+      const pct=d.match(/(\d+(?:\.\d+)?)%/); const fix=d.match(/(\d+)\s*Fixed/i);
+      if(pct) effective=effective*(1-pct[1]/100); else if(fix) effective=effective-parseInt(fix[1]);
+    });
+    effective=Math.max(0,Math.round(effective));
+  }
+
+  const pressEarns = type==='Free'?0:Math.round(effective*rev/100);
+  const shopEarns  = type==='Free'?0:Math.round(effective*(100-rev)/100);
+
+  document.getElementById('pricePreview').innerHTML=`
+    <div class="price-preview-title">Live Preview</div>
+    <div class="preview-row"><span class="pr-label">Pricing Type</span><span class="pr-val">${type}</span></div>
+    ${type==='Fixed'?`<div class="preview-row"><span class="pr-label">Base Price</span><span class="pr-val">₦${base.toLocaleString()}</span></div>`:''}
+    ${currentDiscounts.length&&type!=='Free'?`<div class="preview-row"><span class="pr-label">Discounts Applied</span><span class="pr-val" style="color:var(--sage);">${currentDiscounts.join(', ')}</span></div>`:''}
+    ${type==='Pay-per-Chapter'?`<div class="preview-row"><span class="pr-label">Chapters</span><span class="pr-val">${currentChapters.length} × avg ₦${currentChapters.length?Math.round(currentChapters.reduce((s,c)=>s+c.price,0)/currentChapters.length).toLocaleString():0}</span></div>`:''}
+    <div class="preview-row total"><span class="pr-label">Effective Price</span><span class="pr-val">${type==='Free'?'FREE':'₦'+effective.toLocaleString()}</span></div>
+    <div class="preview-row"><span class="pr-label">Press / Author Earns (${rev}%)</span><span class="pr-val" style="color:var(--warm-gold);">${type==='Free'?'—':'₦'+pressEarns.toLocaleString()}</span></div>
+    <div class="preview-row"><span class="pr-label">Bookshop Commission (${100-rev}%)</span><span class="pr-val">${type==='Free'?'—':'₦'+shopEarns.toLocaleString()}</span></div>`;
+}
+
+// ─────────────────── Save ────────────────────
+function saveEntry() {
+  const bookId=document.getElementById('f-bookId').value.trim();
+  const title =document.getElementById('f-title').value.trim();
+  if(!bookId||!title){showToast('Book ID and Title are required.','error');return;}
+  const type=document.querySelector('.type-opt.selected')?.dataset.type||'Fixed';
+  const basePrice=type==='Fixed'?parseFloat(document.getElementById('f-basePrice').value)||0:0;
+  const revShare=+document.getElementById('revSlider').value;
+  const commRate=document.getElementById('f-commissionRate').value!==''?+document.getElementById('f-commissionRate').value:100-revShare;
+
+  const data={ bookId, title, pricingType:type, basePrice,
+    chapters:[...currentChapters], discounts:[...currentDiscounts],
+    revShare, commissionRate:commRate,
+    commissionNotes:document.getElementById('f-commissionNotes').value.trim(),
+    status:document.getElementById('f-status').value,
+    effectiveDate:document.getElementById('f-effectiveDate').value,
+    notes:document.getElementById('f-notes').value.trim() };
+
+  if(currentEditId){ Object.assign(entries.find(e=>e.id===currentEditId),data); showToast('Pricing updated.','success'); }
+  else { entries.push({id:Math.max(...entries.map(e=>e.id))+1,...data}); showToast('Pricing entry added.','success'); }
+  closeModal(); renderStats(); applyFilters();
+}
+
+function modalAction(type) {
+  document.getElementById('f-status').value=type==='approve'?'Approved':'Needs Review';
+  saveEntry();
+}
+
+// ─────────────────── Export ──────────────────
+function exportCSV(){
+  const rows=[['Book ID','Title','Pricing Type','Base Price','Discounts','Effective Price','Rev Share (Press%)','Commission Rate','Status','Effective Date','Notes']];
+  entries.forEach(e=>rows.push([e.bookId,e.title,e.pricingType,e.basePrice,e.discounts.join('; '),effectivePrice(e),e.revShare,e.commissionRate,e.status,e.effectiveDate,e.notes]));
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='pricing_entries.csv'; a.click();
+  showToast('CSV exported.','success');
+}
+
+// ─────────────────── Toast ───────────────────
+function showToast(msg,type=''){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type;
+  setTimeout(()=>t.classList.add('show'),10); setTimeout(()=>t.classList.remove('show'),3300);
+}
+
+// ─────────────────── Theme ───────────────────
+function toggleTheme(){
+  const html=document.documentElement, dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeLabel').textContent=dark?'Light':'Dark';
+}
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ─────────────────── Init ────────────────────
+renderStats();
+applyFilters();
+updatePreview();
+</script>
+</body>
+</html>
