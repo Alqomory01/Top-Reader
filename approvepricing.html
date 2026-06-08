@@ -829,7 +829,7 @@ function renderTable() {
         <td><span class="mono">${e.bookId}</span></td>
         <td><strong>${e.title}</strong></td>
         <td>${typePill(e.pricingType)}</td>
-        <td><span class="mono">${e.pricingType==='Free'?'—':e.pricingType==='Pay-per-Chapter'?'Per chapter':'₦'+e.basePrice.toLocaleString()}</span></td>
+        <td><span class="mono">${e.pricingType==='pay-per-book'?'—':e.pricingType==='Pay-per-Chapter'?'Per chapter':'₦'+e.basePrice.toLocaleString()}</span></td>
         <td><span style="font-size:0.78rem;color:var(--slate);">${discStr}</span></td>
         <td><span class="mono" style="color:var(--warm-gold);font-weight:600;">${e.pricingType==='Free'?'FREE':'₦'+ep.toLocaleString()}</span></td>
         <td>${statusBadge(e.status)}</td>
