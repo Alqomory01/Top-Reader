@@ -17,6 +17,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);display:flex;min-height:100vh;}
 ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+body.light{--bg:#f5f7fa;--surface:#fff;--surface2:#f1f3f5;--border:#dfe3e8;--border2:#c9d1d9;--text:#1f2937;--text2:#4b5563;--text3:#6b7280;--accent:#d4a017;--green:#16a34a;--red:#dc2626;--blue:#2563eb;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
 .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto;}
 .sidebar-logo{display:flex;align-items:center;gap:10px;padding:26px 20px 18px;border-bottom:1px solid var(--border);}
@@ -138,8 +140,9 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
 </aside>
 
 <div class="main">
-  <header class="topbar">
+  <header class="topbar" style="display:flex; justify-content:space-between;align-items:center">
     <div class="topbar-title">Submit Publication</div>
+    <button class="tbar-btn" onclick="toggleTheme()">🌙 Theme</button>
   </header>
   <div class="content">
     <div class="page-title">New Publication Request</div>
@@ -356,6 +359,7 @@ function showToast(msg, isErr=false) {
 }
 
 loadSubmissions();
+function toggleTheme() { document.body.classList.toggle('light'); }
 </script>
 </body>
 </html>
