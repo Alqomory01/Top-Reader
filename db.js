@@ -1,0 +1,222 @@
+const DB_KEY = 'topreader_db_v2';
+
+const DB = {
+  init() {
+    if (!localStorage.getItem(DB_KEY)) {
+      const seed = {
+        publications: [
+          {
+            id: 'PUB-001',
+            // ── AUTHOR FIELDS ──
+            title: 'Language Policy & Identity',
+            subtitle: 'A Comparative African Study',
+            source_title: 'African Linguistics Series Vol. 3',
+            author: 'B. Owusu',
+            authorId: 'AUTH-0044',
+            faculty: 'Arts',
+            department: 'Linguistics',
+            category: 'Linguistics',
+            accessModel: 'Open Access',
+            description: 'An exploration of how language policy shapes national identity across post-colonial African states.',
+            keywords: 'language, identity, policy, Africa, post-colonial',
+            coAuthors: [],
+            author_amount: 2800,
+            // ── PRESS FIELDS ──
+            press_catalog_id: 'ULP-LIN-0044',
+            isbn: '978-000-1161',
+            press_faculty: 'Arts & Humanities',
+            press_department: 'Linguistics',
+            press_description: 'Peer-reviewed scholarly exploration of post-colonial African language policy.',
+            total_num_pages: 312,
+            table_of_content: 'Ch 1: Introduction\nCh 2: Historical Context\nCh 3: Policy Frameworks\nCh 4: Case Studies\nCh 5: Conclusions',
+            publisher: 'University of Lagos Press',
+            publication_date: '2026-08-01',
+            edition: '1st Edition',
+            format: 'EPUB',
+            file_size: '4.2 MB',
+            drm: true,
+            cover_image: '',
+            original_publication: '2026',
+            press_amount: 1200,
+            pressNotes: 'Excellent peer-review scores. Ready for distribution.',
+            // ── BOOKSHOP FIELDS ──
+            bookshop_catalog_id: '',
+            language: '',
+            bs_keywords: '',
+            identifiers: '',
+            genre: '',
+            categories: '',
+            age_range: '',
+            reading_level: '',
+            rights: '',
+            review_quotes: '',
+            awards: '',
+            bookshop_amount: null,
+            final_sales_price: null,
+            bookshopNotes: '',
+            // ── STATUS ──
+            status: 'press_approved',
+            submittedAt: new Date(Date.now() - 1000*60*60*48).toISOString(),
+            pressReviewedAt: new Date(Date.now() - 1000*60*60*24).toISOString(),
+            publishedAt: null,
+          },
+          {
+            id: 'PUB-002',
+            title: 'Digital Pedagogy in African HE',
+            subtitle: '',
+            source_title: 'Education Futures Africa',
+            author: 'F. Eze',
+            authorId: 'AUTH-0058',
+            faculty: 'Education',
+            department: 'Education',
+            category: 'Education',
+            accessModel: 'Paid',
+            description: 'A comprehensive exploration of digital pedagogical practices across African higher education institutions.',
+            keywords: 'digital, pedagogy, HE, Africa, blended learning',
+            coAuthors: [],
+            author_amount: 3500,
+            press_catalog_id: '',
+            isbn: '',
+            press_faculty: '',
+            press_department: '',
+            press_description: '',
+            total_num_pages: null,
+            table_of_content: '',
+            publisher: '',
+            publication_date: '',
+            edition: '',
+            format: '',
+            file_size: '',
+            drm: true,
+            cover_image: '',
+            original_publication: '',
+            press_amount: null,
+            pressNotes: '',
+            bookshop_catalog_id: '',
+            language: '',
+            bs_keywords: '',
+            identifiers: '',
+            genre: '',
+            categories: '',
+            age_range: '',
+            reading_level: '',
+            rights: '',
+            review_quotes: '',
+            awards: '',
+            bookshop_amount: null,
+            final_sales_price: null,
+            bookshopNotes: '',
+            status: 'press_review',
+            submittedAt: new Date(Date.now() - 1000*60*60*72).toISOString(),
+            pressReviewedAt: null,
+            publishedAt: null,
+          }
+        ],
+        nextId: 3,
+      };
+      localStorage.setItem(DB_KEY, JSON.stringify(seed));
+    }
+  },
+
+  _get() { return JSON.parse(localStorage.getItem(DB_KEY)); },
+  _save(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); },
+
+  submitPublication(payload) {
+    const data = this._get();
+    const pub = {
+      id: `PUB-${String(data.nextId).padStart(3, '0')}`,
+      // author fields
+      ...payload,
+      // press fields (blank)
+      press_catalog_id: '', isbn: '', press_faculty: '', press_department: '',
+      press_description: '', total_num_pages: null, table_of_content: '',
+      publisher: '', publication_date: '', edition: '', format: '', file_size: '',
+      drm: true, cover_image: '', original_publication: '', press_amount: null, pressNotes: '',
+      // bookshop fields (blank)
+      bookshop_catalog_id: '', language: '', bs_keywords: '', identifiers: '',
+      genre: '', categories: '', age_range: '', reading_level: '', rights: '',
+      review_quotes: '', awards: '', bookshop_amount: null, final_sales_price: null, bookshopNotes: '',
+      // status
+      status: 'author_pending',
+      submittedAt: new Date().toISOString(),
+      pressReviewedAt: null,
+      publishedAt: null,
+    };
+    data.publications.push(pub);
+    data.nextId++;
+    this._save(data);
+    return pub;
+  },
+
+  getPublications(filter = null) {
+    const data = this._get();
+    if (!filter) return data.publications;
+    return data.publications.filter(p => p.status === filter);
+  },
+
+  getPub(id) { return this._get().publications.find(p => p.id === id); },
+
+  pressApprove(id, pressFields) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub) {
+      Object.assign(pub, pressFields);
+      pub.status = 'press_approved';
+      pub.pressReviewedAt = new Date().toISOString();
+    }
+    this._save(data);
+    return pub;
+  },
+
+  pressReject(id, notes) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub) { pub.status = 'rejected'; pub.pressNotes = notes || ''; pub.pressReviewedAt = new Date().toISOString(); }
+    this._save(data);
+    return pub;
+  },
+
+  pressStartReview(id) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub && pub.status === 'author_pending') pub.status = 'press_review';
+    this._save(data);
+    return pub;
+  },
+
+  bookshopPublish(id, bsFields) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub) {
+      Object.assign(pub, bsFields);
+      pub.status = 'bookshop_live';
+      pub.publishedAt = new Date().toISOString();
+    }
+    this._save(data);
+    return pub;
+  },
+
+  bookshopReject(id, notes) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub) { pub.status = 'press_review'; pub.bookshopNotes = notes || ''; }
+    this._save(data);
+    return pub;
+  },
+
+  statusLabel(status) {
+    return { author_pending: 'Pending Press Review', press_review: 'Editorial Review in Progress', press_approved: 'Approved — Awaiting Bookshop', bookshop_live: 'Live on Storefront', rejected: 'Rejected' }[status] || status;
+  },
+
+  timeAgo(iso) {
+    if (!iso) return '—';
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  },
+};
+
+DB.init();

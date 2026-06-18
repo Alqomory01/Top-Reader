@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopReader — Bookshop Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1208;--paper:#f5f0e8;--cream:#ede8db;--warm-gold:#c8962a;--rust:#b04c2f;--sage:#3a6b3a;--slate:#4a5568;--muted:#8a7e70;--border:#d4c9b5;--card-bg:#faf7f2;--highlight:#fff8e7;--green:#3a6b3a;--red:#b04c2f;--blue:#1a5fa8;--shadow:0 2px 12px rgba(26,18,8,.08);--shadow-lg:0 8px 32px rgba(26,18,8,.13);--sidebar-bg:#1a1208;}
+[data-theme="dark"]{--ink:#f0e8d8;--paper:#0d0d0f;--cream:#181820;--warm-gold:#e0a832;--rust:#e06040;--sage:#6aaa6a;--slate:#a0aab8;--muted:#666680;--border:#2a2a38;--card-bg:#14141c;--highlight:#1e1a10;--green:#5aaa5a;--red:#e06040;--blue:#60a8e0;--shadow:0 2px 12px rgba(0,0,0,.35);--shadow-lg:0 8px 32px rgba(0,0,0,.5);--sidebar-bg:#0a0a0e;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;z-index:100;border-right:3px solid var(--warm-gold);}
+.sidebar-logo{padding:24px 22px 16px;border-bottom:1px solid rgba(200,150,42,.25);}
+.brand{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;color:var(--warm-gold);line-height:1.1;}
+.brand-sub{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-top:3px;}
+.sidebar-role{padding:11px 22px;background:rgba(200,150,42,.08);border-bottom:1px solid rgba(200,150,42,.15);}
+.role-label{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;}
+.role-name{font-size:.8rem;color:#e8dfc8;font-weight:500;margin-top:2px;}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto;}
+.nav-section{font-family:'DM Mono',monospace;font-size:.55rem;color:rgba(200,150,42,.55);letter-spacing:.18em;text-transform:uppercase;padding:11px 22px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 22px;color:#c8c0b0;font-size:.8rem;cursor:pointer;transition:background .15s,color .15s;border-left:3px solid transparent;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.nav-item:hover{background:rgba(200,150,42,.07);color:var(--warm-gold);}
+.nav-item.active{background:rgba(200,150,42,.12);color:var(--warm-gold);border-left:3px solid var(--warm-gold);font-weight:500;}
+.nav-badge-bs{margin-left:auto;background:var(--rust);color:#fff;font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:20px;}
+.sidebar-footer{padding:14px 22px;border-top:1px solid rgba(200,150,42,.18);font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);}
+.portal-links{margin-top:8px;display:flex;flex-direction:column;gap:3px;}
+.portal-link{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 6px;border-radius:5px;display:flex;align-items:center;gap:6px;transition:color .12s;}
+.portal-link:hover{color:#c8c0b0;}
+
+.main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--card-bg);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;}
+.topbar-meta{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.alert-badge{background:var(--rust);color:#fff;font-family:'DM Mono',monospace;font-size:.6rem;padding:5px 10px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;}
+.theme-btn{background:var(--card-bg);border:1px solid var(--border);padding:7px 14px;cursor:pointer;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:border-color .15s,color .15s;border-radius:2px;}
+.theme-btn:hover{border-color:var(--warm-gold);color:var(--warm-gold);}
+
+.content{padding:24px 30px;flex:1;}
+.view{display:none;} .view.active{display:block;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.kpi{background:var(--card-bg);border:1px solid var(--border);border-top:3px solid var(--warm-gold);padding:16px 20px;box-shadow:var(--shadow);}
+.kpi:nth-child(2){border-top-color:var(--rust);}
+.kpi:nth-child(3){border-top-color:var(--sage);}
+.kpi-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.kpi-value{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;line-height:1;}
+.kpi-note{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:5px;}
+
+.panel{background:var(--card-bg);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:18px;}
+.panel-head{padding:14px 22px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;}
+.panel-action{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--warm-gold);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--warm-gold);background:none;padding:4px 8px;transition:all .15s;}
+.panel-action:hover{background:var(--warm-gold);color:var(--ink);}
+
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:9px 12px;text-align:left;border-bottom:2px solid var(--border);}
+.tbl td{font-size:.78rem;padding:10px 12px;border-bottom:1px solid var(--cream);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;} .tbl tr:hover td{background:var(--highlight);}
+.tbl .bold{font-weight:600;} .tbl .sub{font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.tbl .mono{font-family:'DM Mono',monospace;font-size:.7rem;}
+
+.badge{font-family:'DM Mono',monospace;font-size:.56rem;padding:3px 8px;border-radius:2px;letter-spacing:.08em;text-transform:uppercase;display:inline-block;}
+.b-pending{background:#fff3cd;color:#856404;border:1px solid #f0c040;}
+.b-approved,.b-live{background:#d1edda;color:var(--green);border:1px solid #a3d4b0;}
+.b-review{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;}
+.b-rejected{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;}
+[data-theme="dark"] .b-pending{background:#2a2000;color:#e0c060;border-color:#5a4800;}
+[data-theme="dark"] .b-approved,[data-theme="dark"] .b-live{background:#0a200a;color:#6aaa6a;border-color:#1a5a1a;}
+[data-theme="dark"] .b-review,[data-theme="dark"] .b-rejected{background:#220a00;color:#e06040;border-color:#5a1a00;}
+
+.btn{padding:5px 11px;border-radius:3px;font-size:.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:var(--card-bg);color:var(--ink);}
+.btn:hover{border-color:var(--warm-gold);}
+.btn.publish{background:var(--warm-gold);color:var(--ink);border-color:var(--warm-gold);font-weight:700;}
+.btn.publish:hover{background:#e0b040;}
+.btn.reject{background:#fce8e3;color:var(--red);border-color:#f0b8a8;}
+.btn.reject:hover{background:var(--red);color:#fff;}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* ── BIG BOOKSHOP MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:900;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card-bg);border:1px solid var(--border);border-radius:4px;width:820px;max-width:98vw;box-shadow:var(--shadow-lg);}
+.modal-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card-bg);z-index:10;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.modal-close{background:var(--cream);border:none;color:var(--muted);cursor:pointer;font-size:15px;width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:22px 24px;}
+
+/* Press info card at top of modal */
+.press-info-card{background:var(--cream);border:1px solid var(--border);padding:16px 18px;margin-bottom:22px;font-size:.8rem;color:var(--slate);line-height:1.7;}
+.press-info-card strong{color:var(--ink);}
+.press-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;}
+.press-info-item{background:var(--card-bg);border:1px solid var(--border);padding:8px 10px;border-radius:2px;}
+.press-info-item .pil{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.press-info-item .piv{font-size:.8rem;font-weight:600;color:var(--ink);}
+
+.modal-section{margin-bottom:22px;}
+.modal-section-title{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gold);border-bottom:1px solid var(--border);padding-bottom:7px;margin-bottom:14px;}
+.fg{display:flex;flex-direction:column;margin-bottom:12px;}
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.f-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.f-req{color:var(--red);}
+.f-input{width:100%;background:var(--cream);border:1px solid var(--border);padding:9px 13px;font-size:.8rem;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none;border-radius:2px;resize:none;transition:border-color .15s;}
+.f-input:focus{border-color:var(--warm-gold);}
+.f-input::placeholder{color:var(--muted);}
+.price-wrap{position:relative;}
+.price-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;}
+.price-wrap .f-input{padding-left:24px;}
+.price-summary-box{background:var(--highlight);border:1px solid var(--warm-gold);padding:14px 16px;margin-top:14px;}
+.price-summary-box .ps-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8rem;}
+.price-summary-box .ps-row.total{border-top:1px solid var(--border);margin-top:6px;padding-top:8px;font-weight:700;font-size:.9rem;}
+.price-summary-box .ps-label{color:var(--slate);}
+.price-summary-box .ps-val{font-family:'DM Mono',monospace;font-weight:600;}
+
+.modal-footer{display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--card-bg);}
+.modal-btn{flex:1;padding:10px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.modal-btn.publish{background:var(--warm-gold);color:var(--ink);} .modal-btn.publish:hover{background:#e0b040;}
+.modal-btn.reject{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;} .modal-btn.reject:hover{background:var(--red);color:#fff;}
+.modal-btn.cancel{background:var(--cream);color:var(--slate);border:1px solid var(--border);}
+
+/* small reject modal */
+.small-modal{max-width:460px;}
+
+.toast{position:fixed;bottom:28px;right:28px;padding:12px 20px;border-radius:3px;font-size:.82rem;font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:999;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.gold{background:var(--warm-gold);color:var(--ink);}
+.toast.err{background:var(--red);color:#fff;}
+.toast.ok{background:var(--sage);color:#fff;}
+
+.empty{padding:30px;text-align:center;color:var(--muted);font-size:.82rem;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.panel{animation:fadeUp .4s ease both;}
+@media(max-width:900px){.kpi-grid{grid-template-columns:1fr 1fr;}.fg-grid,.fg-grid-3{grid-template-columns:1fr;}.press-info-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">Press<br>Bookshop</div><div class="brand-sub">Retailer Portal</div></div>
+  <div class="sidebar-role"><div class="role-label">Active Role</div><div class="role-name">📚 Bookshop Administrator</div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <button class="nav-item active" onclick="navigate('dashboard',this)"><span>◉</span> Dashboard</button>
+    <div class="nav-section">Catalogue</div>
+    <button class="nav-item" onclick="navigate('inbox',this)"><span>📥</span> Press Approvals Inbox <span class="nav-badge-bs" id="nav-inbox-count">0</span></button>
+    <button class="nav-item" onclick="navigate('storefront',this)"><span>🏪</span> Storefront</button>
+    <div class="nav-section">Finance</div>
+    <button class="nav-item" onclick="navigate('revenue',this)"><span>💰</span> Sales & Revenue</button>
+  </nav>
+  <div class="sidebar-footer">
+    v2.4 · Bookshop OS
+    <div class="portal-links">
+      <a href="author.html" class="portal-link">✍️ Author Portal</a>
+      <a href="press.html" class="portal-link">🏛 Press Dashboard</a>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div><div class="topbar-title" id="page-title">Bookshop Dashboard</div><div class="topbar-meta">SEMESTER 1 · JAN–JUN 2026</div></div>
+    <div class="topbar-right">
+      <button class="theme-btn" onclick="toggleTheme()">⬤ Theme</button>
+      <span class="alert-badge" id="topbar-pending">0 Pending</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="view active" id="view-dashboard">
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Press Approvals — Awaiting Action</div><button class="panel-action" onclick="navigate('inbox',null)">View Inbox →</button></div>
+          <div style="padding:0 22px" id="dash-inbox-wrap"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Recent Activity</div></div>
+          <div class="panel-body" style="padding:14px 22px" id="dash-activity"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-inbox">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Press Approvals — Ready to Publish</div>
+          <span id="inbox-count" style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)"></span>
+        </div>
+        <div id="inbox-wrap" style="padding:0 22px"></div>
+        <div style="padding:11px 22px;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted)">ⓘ Publications approved by Press. Add bookshop metadata and set final retail pricing before publishing.</div>
+      </div>
+    </div>
+
+    <div class="view" id="view-storefront">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Storefront — Live Listings</div><button class="panel-action" onclick="navigate('inbox',null)">+ Publish New</button></div>
+        <div id="storefront-wrap" style="padding:0 22px"></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-revenue">
+      <div class="kpi-grid" id="rev-kpi"></div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Published Titles — Pricing Breakdown</div></div>
+        <div id="rev-wrap" style="padding:0 22px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PUBLISH MODAL (full bookshop metadata form) -->
+<div class="modal-overlay" id="publish-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Complete Metadata & Publish</div>
+      <button class="modal-close" onclick="closeModal('publish-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Press/Author info summary -->
+      <div class="press-info-card" id="pm-press-info"></div>
+
+      <!-- SECTION: Bookshop Catalog -->
+      <div class="modal-section">
+        <div class="modal-section-title">🏪 Bookshop Catalog</div>
+        <div class="fg-grid">
+          <div class="fg"><label class="f-label">Bookshop Catalog ID <span class="f-req">*</span></label><input id="b-catalog-id" class="f-input" placeholder="e.g. BSH-2026-0041"></div>
+          <div class="fg"><label class="f-label">Language <span class="f-req">*</span></label>
+            <select id="b-language" class="f-input">
+              <option value="">Select language…</option>
+              <option value="English">English</option>
+              <option value="French">French</option>
+              <option value="Yoruba">Yoruba</option>
+              <option value="Igbo">Igbo</option>
+              <option value="Hausa">Hausa</option>
+              <option value="Swahili">Swahili</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Arabic">Arabic</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label class="f-label">Keywords (for search)</label><input id="b-keywords" class="f-input" placeholder="education, Africa, digital, pedagogy…"></div>
+        <div class="fg"><label class="f-label">Identifiers</label><input id="b-identifiers" class="f-input" placeholder="DOI, ISSN, OCLC, WorldCat ID…"></div>
+      </div>
+
+      <!-- SECTION: Classification -->
+      <div class="modal-section">
+        <div class="modal-section-title">📂 Classification</div>
+        <div class="fg-grid">
+          <div class="fg"><label class="f-label">Genre <span class="f-req">*</span></label>
+            <select id="b-genre" class="f-input">
+              <option value="">Select genre…</option>
+              <option>Academic / Scholarly</option>
+              <option>Textbook</option>
+              <option>Reference</option>
+              <option>Trade Non-Fiction</option>
+              <option>Professional</option>
+              <option>Open Educational Resource</option>
+            </select>
+          </div>
+          <div class="fg"><label class="f-label">Categories</label><input id="b-categories" class="f-input" placeholder="e.g. Education > Higher Education > Africa"></div>
+          <div class="fg"><label class="f-label">Age Range</label>
+            <select id="b-age-range" class="f-input">
+              <option value="">Select age range…</option>
+              <option>18+</option>
+              <option>16+</option>
+              <option>All Ages</option>
+              <option>University Level</option>
+              <option>Postgraduate</option>
+            </select>
+          </div>
+          <div class="fg"><label class="f-label">Reading Level</label>
+            <select id="b-reading-level" class="f-input">
+              <option value="">Select level…</option>
+              <option>Undergraduate</option>
+              <option>Postgraduate</option>
+              <option>Professional</option>
+              <option>General</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Rights & Recognition -->
+      <div class="modal-section">
+        <div class="modal-section-title">⚖️ Rights & Recognition</div>
+        <div class="fg"><label class="f-label">Rights / Licensing</label><input id="b-rights" class="f-input" placeholder="e.g. © 2026 University Press. All rights reserved. CC BY-NC 4.0"></div>
+        <div class="fg-grid" style="margin-top:12px">
+          <div class="fg"><label class="f-label">Review Quotes</label><textarea id="b-review-quotes" class="f-input" rows="3" placeholder='"A landmark work…" — Prof. X, University Y'></textarea></div>
+          <div class="fg"><label class="f-label">Awards & Recognition</label><textarea id="b-awards" class="f-input" rows="3" placeholder="Best Book Award 2026, NULP Prize…"></textarea></div>
+        </div>
+      </div>
+
+      <!-- SECTION: Pricing -->
+      <div class="modal-section">
+        <div class="modal-section-title">💰 Bookshop Pricing</div>
+        <div class="fg-grid">
+          <div class="fg">
+            <label class="f-label">Bookshop Amount (₦) <span class="f-req">*</span></label>
+            <div class="price-wrap"><span class="price-prefix">₦</span><input id="b-bs-amount" type="number" class="f-input" placeholder="e.g. 800" oninput="updatePriceSummary()"></div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:3px">Bookshop fee per sale</div>
+          </div>
+          <div class="fg">
+            <label class="f-label">Final Sales Price (₦) <span class="f-req">*</span></label>
+            <div class="price-wrap"><span class="price-prefix">₦</span><input id="b-final-price" type="number" class="f-input" placeholder="e.g. 5800" oninput="updatePriceSummary()"></div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:3px">What students pay</div>
+          </div>
+        </div>
+        <div class="price-summary-box" id="price-summary-box">
+          Enter amounts above to see pricing breakdown.
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn publish" onclick="confirmPublish()">🚀 Publish to Storefront</button>
+      <button class="modal-btn reject" onclick="switchToReturn()">Return to Press</button>
+      <button class="modal-btn cancel" onclick="closeModal('publish-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RETURN MODAL -->
+<div class="modal-overlay" id="return-modal">
+  <div class="modal small-modal">
+    <div class="modal-head"><div class="modal-title">Return to Press</div><button class="modal-close" onclick="closeModal('return-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="press-info-card" id="rm-info"></div>
+      <div class="fg"><label class="f-label">Reason <span class="f-req">*</span></label><textarea id="rm-notes" class="f-input" rows="4" placeholder="Explain what needs correcting…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn reject" onclick="confirmReturn()">Return to Press</button>
+      <button class="modal-btn cancel" onclick="closeModal('return-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script>
+let currentView='dashboard', activePubId=null;
+
+function navigate(view, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const titles={dashboard:'Bookshop Dashboard',inbox:'Press Approvals Inbox',storefront:'Storefront',revenue:'Sales & Revenue'};
+  document.getElementById('page-title').textContent=titles[view]||'Bookshop';
+  currentView=view; renderView(view);
+}
+
+function renderView(v) {
+  if(v==='dashboard') renderDashboard();
+  if(v==='inbox') renderInbox();
+  if(v==='storefront') renderStorefront();
+  if(v==='revenue') renderRevenue();
+  updateBadges();
+}
+
+function updateBadges() {
+  const n = DB.getPublications().filter(p=>p.status==='press_approved').length;
+  document.getElementById('nav-inbox-count').textContent=n;
+  document.getElementById('topbar-pending').textContent=n+' Pending';
+}
+
+function renderDashboard() {
+  const all=DB.getPublications();
+  const inbox=all.filter(p=>p.status==='press_approved');
+  const live=all.filter(p=>p.status==='bookshop_live');
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Awaiting Publish</div><div class="kpi-value" style="color:var(--warm-gold)">${inbox.length}</div><div class="kpi-note">From Press inbox</div></div>
+    <div class="kpi"><div class="kpi-label">Live on Storefront</div><div class="kpi-value" style="color:var(--sage)">${live.length}</div><div class="kpi-note">Active listings</div></div>
+    <div class="kpi"><div class="kpi-label">All Publications</div><div class="kpi-value">${all.length}</div><div class="kpi-note">Total in system</div></div>
+  `;
+  const wrap=document.getElementById('dash-inbox-wrap');
+  wrap.innerHTML=inbox.length===0
+    ?'<div class="empty">No press approvals waiting. Submissions flow: Author → Press → here.</div>'
+    :buildInboxTable(inbox.slice(0,4));
+  const acts=all.slice().reverse().slice(0,5);
+  const colors={author_pending:'#c8962a',press_review:'#60a8e0',press_approved:'#c8962a',bookshop_live:'var(--sage)',rejected:'var(--red)'};
+  document.getElementById('dash-activity').innerHTML=acts.length===0?'<div class="empty">No activity yet.</div>':acts.map(p=>`
+    <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--cream);">
+      <div style="width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0;background:${colors[p.status]||'var(--muted)'}"></div>
+      <div><div style="font-size:.76rem;color:var(--slate)"><strong style="color:var(--ink)">${p.title.slice(0,32)}…</strong></div>
+      <div style="font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace">${DB.statusLabel(p.status)} · ${DB.timeAgo(p.submittedAt)}</div></div>
+    </div>`).join('');
+}
+
+function renderInbox() {
+  const inbox=DB.getPublications().filter(p=>p.status==='press_approved');
+  document.getElementById('inbox-count').textContent=`${inbox.length} awaiting action`;
+  document.getElementById('inbox-wrap').innerHTML=inbox.length===0
+    ?'<div class="empty">No publications waiting. When Press approves a publication it appears here.</div>'
+    :buildInboxTable(inbox);
+}
+
+function buildInboxTable(pubs) {
+  return `<table class="tbl">
+    <thead><tr><th>Title</th><th>Author</th><th>Format</th><th>Author Amt</th><th>Press Amt</th><th>Approved</th><th>Action</th></tr></thead>
+    <tbody>${pubs.map(p=>`<tr>
+      <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'ISBN pending'} · ${p.faculty}</div></td>
+      <td>${p.author}</td>
+      <td>${p.format||'—'}</td>
+      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.pressReviewedAt)}</td>
+      <td><div class="btn-group">
+        <button class="btn publish" onclick="openPublish('${p.id}')">Complete & Publish</button>
+        <button class="btn reject" onclick="openReturn('${p.id}')">Return</button>
+      </div></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderStorefront() {
+  const live=DB.getPublications().filter(p=>p.status==='bookshop_live');
+  const wrap=document.getElementById('storefront-wrap');
+  if(!live.length){wrap.innerHTML='<div class="empty">No live listings yet. Publish books from Press Approvals Inbox.</div>';return;}
+  wrap.innerHTML=`<table class="tbl">
+    <thead><tr><th>Title</th><th>Author</th><th>Language</th><th>Genre</th><th>Author Amt</th><th>Press Amt</th><th>BS Amt</th><th>Final Price</th><th>Status</th></tr></thead>
+    <tbody>${live.map(p=>`<tr>
+      <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'—'}</div></td>
+      <td>${p.author}</td>
+      <td>${p.language||'—'}</td>
+      <td>${p.genre||'—'}</td>
+      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--blue)">${p.bookshop_amount?'₦'+Number(p.bookshop_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="font-weight:700;color:var(--ink)">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
+      <td><span class="badge b-live">Live</span></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderRevenue() {
+  const live=DB.getPublications().filter(p=>p.status==='bookshop_live');
+  document.getElementById('rev-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Live Titles</div><div class="kpi-value">${live.length}</div><div class="kpi-note">On storefront</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Final Price</div><div class="kpi-value">${live.length?'₦'+Math.floor(live.reduce((s,p)=>s+(Number(p.final_sales_price)||0),0)/live.length).toLocaleString():'—'}</div><div class="kpi-note">Per title</div></div>
+    <div class="kpi"><div class="kpi-label">Avg BS Amount</div><div class="kpi-value">${live.length?'₦'+Math.floor(live.reduce((s,p)=>s+(Number(p.bookshop_amount)||0),0)/live.length).toLocaleString():'—'}</div><div class="kpi-note">Bookshop avg fee</div></div>
+  `;
+  const wrap=document.getElementById('rev-wrap');
+  if(!live.length){wrap.innerHTML='<div class="empty">No live titles yet.</div>';return;}
+  wrap.innerHTML=`<table class="tbl">
+    <thead><tr><th>Title</th><th>Author</th><th>Author Amt</th><th>Press Amt</th><th>Bookshop Amt</th><th>Final Price</th><th>Format</th><th>Published</th></tr></thead>
+    <tbody>${live.map(p=>`<tr>
+      <td class="bold">${p.title}</td>
+      <td>${p.author}</td>
+      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--blue)">${p.bookshop_amount?'₦'+Number(p.bookshop_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="font-weight:700">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
+      <td>${p.format||'—'}</td>
+      <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.publishedAt)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ── PUBLISH MODAL ──
+function openPublish(id) {
+  activePubId=id;
+  const p=DB.getPub(id);
+  document.getElementById('pm-press-info').innerHTML=`
+    <strong>${p.title}</strong>${p.subtitle?' — '+p.subtitle:''}<br>
+    Author: <strong>${p.author}</strong> · Faculty: ${p.press_faculty||p.faculty} · ${p.press_department||p.department||''}<br>
+    Format: ${p.format||'—'} · Pages: ${p.total_num_pages||'—'} · DRM: ${p.drm?'Yes':'No'} · Edition: ${p.edition||'—'}<br>
+    Publisher: ${p.publisher||'—'} · Date: ${p.publication_date||'—'} · ISBN: ${p.isbn||'—'}<br>
+    ${p.pressNotes?'<em>Press notes: '+p.pressNotes+'</em><br>':''}
+    <div class="press-info-grid">
+      <div class="press-info-item"><div class="pil">Author Amount</div><div class="piv" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</div></div>
+      <div class="press-info-item"><div class="pil">Press Amount</div><div class="piv" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</div></div>
+      <div class="press-info-item"><div class="pil">Subtotal (before BS)</div><div class="piv">${(p.author_amount&&p.press_amount)?'₦'+((Number(p.author_amount)+Number(p.press_amount)).toLocaleString()):'—'}</div></div>
+    </div>
+  `;
+  // Prefill if previously saved
+  document.getElementById('b-catalog-id').value=p.bookshop_catalog_id||'';
+  document.getElementById('b-language').value=p.language||'';
+  document.getElementById('b-keywords').value=p.bs_keywords||'';
+  document.getElementById('b-identifiers').value=p.identifiers||'';
+  document.getElementById('b-genre').value=p.genre||'';
+  document.getElementById('b-categories').value=p.categories||'';
+  document.getElementById('b-age-range').value=p.age_range||'';
+  document.getElementById('b-reading-level').value=p.reading_level||'';
+  document.getElementById('b-rights').value=p.rights||'';
+  document.getElementById('b-review-quotes').value=p.review_quotes||'';
+  document.getElementById('b-awards').value=p.awards||'';
+  document.getElementById('b-bs-amount').value=p.bookshop_amount||'';
+  document.getElementById('b-final-price').value=p.final_sales_price||'';
+  updatePriceSummary(p.author_amount, p.press_amount);
+  openModal('publish-modal');
+}
+
+function updatePriceSummary(authorAmt, pressAmt) {
+  const p=DB.getPub(activePubId);
+  const aAmt=Number(authorAmt||(p?p.author_amount:0))||0;
+  const pAmt=Number(pressAmt||(p?p.press_amount:0))||0;
+  const bAmt=Number(document.getElementById('b-bs-amount').value)||0;
+  const final=Number(document.getElementById('b-final-price').value)||0;
+  const subtotal=aAmt+pAmt+bAmt;
+  const margin=final>0&&subtotal>0?((final-subtotal)/final*100).toFixed(1):0;
+  document.getElementById('price-summary-box').innerHTML=`
+    <div class="ps-row"><span class="ps-label">Author Amount</span><span class="ps-val" style="color:var(--green)">₦${aAmt.toLocaleString()}</span></div>
+    <div class="ps-row"><span class="ps-label">Press Amount</span><span class="ps-val" style="color:var(--warm-gold)">₦${pAmt.toLocaleString()}</span></div>
+    <div class="ps-row"><span class="ps-label">Bookshop Amount</span><span class="ps-val" style="color:var(--blue)">₦${bAmt.toLocaleString()}</span></div>
+    <div class="ps-row total"><span class="ps-label">Final Sales Price</span><span class="ps-val" style="color:var(--ink);font-size:1rem">₦${final.toLocaleString()}</span></div>
+    ${final>0?`<div style="margin-top:6px;font-size:.72rem;color:var(--muted)">Subtotal cost: ₦${subtotal.toLocaleString()} · Margin: ${margin}%</div>`:''}
+  `;
+}
+
+function confirmPublish() {
+  const required=[['b-catalog-id','Bookshop Catalog ID'],['b-language','Language'],['b-genre','Genre'],['b-bs-amount','Bookshop Amount'],['b-final-price','Final Sales Price']];
+  for(const [id,label] of required){
+    if(!document.getElementById(id).value.trim()){showToast(`${label} is required`,'err');return;}
+  }
+  DB.bookshopPublish(activePubId,{
+    bookshop_catalog_id:document.getElementById('b-catalog-id').value.trim(),
+    language:document.getElementById('b-language').value,
+    bs_keywords:document.getElementById('b-keywords').value.trim(),
+    identifiers:document.getElementById('b-identifiers').value.trim(),
+    genre:document.getElementById('b-genre').value,
+    categories:document.getElementById('b-categories').value.trim(),
+    age_range:document.getElementById('b-age-range').value,
+    reading_level:document.getElementById('b-reading-level').value,
+    rights:document.getElementById('b-rights').value.trim(),
+    review_quotes:document.getElementById('b-review-quotes').value.trim(),
+    awards:document.getElementById('b-awards').value.trim(),
+    bookshop_amount:Number(document.getElementById('b-bs-amount').value),
+    final_sales_price:Number(document.getElementById('b-final-price').value),
+    bookshopNotes:'',
+  });
+  closeModal('publish-modal');
+  showToast('Published to storefront!','gold');
+  renderView(currentView);
+}
+
+function switchToReturn(){closeModal('publish-modal');openReturn(activePubId);}
+
+function openReturn(id){
+  activePubId=id;
+  const p=DB.getPub(id);
+  document.getElementById('rm-info').innerHTML=`<strong>${p.title}</strong> by ${p.author}`;
+  document.getElementById('rm-notes').value='';
+  openModal('return-modal');
+}
+
+function confirmReturn(){
+  const notes=document.getElementById('rm-notes').value.trim();
+  if(!notes){showToast('Please provide a reason','err');return;}
+  DB.bookshopReject(activePubId, notes);
+  closeModal('return-modal');
+  showToast('Returned to Press for revision');
+  renderView(currentView);
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+function showToast(msg,style='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=(style==='gold'?'🚀 ':style==='err'?'⚠ ':'✓ ')+msg;
+  t.className='toast show '+style;
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function toggleTheme(){const d=document.documentElement;d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'light':'dark');}
+
+renderDashboard();
+updateBadges();
+</script>
+</body>
+</html>
