@@ -157,7 +157,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="brand">Press<br>Bookshop</div><div class="brand-sub">Retailer Portal</div></div>
+  <div class="sidebar-logo"><div class="brand">Bookshop</div><div class="brand-sub">Retailer Portal</div></div>
   <div class="sidebar-role"><div class="role-label">Active Role</div><div class="role-name">📚 Bookshop Administrator</div></div>
   <nav class="sidebar-nav">
     <div class="nav-section">Overview</div>
@@ -518,7 +518,7 @@ function buildInboxTable(pubs) {
       <td class="mono" style="color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
       <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.pressReviewedAt)}</td>
       <td><div class="btn-group">
-        <button class="btn publish" onclick="openPublish('${p.id}')">Complete & Publish</button>
+        <button class="btn publish" onclick="openPublish('${p.id}')">Approve for Sale</button>
         <button class="btn reject" onclick="openReturn('${p.id}')">Return</button>
       </div></td>
     </tr>`).join('')}</tbody></table>`;
