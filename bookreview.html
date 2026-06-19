@@ -80,7 +80,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .btn.reject:hover{background:var(--red);color:#fff;}
 .btn-group{display:flex;gap:6px;flex-wrap:wrap;}
 
-/* ── BIG BOOKSHOP MODAL ── */
+/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:900;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--card-bg);border:1px solid var(--border);border-radius:4px;width:820px;max-width:98vw;box-shadow:var(--shadow-lg);}
@@ -89,7 +89,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .modal-close{background:var(--cream);border:none;color:var(--muted);cursor:pointer;font-size:15px;width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;}
 .modal-body{padding:22px 24px;}
 
-/* Press info card at top of modal */
 .press-info-card{background:var(--cream);border:1px solid var(--border);padding:16px 18px;margin-bottom:22px;font-size:.8rem;color:var(--slate);line-height:1.7;}
 .press-info-card strong{color:var(--ink);}
 .press-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;}
@@ -107,6 +106,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .f-input{width:100%;background:var(--cream);border:1px solid var(--border);padding:9px 13px;font-size:.8rem;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none;border-radius:2px;resize:none;transition:border-color .15s;}
 .f-input:focus{border-color:var(--warm-gold);}
 .f-input::placeholder{color:var(--muted);}
+.f-input.error{border-color:var(--red) !important;background:#fff5f5;}
+[data-theme="dark"] .f-input.error{background:#1e0a0a;}
+.f-error-msg{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--red);margin-top:4px;display:none;}
+.f-error-msg.show{display:block;}
+
+/* ── KEYWORD TAG INPUT (bookshop) ── */
+.keyword-input-wrap{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:2px;padding:7px 10px;cursor:text;min-height:40px;
+  transition:border-color .15s;
+}
+.keyword-input-wrap:focus-within{border-color:var(--warm-gold);}
+.keyword-input-wrap.error{border-color:var(--red) !important;}
+.kw-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(200,150,42,.12);border:1px solid rgba(200,150,42,.3);color:var(--warm-gold);border-radius:20px;padding:3px 10px;font-size:.68rem;font-family:'DM Mono',monospace;white-space:nowrap;}
+.kw-tag-x{cursor:pointer;opacity:.7;font-size:13px;line-height:1;transition:opacity .1s;}
+.kw-tag-x:hover{opacity:1;}
+.kw-bare-input{border:none;outline:none;background:transparent;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.8rem;min-width:120px;flex:1;}
+.kw-bare-input::placeholder{color:var(--muted);}
+
 .price-wrap{position:relative;}
 .price-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;}
 .price-wrap .f-input{padding-left:24px;}
@@ -122,7 +141,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .modal-btn.reject{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;} .modal-btn.reject:hover{background:var(--red);color:#fff;}
 .modal-btn.cancel{background:var(--cream);color:var(--slate);border:1px solid var(--border);}
 
-/* small reject modal */
 .small-modal{max-width:460px;}
 
 .toast{position:fixed;bottom:28px;right:28px;padding:12px 20px;border-radius:3px;font-size:.82rem;font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:999;display:flex;align-items:center;gap:8px;}
@@ -213,24 +231,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
   </div>
 </div>
 
-<!-- PUBLISH MODAL (full bookshop metadata form) -->
+<!-- PUBLISH MODAL -->
 <div class="modal-overlay" id="publish-modal">
   <div class="modal">
     <div class="modal-head">
-      <div class="modal-title">Complete Metadata & Publish to storefront</div>
+      <div class="modal-title">Complete Metadata & Publish to Storefront</div>
       <button class="modal-close" onclick="closeModal('publish-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <!-- Press/Author info summary -->
       <div class="press-info-card" id="pm-press-info"></div>
 
-      <!-- SECTION: Bookshop Catalog -->
+      <!-- Bookshop Catalog -->
       <div class="modal-section">
         <div class="modal-section-title">🏪 Bookshop Catalog</div>
         <div class="fg-grid">
-          <div class="fg"><label class="f-label">Bookshop Catalog ID <span class="f-req">*</span></label><input id="b-catalog-id" class="f-input" placeholder="e.g. BSH-2026-0041"></div>
-          <div class="fg"><label class="f-label">Language <span class="f-req">*</span></label>
-            <select id="b-language" class="f-input">
+          <div class="fg">
+            <label class="f-label">Bookshop Catalog ID <span class="f-req">*</span></label>
+            <input id="b-catalog-id" class="f-input" placeholder="e.g. BSH-2026-0041" oninput="clearError('b-catalog-id')">
+            <div class="f-error-msg" id="err-b-catalog-id">Catalog ID is required</div>
+          </div>
+          <div class="fg">
+            <label class="f-label">Language <span class="f-req">*</span></label>
+            <select id="b-language" class="f-input" onchange="clearError('b-language')">
               <option value="">Select language…</option>
               <option value="English">English</option>
               <option value="French">French</option>
@@ -241,18 +263,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
               <option value="Portuguese">Portuguese</option>
               <option value="Arabic">Arabic</option>
             </select>
+            <div class="f-error-msg" id="err-b-language">Language is required</div>
           </div>
         </div>
-        <div class="fg"><label class="f-label">Keywords (for search)</label><input id="b-keywords" class="f-input" placeholder="education, Africa, digital, pedagogy…"></div>
-        <div class="fg"><label class="f-label">Identifiers</label><input id="b-identifiers" class="f-input" placeholder="DOI, ISSN, OCLC, WorldCat ID…"></div>
+
+        <!-- KEYWORD TAG INPUT -->
+        <div class="fg">
+          <label class="f-label">Keywords (for search)</label>
+          <div class="keyword-input-wrap" id="b-kw-wrap" onclick="document.getElementById('b-kw-input').focus()">
+            <div id="b-kw-tags" style="display:contents;"></div>
+            <input id="b-kw-input" class="kw-bare-input" placeholder="Type and press Enter or comma…">
+          </div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Press Enter or comma after each keyword</div>
+        </div>
+
+        <div class="fg">
+          <label class="f-label">Identifiers</label>
+          <input id="b-identifiers" class="f-input" placeholder="DOI, ISSN, OCLC, WorldCat ID…">
+        </div>
       </div>
 
-      <!-- SECTION: Classification -->
+      <!-- Classification -->
       <div class="modal-section">
         <div class="modal-section-title">📂 Classification</div>
         <div class="fg-grid">
-          <div class="fg"><label class="f-label">Genre <span class="f-req">*</span></label>
-            <select id="b-genre" class="f-input">
+          <div class="fg">
+            <label class="f-label">Genre <span class="f-req">*</span></label>
+            <select id="b-genre" class="f-input" onchange="clearError('b-genre')">
               <option value="">Select genre…</option>
               <option>Academic / Scholarly</option>
               <option>Textbook</option>
@@ -261,9 +298,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
               <option>Professional</option>
               <option>Open Educational Resource</option>
             </select>
+            <div class="f-error-msg" id="err-b-genre">Genre is required</div>
           </div>
-          <div class="fg"><label class="f-label">Categories</label><input id="b-categories" class="f-input" placeholder="e.g. Education > Higher Education > Africa"></div>
-          <div class="fg"><label class="f-label">Age Range</label>
+          <div class="fg">
+            <label class="f-label">Categories</label>
+            <input id="b-categories" class="f-input" placeholder="e.g. Education > Higher Education > Africa">
+          </div>
+          <div class="fg">
+            <label class="f-label">Age Range</label>
             <select id="b-age-range" class="f-input">
               <option value="">Select age range…</option>
               <option>18+</option>
@@ -273,7 +315,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
               <option>Postgraduate</option>
             </select>
           </div>
-          <div class="fg"><label class="f-label">Reading Level</label>
+          <div class="fg">
+            <label class="f-label">Reading Level</label>
             <select id="b-reading-level" class="f-input">
               <option value="">Select level…</option>
               <option>Undergraduate</option>
@@ -286,34 +329,49 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         </div>
       </div>
 
-      <!-- SECTION: Rights & Recognition -->
+      <!-- Rights & Recognition -->
       <div class="modal-section">
         <div class="modal-section-title">⚖️ Rights & Recognition</div>
-        <div class="fg"><label class="f-label">Rights / Licensing</label><input id="b-rights" class="f-input" placeholder="e.g. © 2026 University Press. All rights reserved. CC BY-NC 4.0"></div>
+        <div class="fg">
+          <label class="f-label">Rights / Licensing</label>
+          <input id="b-rights" class="f-input" placeholder="e.g. © 2026 University Press. All rights reserved. CC BY-NC 4.0">
+        </div>
         <div class="fg-grid" style="margin-top:12px">
-          <div class="fg"><label class="f-label">Review Quotes</label><textarea id="b-review-quotes" class="f-input" rows="3" placeholder='"A landmark work…" — Prof. X, University Y'></textarea></div>
-          <div class="fg"><label class="f-label">Awards & Recognition</label><textarea id="b-awards" class="f-input" rows="3" placeholder="Best Book Award 2026, NULP Prize…"></textarea></div>
+          <div class="fg">
+            <label class="f-label">Review Quotes</label>
+            <textarea id="b-review-quotes" class="f-input" rows="3" placeholder='"A landmark work…" — Prof. X, University Y'></textarea>
+          </div>
+          <div class="fg">
+            <label class="f-label">Awards & Recognition</label>
+            <textarea id="b-awards" class="f-input" rows="3" placeholder="Best Book Award 2026, NULP Prize…"></textarea>
+          </div>
         </div>
       </div>
 
-      <!-- SECTION: Pricing -->
+      <!-- Pricing -->
       <div class="modal-section">
         <div class="modal-section-title">💰 Bookshop Pricing</div>
         <div class="fg-grid">
           <div class="fg">
             <label class="f-label">Bookshop Amount (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap"><span class="price-prefix">₦</span><input id="b-bs-amount" type="number" class="f-input" placeholder="e.g. 800" oninput="updatePriceSummary()"></div>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="b-bs-amount" type="number" class="f-input" placeholder="e.g. 800" oninput="updatePriceSummary();clearError('b-bs-amount')">
+            </div>
+            <div class="f-error-msg" id="err-b-bs-amount">Bookshop amount is required</div>
             <div style="font-size:.7rem;color:var(--muted);margin-top:3px">Bookshop fee per sale</div>
           </div>
           <div class="fg">
             <label class="f-label">Final Sales Price (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap"><span class="price-prefix">₦</span><input id="b-final-price" type="number" class="f-input" placeholder="e.g. 5800" oninput="updatePriceSummary()"></div>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="b-final-price" type="number" class="f-input" placeholder="e.g. 5800" oninput="updatePriceSummary();clearError('b-final-price')">
+            </div>
+            <div class="f-error-msg" id="err-b-final-price">Final sales price is required</div>
             <div style="font-size:.7rem;color:var(--muted);margin-top:3px">What students pay</div>
           </div>
         </div>
-        <div class="price-summary-box" id="price-summary-box">
-          Enter amounts above to see pricing breakdown.
-        </div>
+        <div class="price-summary-box" id="price-summary-box">Enter amounts above to see pricing breakdown.</div>
       </div>
 
     </div>
@@ -331,7 +389,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
     <div class="modal-head"><div class="modal-title">Return to Press</div><button class="modal-close" onclick="closeModal('return-modal')">✕</button></div>
     <div class="modal-body">
       <div class="press-info-card" id="rm-info"></div>
-      <div class="fg"><label class="f-label">Reason <span class="f-req">*</span></label><textarea id="rm-notes" class="f-input" rows="4" placeholder="Explain what needs correcting…"></textarea></div>
+      <div class="fg">
+        <label class="f-label">Reason <span class="f-req">*</span></label>
+        <textarea id="rm-notes" class="f-input" rows="4" placeholder="Explain what needs correcting…" oninput="clearError('rm-notes')"></textarea>
+        <div class="f-error-msg" id="err-rm-notes">Please provide a reason</div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="modal-btn reject" onclick="confirmReturn()">Return to Press</button>
@@ -346,6 +408,49 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 <script>
 let currentView='dashboard', activePubId=null;
 
+// ── KEYWORD TAG SYSTEM ──
+let bsKeywords = [];
+
+document.getElementById('b-kw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = this.value.replace(/,/g,'').trim();
+    if (val && !bsKeywords.includes(val)) {
+      bsKeywords.push(val);
+      renderBsKeywords();
+    }
+    this.value = '';
+  } else if (e.key === 'Backspace' && this.value === '' && bsKeywords.length) {
+    bsKeywords.pop();
+    renderBsKeywords();
+  }
+});
+
+function renderBsKeywords() {
+  document.getElementById('b-kw-tags').innerHTML = bsKeywords.map((kw,i) => `
+    <span class="kw-tag">
+      ${kw}
+      <span class="kw-tag-x" onclick="removeBsKeyword(${i})">×</span>
+    </span>
+  `).join('');
+}
+
+function removeBsKeyword(i) {
+  bsKeywords.splice(i,1);
+  renderBsKeywords();
+}
+
+// ── ERROR HELPERS ──
+function setError(fieldId, show) {
+  const el = document.getElementById(fieldId);
+  const err = document.getElementById('err-' + fieldId);
+  if (!el) return;
+  el.classList.toggle('error', show);
+  if (err) err.classList.toggle('show', show);
+}
+function clearError(fieldId) { setError(fieldId, false); }
+
+// ── NAVIGATION ──
 function navigate(view, btn) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
@@ -403,13 +508,14 @@ function renderInbox() {
 
 function buildInboxTable(pubs) {
   return `<table class="tbl">
-    <thead><tr><th>Title</th><th>Author</th><th>Format</th><th>Author Amt</th><th>Press Amt</th><th>Approved</th><th>Action</th></tr></thead>
+    <thead><tr><th>Title</th><th>Author</th><th>Format</th><th>Author Amt</th><th>Press Amt</th><th>Accumulated</th><th>Approved</th><th>Action</th></tr></thead>
     <tbody>${pubs.map(p=>`<tr>
       <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'ISBN pending'} · ${p.faculty}</div></td>
       <td>${p.author}</td>
       <td>${p.format||'—'}</td>
       <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
       <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
       <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.pressReviewedAt)}</td>
       <td><div class="btn-group">
         <button class="btn publish" onclick="openPublish('${p.id}')">Complete & Publish</button>
@@ -463,7 +569,9 @@ function renderRevenue() {
 // ── PUBLISH MODAL ──
 function openPublish(id) {
   activePubId=id;
+  bsKeywords=[];
   const p=DB.getPub(id);
+
   document.getElementById('pm-press-info').innerHTML=`
     <strong>${p.title}</strong>${p.subtitle?' — '+p.subtitle:''}<br>
     Author: <strong>${p.author}</strong> · Faculty: ${p.press_faculty||p.faculty} · ${p.press_department||p.department||''}<br>
@@ -473,13 +581,13 @@ function openPublish(id) {
     <div class="press-info-grid">
       <div class="press-info-item"><div class="pil">Author Amount</div><div class="piv" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</div></div>
       <div class="press-info-item"><div class="pil">Press Amount</div><div class="piv" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</div></div>
-      <div class="press-info-item"><div class="pil">Subtotal (before BS)</div><div class="piv">${(p.author_amount&&p.press_amount)?'₦'+((Number(p.author_amount)+Number(p.press_amount)).toLocaleString()):'—'}</div></div>
+      <div class="press-info-item"><div class="pil">Accumulated (excl. Bookshop)</div><div class="piv" style="color:var(--blue)">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</div></div>
     </div>
   `;
-  // Prefill if previously saved
+
+  // Prefill fields
   document.getElementById('b-catalog-id').value=p.bookshop_catalog_id||'';
   document.getElementById('b-language').value=p.language||'';
-  document.getElementById('b-keywords').value=p.bs_keywords||'';
   document.getElementById('b-identifiers').value=p.identifiers||'';
   document.getElementById('b-genre').value=p.genre||'';
   document.getElementById('b-categories').value=p.categories||'';
@@ -490,14 +598,27 @@ function openPublish(id) {
   document.getElementById('b-awards').value=p.awards||'';
   document.getElementById('b-bs-amount').value=p.bookshop_amount||'';
   document.getElementById('b-final-price').value=p.final_sales_price||'';
-  updatePriceSummary(p.author_amount, p.press_amount);
+
+  // Restore saved keywords
+  if (p.bs_keywords) {
+    bsKeywords = p.bs_keywords.split(',').map(k=>k.trim()).filter(Boolean);
+    renderBsKeywords();
+  } else {
+    renderBsKeywords();
+  }
+
+  // Clear all previous errors
+  ['b-catalog-id','b-language','b-genre','b-bs-amount','b-final-price'].forEach(id => clearError(id));
+
+  updatePriceSummary();
   openModal('publish-modal');
 }
 
-function updatePriceSummary(authorAmt, pressAmt) {
+function updatePriceSummary() {
+  if (!activePubId) return;
   const p=DB.getPub(activePubId);
-  const aAmt=Number(authorAmt||(p?p.author_amount:0))||0;
-  const pAmt=Number(pressAmt||(p?p.press_amount:0))||0;
+  const aAmt=Number(p?p.author_amount:0)||0;
+  const pAmt=Number(p?p.press_amount:0)||0;
   const bAmt=Number(document.getElementById('b-bs-amount').value)||0;
   const final=Number(document.getElementById('b-final-price').value)||0;
   const subtotal=aAmt+pAmt+bAmt;
@@ -512,25 +633,48 @@ function updatePriceSummary(authorAmt, pressAmt) {
 }
 
 function confirmPublish() {
-  const required=[['b-catalog-id','Bookshop Catalog ID'],['b-language','Language'],['b-genre','Genre'],['b-bs-amount','Bookshop Amount'],['b-final-price','Final Sales Price']];
-  for(const [id,label] of required){
-    if(!document.getElementById(id).value.trim()){showToast(`${label} is required`,'err');return;}
+  // Validate required fields with inline errors
+  const required = [
+    ['b-catalog-id', 'Catalog ID is required'],
+    ['b-language',   'Language is required'],
+    ['b-genre',      'Genre is required'],
+    ['b-bs-amount',  'Bookshop amount is required'],
+    ['b-final-price','Final sales price is required'],
+  ];
+  let hasError = false;
+  for (const [id, msg] of required) {
+    const val = document.getElementById(id).value.trim();
+    if (!val) {
+      setError(id, true);
+      // update the error message text too
+      const errEl = document.getElementById('err-' + id);
+      if (errEl) errEl.textContent = msg;
+      hasError = true;
+    }
   }
+  if (hasError) {
+    showToast('Please fill all required fields', 'err');
+    // Scroll to first error
+    const firstErr = document.querySelector('.f-input.error, select.error');
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
   DB.bookshopPublish(activePubId,{
-    bookshop_catalog_id:document.getElementById('b-catalog-id').value.trim(),
-    language:document.getElementById('b-language').value,
-    bs_keywords:document.getElementById('b-keywords').value.trim(),
-    identifiers:document.getElementById('b-identifiers').value.trim(),
-    genre:document.getElementById('b-genre').value,
-    categories:document.getElementById('b-categories').value.trim(),
-    age_range:document.getElementById('b-age-range').value,
-    reading_level:document.getElementById('b-reading-level').value,
-    rights:document.getElementById('b-rights').value.trim(),
-    review_quotes:document.getElementById('b-review-quotes').value.trim(),
-    awards:document.getElementById('b-awards').value.trim(),
-    bookshop_amount:Number(document.getElementById('b-bs-amount').value),
-    final_sales_price:Number(document.getElementById('b-final-price').value),
-    bookshopNotes:'',
+    bookshop_catalog_id: document.getElementById('b-catalog-id').value.trim(),
+    language:            document.getElementById('b-language').value,
+    bs_keywords:         bsKeywords.join(', '),
+    identifiers:         document.getElementById('b-identifiers').value.trim(),
+    genre:               document.getElementById('b-genre').value,
+    categories:          document.getElementById('b-categories').value.trim(),
+    age_range:           document.getElementById('b-age-range').value,
+    reading_level:       document.getElementById('b-reading-level').value,
+    rights:              document.getElementById('b-rights').value.trim(),
+    review_quotes:       document.getElementById('b-review-quotes').value.trim(),
+    awards:              document.getElementById('b-awards').value.trim(),
+    bookshop_amount:     Number(document.getElementById('b-bs-amount').value),
+    final_sales_price:   Number(document.getElementById('b-final-price').value),
+    bookshopNotes: '',
   });
   closeModal('publish-modal');
   showToast('Published to storefront!','gold');
@@ -544,12 +688,16 @@ function openReturn(id){
   const p=DB.getPub(id);
   document.getElementById('rm-info').innerHTML=`<strong>${p.title}</strong> by ${p.author}`;
   document.getElementById('rm-notes').value='';
+  clearError('rm-notes');
   openModal('return-modal');
 }
 
 function confirmReturn(){
   const notes=document.getElementById('rm-notes').value.trim();
-  if(!notes){showToast('Please provide a reason','err');return;}
+  if(!notes){
+    setError('rm-notes', true);
+    return;
+  }
   DB.bookshopReject(activePubId, notes);
   closeModal('return-modal');
   showToast('Returned to Press for revision');
