@@ -68,7 +68,7 @@ nav{flex:1;padding:12px 10px;}
 .btn.accent{background:var(--accent-dim);color:var(--accent);border-color:rgba(232,184,75,.3);} .btn.accent:hover{background:var(--accent);color:#0c0e10;}
 .btn-group{display:flex;gap:6px;flex-wrap:wrap;}
 
-/* ── BIG APPROVAL MODAL ── */
+/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:900;display:none;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:780px;max-width:98vw;box-shadow:0 24px 64px rgba(0,0,0,.45);}
@@ -90,6 +90,7 @@ nav{flex:1;padding:12px 10px;}
 .f-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--text);font-family:'Sora',sans-serif;outline:none;transition:border-color .15s;resize:none;width:100%;}
 .f-input:focus{border-color:var(--accent);}
 .f-input::placeholder{color:var(--text3);}
+.f-input[readonly]{opacity:.65;cursor:default;}
 .price-wrap{position:relative;}
 .price-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:12px;}
 .price-wrap .f-input{padding-left:26px;}
@@ -98,13 +99,24 @@ nav{flex:1;padding:12px 10px;}
 .toggle.on{background:var(--green);}
 .toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;}
 .toggle.on::after{left:21px;}
+
+/* ── PRICING SUMMARY CARD ── */
+.pricing-card{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid rgba(232,184,75,.25);border-radius:10px;overflow:hidden;margin-top:14px;}
+.pricing-card-col{padding:14px 16px;background:rgba(232,184,75,.04);}
+.pricing-card-col+.pricing-card-col{border-left:1px solid rgba(232,184,75,.15);}
+.pricing-card-col.total{background:rgba(232,184,75,.1);}
+.pricing-card-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.pricing-card-val{font-size:18px;font-weight:700;font-family:'Playfair Display',serif;}
+.pricing-card-note{font-size:10.5px;color:var(--text3);margin-top:3px;}
+.pricing-card-col.total .pricing-card-lbl{color:var(--accent);}
+.pricing-card-col.total .pricing-card-val{color:var(--accent);}
+
 .modal-footer{padding:18px 26px;border-top:1px solid var(--border);display:flex;gap:10px;position:sticky;bottom:0;background:var(--surface);border-radius:0 0 16px 16px;}
 .modal-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Sora',sans-serif;transition:all .15s;}
 .modal-btn.approve{background:var(--green);color:#0c0e10;} .modal-btn.approve:hover{background:#55e8a4;}
 .modal-btn.reject{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,100,114,.2);} .modal-btn.reject:hover{background:var(--red);color:#fff;}
 .modal-btn.cancel{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
 
-/* Reject modal */
 .reject-modal{max-width:480px;}
 .toast{position:fixed;bottom:28px;right:28px;background:var(--green);color:#0a1f12;padding:13px 20px;border-radius:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(61,214,140,.25);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:999;}
 .toast.show{transform:translateY(0);opacity:1;} .toast.err{background:var(--red);color:#fff;}
@@ -183,15 +195,14 @@ nav{flex:1;padding:12px 10px;}
   </div>
 </div>
 
-<!-- APPROVE MODAL (full press metadata form) -->
+<!-- APPROVE MODAL -->
 <div class="modal-overlay" id="approve-modal">
   <div class="modal">
     <div class="modal-head">
-      <div class="modal-title">Review & Approve Publication</div>
+      <div class="modal-title">Approve & Publish</div>
       <button class="modal-close" onclick="closeModal('approve-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <!-- Author submitted info -->
       <div class="modal-author-info" id="modal-author-info"></div>
 
       <!-- SECTION: Catalog & Identity -->
@@ -201,7 +212,19 @@ nav{flex:1;padding:12px 10px;}
           <div class="f-group"><label class="f-label">Press Catalog ID <span class="f-req">*</span></label><input id="p-catalog-id" class="f-input" placeholder="e.g. ULP-GEO-0091"></div>
           <div class="f-group"><label class="f-label">ISBN <span class="f-req">*</span></label><input id="p-isbn" class="f-input" placeholder="e.g. 978-000-1234"></div>
           <div class="f-group"><label class="f-label">Publisher <span class="f-req">*</span></label><input id="p-publisher" class="f-input" placeholder="e.g. University of Lagos Press"></div>
-          <div class="f-group"><label class="f-label">Edition</label><input id="p-edition" class="f-input" placeholder="e.g. 1st Edition"></div>
+          <div class="f-group">
+            <label class="f-label">Edition</label>
+            <select id="p-edition" class="f-input">
+              <option value="">— Select Edition —</option>
+              <option value="1st Edition">1st Edition</option>
+              <option value="2nd Edition">2nd Edition</option>
+              <option value="3rd Edition">3rd Edition</option>
+              <option value="4th Edition">4th Edition</option>
+              <option value="5th Edition">5th Edition</option>
+              <option value="6th Edition">6th Edition</option>
+              <option value="7th Edition">7th Edition</option>
+            </select>
+          </div>
           <div class="f-group"><label class="f-label">Publication Date <span class="f-req">*</span></label><input id="p-pub-date" type="date" class="f-input"></div>
           <div class="f-group"><label class="f-label">Original Publication Year</label><input id="p-original-pub" class="f-input" placeholder="e.g. 2026"></div>
         </div>
@@ -252,26 +275,69 @@ nav{flex:1;padding:12px 10px;}
 
       <!-- SECTION: Press Pricing -->
       <div class="modal-section">
-        <div class="modal-section-title">💰 Press Pricing</div>
+        <div class="modal-section-title">💰 Pricing — Author & Press Amounts</div>
+
         <div class="form-grid">
+          <!-- Author Amount (editable — press confirms or overrides) -->
+          <div class="f-group">
+            <label class="f-label">Author Amount (₦) <span class="f-req">*</span></label>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="p-author-amount" type="number" class="f-input" placeholder="e.g. 2800" oninput="updatePricingSummary()">
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px">Amount allocated to the author per sale</div>
+          </div>
+
+          <!-- Press Amount -->
           <div class="f-group">
             <label class="f-label">Press Amount (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap"><span class="price-prefix">₦</span><input id="p-press-amount" type="number" class="f-input" placeholder="e.g. 1500"></div>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="p-press-amount" type="number" class="f-input" placeholder="e.g. 1200" oninput="updatePricingSummary()">
+            </div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">Press fee per sale</div>
           </div>
+
+          <!-- Accumulated total (read-only, sent to bookshop) -->
+          <div class="f-group">
+            <label class="f-label">Accumulated Total (₦) — sent to Bookshop</label>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="p-accumulated" type="number" class="f-input" placeholder="Auto-calculated" readonly>
+            </div>
+            <div style="font-size:11px;color:var(--accent);margin-top:4px">Author + Press · Bookshop adds their margin on top</div>
+          </div>
+
+          <!-- Press Notes -->
           <div class="f-group">
             <label class="f-label">Press Notes</label>
             <textarea id="p-notes" class="f-input" rows="2" placeholder="Notes for bookshop or author…"></textarea>
           </div>
         </div>
-        <div style="background:rgba(232,184,75,.06);border:1px solid rgba(232,184,75,.2);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;color:var(--text3);" id="pricing-summary">
-          Set both amounts to see pricing breakdown.
+
+        <!-- Live pricing breakdown card -->
+        <div class="pricing-card" id="pricing-card">
+          <div class="pricing-card-col">
+            <div class="pricing-card-lbl">Author Amount</div>
+            <div class="pricing-card-val" id="pc-author" style="color:var(--green)">₦0</div>
+            <div class="pricing-card-note">Author's cut per sale</div>
+          </div>
+          <div class="pricing-card-col">
+            <div class="pricing-card-lbl">Press Amount</div>
+            <div class="pricing-card-val" id="pc-press" style="color:var(--accent)">₦0</div>
+            <div class="pricing-card-note">Press fee per sale</div>
+          </div>
+          <div class="pricing-card-col total">
+            <div class="pricing-card-lbl">Accumulated Total → Bookshop</div>
+            <div class="pricing-card-val" id="pc-total">₦0</div>
+            <div class="pricing-card-note">Bookshop adds their margin to set retail price</div>
+          </div>
         </div>
       </div>
 
     </div>
     <div class="modal-footer">
-      <button class="modal-btn approve" onclick="confirmApprove()">✓ Approve & Forward to Bookshop</button>
+      <button class="modal-btn approve" onclick="confirmApprove()">✓ Submit Approval</button>
       <button class="modal-btn reject" onclick="switchToReject()">Reject</button>
       <button class="modal-btn cancel" onclick="closeModal('approve-modal')">Cancel</button>
     </div>
@@ -334,7 +400,7 @@ function renderDashboard() {
   const review = all.filter(p=>p.status==='press_review').length;
   const approved = all.filter(p=>p.status==='press_approved'||p.status==='bookshop_live').length;
   document.getElementById('dash-stats').innerHTML = `
-    <div class="stat"><div class="stat-accent" style="background:var(--accent)"></div><div class="stat-lbl">Pending Approval</div><div class="stat-val" style="color:var(--accent)">${pending}</div><div class="stat-note">Awaiting press review</div></div>
+    <div class="stat"><div class="stat-accent" style="background:var(--accent)"></div><div class="stat-lbl">Pending Publisher Review</div><div class="stat-val" style="color:var(--accent)">${pending}</div><div class="stat-note">Awaiting press review</div></div>
     <div class="stat"><div class="stat-accent" style="background:var(--blue)"></div><div class="stat-lbl">Editorial Review</div><div class="stat-val" style="color:var(--blue)">${review}</div><div class="stat-note">Under review</div></div>
     <div class="stat"><div class="stat-accent" style="background:var(--green)"></div><div class="stat-lbl">Approved</div><div class="stat-val" style="color:var(--green)">${approved}</div><div class="stat-note">Sent to Bookshop</div></div>
   `;
@@ -356,29 +422,32 @@ function renderRemuneration() {
   const pubs = DB.getPublications().filter(p=>p.status!=='author_pending'&&p.status!=='rejected');
   document.getElementById('rem-table-wrap').innerHTML = pubs.length===0 ? '<div class="empty">No publications to show yet.</div>' : `
     <table class="tbl">
-      <thead><tr><th>Book</th><th>Author</th><th>Author Amt</th><th>Press Amt</th><th>Final Price</th><th>Status</th></tr></thead>
+      <thead><tr><th>Book</th><th>Author</th><th>Author Amt</th><th>Press Amt</th><th>Accumulated → Bookshop</th><th>Final Price</th><th>Status</th></tr></thead>
       <tbody>${pubs.map(p=>`<tr>
         <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'ISBN pending'}</div></td>
         <td>${p.author}</td>
         <td style="font-family:'JetBrains Mono',monospace;color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
         <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
-        <td style="font-family:'JetBrains Mono',monospace;color:var(--blue)">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--purple)">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
         <td><span class="badge b-${p.status}">${DB.statusLabel(p.status)}</span></td>
       </tr>`).join('')}</tbody>
     </table>
-    <div style="padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">ⓘ Final sales price is set by Bookshop after reviewing author and press amounts.</div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">ⓘ Accumulated total = Author Amount + Press Amount. Bookshop adds their margin to set the final retail price.</div>
   `;
 }
 
 function buildTable(pubs, showActions) {
   if (!pubs.length) return '<div class="empty">No submissions yet — author submissions appear here.</div>';
   return `<table class="tbl">
-    <thead><tr><th>Publication</th><th>Author</th><th>Access</th><th>Author Amt</th><th>Submitted</th><th>Status</th>${showActions?'<th>Actions</th>':''}</tr></thead>
+    <thead><tr><th>Publication</th><th>Author</th><th>Access</th><th>Author Amt</th><th>Press Amt</th><th>Accumulated</th><th>Submitted</th><th>Status</th>${showActions?'<th>Actions</th>':''}</tr></thead>
     <tbody>${pubs.map(p=>`<tr>
       <td><div class="bold">${p.title}</div><div class="sub">${p.isbn?'ISBN: '+p.isbn:'ISBN pending'} · ${p.faculty}</div></td>
       <td>${p.author}</td>
       <td style="font-size:12px">${p.accessModel}</td>
-      <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${DB.timeAgo(p.submittedAt)}</td>
       <td><span class="badge b-${p.status}">${DB.statusLabel(p.status)}</span></td>
       ${showActions?`<td>${buildActions(p)}</td>`:''}
@@ -401,14 +470,14 @@ function openApprove(id) {
   activePubId = id; drmEnabled = true;
   const p = DB.getPub(id);
   document.getElementById('modal-author-info').innerHTML = `
-    <strong>${p.title}</strong> ${p.subtitle?'— '+p.subtitle:''}<br>
+    <strong>${p.title}</strong>${p.subtitle?' — '+p.subtitle:''}<br>
     Author: <strong>${p.author}</strong> · Faculty: ${p.faculty} · Dept: ${p.department||'—'}<br>
     Access: ${p.accessModel} · Source Title: ${p.source_title||'—'}<br>
     Description: <em>${p.description.slice(0,200)}…</em><br>
-    Author Amount: <span class="price-highlight">₦${p.author_amount?Number(p.author_amount).toLocaleString():'Not set'}</span>
     ${p.pressNotes?'<br>Previous Press Notes: '+p.pressNotes:''}
   `;
-  // Prefill if previously filled
+
+  // Prefill fields
   document.getElementById('p-catalog-id').value = p.press_catalog_id||'';
   document.getElementById('p-isbn').value = p.isbn||'';
   document.getElementById('p-publisher').value = p.publisher||'University of Lagos Press';
@@ -423,29 +492,29 @@ function openApprove(id) {
   document.getElementById('p-file-size').value = p.file_size||'';
   document.getElementById('p-toc').value = p.table_of_content||'';
   document.getElementById('p-cover').value = p.cover_image||'';
+  // Pricing: prefill from what press previously set (blank on first open)
+  document.getElementById('p-author-amount').value = p.author_amount||'';
   document.getElementById('p-press-amount').value = p.press_amount||'';
   document.getElementById('p-notes').value = p.pressNotes||'';
+
   drmEnabled = p.drm !== false;
   const toggle = document.getElementById('p-drm-toggle');
   toggle.className = 'toggle' + (drmEnabled?' on':'');
   document.getElementById('p-drm-label').textContent = drmEnabled ? 'DRM Enabled' : 'DRM Disabled';
-  updatePricingSummary(p.author_amount);
-  // Listen for press amount changes
-  document.getElementById('p-press-amount').oninput = () => updatePricingSummary(p.author_amount);
+
+  updatePricingSummary();
   openModal('approve-modal');
 }
 
-function updatePricingSummary(authorAmt) {
-  const pressAmt = Number(document.getElementById('p-press-amount').value)||0;
-  const total = (Number(authorAmt)||0) + pressAmt;
-  document.getElementById('pricing-summary').innerHTML = `
-    <div style="display:flex;gap:24px;flex-wrap:wrap;">
-      <div><div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">Author Amount</div><div style="font-size:15px;font-weight:600;color:var(--green)">₦${Number(authorAmt||0).toLocaleString()}</div></div>
-      <div><div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">Press Amount</div><div style="font-size:15px;font-weight:600;color:var(--accent)">₦${pressAmt.toLocaleString()}</div></div>
-      <div><div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">Subtotal (excl. Bookshop)</div><div style="font-size:15px;font-weight:600;color:var(--blue)">₦${total.toLocaleString()}</div></div>
-    </div>
-    <div style="margin-top:8px;font-size:11px;color:var(--text3)">Bookshop will add their amount and set the final retail price.</div>
-  `;
+function updatePricingSummary() {
+  const authorAmt = Number(document.getElementById('p-author-amount').value)||0;
+  const pressAmt  = Number(document.getElementById('p-press-amount').value)||0;
+  const total = authorAmt + pressAmt;
+
+  document.getElementById('p-accumulated').value = total > 0 ? total : '';
+  document.getElementById('pc-author').textContent = '₦' + authorAmt.toLocaleString();
+  document.getElementById('pc-press').textContent  = '₦' + pressAmt.toLocaleString();
+  document.getElementById('pc-total').textContent  = '₦' + total.toLocaleString();
 }
 
 function toggleDRM(btn) {
@@ -458,30 +527,38 @@ function confirmApprove() {
   const required = [
     ['p-catalog-id','Press Catalog ID'], ['p-isbn','ISBN'],
     ['p-publisher','Publisher'], ['p-pub-date','Publication Date'],
-    ['p-pages','Total Pages'], ['p-format','Format'], ['p-press-amount','Press Amount']
+    ['p-pages','Total Pages'], ['p-format','Format'],
+    ['p-author-amount','Author Amount'], ['p-press-amount','Press Amount']
   ];
   for (const [id, label] of required) {
     if (!document.getElementById(id).value.trim()) { showToast(`${label} is required`, true); return; }
   }
+
+  const authorAmt = Number(document.getElementById('p-author-amount').value);
+  const pressAmt  = Number(document.getElementById('p-press-amount').value);
+
   const pressFields = {
-    press_catalog_id: document.getElementById('p-catalog-id').value.trim(),
-    isbn: document.getElementById('p-isbn').value.trim(),
-    publisher: document.getElementById('p-publisher').value.trim(),
-    edition: document.getElementById('p-edition').value.trim(),
-    publication_date: document.getElementById('p-pub-date').value,
+    press_catalog_id:     document.getElementById('p-catalog-id').value.trim(),
+    isbn:                 document.getElementById('p-isbn').value.trim(),
+    publisher:            document.getElementById('p-publisher').value.trim(),
+    edition:              document.getElementById('p-edition').value.trim(),
+    publication_date:     document.getElementById('p-pub-date').value,
     original_publication: document.getElementById('p-original-pub').value.trim(),
-    press_faculty: document.getElementById('p-faculty').value.trim(),
-    press_department: document.getElementById('p-department').value.trim(),
-    press_description: document.getElementById('p-description').value.trim(),
-    total_num_pages: Number(document.getElementById('p-pages').value),
-    format: document.getElementById('p-format').value,
-    file_size: document.getElementById('p-file-size').value.trim(),
-    table_of_content: document.getElementById('p-toc').value.trim(),
-    cover_image: document.getElementById('p-cover').value.trim(),
-    drm: drmEnabled,
-    press_amount: Number(document.getElementById('p-press-amount').value),
-    pressNotes: document.getElementById('p-notes').value.trim(),
+    press_faculty:        document.getElementById('p-faculty').value.trim(),
+    press_department:     document.getElementById('p-department').value.trim(),
+    press_description:    document.getElementById('p-description').value.trim(),
+    total_num_pages:      Number(document.getElementById('p-pages').value),
+    format:               document.getElementById('p-format').value,
+    file_size:            document.getElementById('p-file-size').value.trim(),
+    table_of_content:     document.getElementById('p-toc').value.trim(),
+    cover_image:          document.getElementById('p-cover').value.trim(),
+    drm:                  drmEnabled,
+    author_amount:        authorAmt,   // press sets the author's amount
+    press_amount:         pressAmt,    // press sets their own amount
+    accumulated_amount:   authorAmt + pressAmt,  // total sent to bookshop
+    pressNotes:           document.getElementById('p-notes').value.trim(),
   };
+
   DB.pressApprove(activePubId, pressFields);
   closeModal('approve-modal');
   showToast('Approved & forwarded to Bookshop');
@@ -507,7 +584,7 @@ function confirmReject() {
   renderView(currentView);
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
 

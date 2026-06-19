@@ -133,7 +133,7 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
   <div class="sidebar-footer">
     <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Other Portals</div>
     <div class="portal-links">
-      <a href="press.html" class="portal-link">🏛 Press Dashboard</a>
+      <a href="press.html" class="portal-link">🏛 Unilag Press Dashboard</a>
       <a href="bookshop.html" class="portal-link">📚 Bookshop Dashboard</a>
     </div>
   </div>
@@ -146,7 +146,7 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
   </header>
   <div class="content">
     <div class="page-title">New Publication Request</div>
-    <div class="page-sub">Fill in your book metadata and pricing — Press handles editorial review and file upload.</div>
+    <div class="page-sub">Fill in your book metadata — University of lagos Press handles editorial review and file upload.</div>
 
     <div class="flow-banner">
       <div class="flow-step active"><div class="flow-icon">✍️</div><div class="flow-label">Author Submit</div></div>
@@ -217,31 +217,36 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
             </div>
             <div class="form-group">
               <label class="form-label">Keywords</label>
-              <input id="f-keywords" class="form-input" placeholder="Comma-separated keywords…">
+              <div id="keyword-wrap" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:text;" onclick="document.getElementById('f-keywords-input').focus()">
+                <div id="keyword-tags" style="display:contents;"></div>
+                <input id="f-keywords-input" style="border:none;outline:none;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;min-width:140px;flex:1;" placeholder="Type and press Enter or comma…">
+              </div>
+              <div class="form-hint">Press Enter or comma to add each keyword</div>
               <div class="form-hint">Used for discoverability on the storefront</div>
             </div>
+            
           </div>
         </div>
 
         <!-- SECTION 3: Pricing -->
         <div class="section-card">
           <div class="section-head">
-            <div class="section-title">💰 Author Pricing</div>
+            <div class="section-title">Author</div>
             <span class="section-tag">Required</span>
           </div>
           <div class="section-body">
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Author Amount (₦) <span class="req">*</span></label>
+                <label class="form-label">Lead Author <span class="req">*</span></label>
                 <div class="price-wrap">
-                  <span class="price-prefix">₦</span>
-                  <input id="f-author-amount" type="number" class="form-input" placeholder="e.g. 3500">
+                  <span class="price-prefix">Dr</span>
+                  <input id="f-author-amount" type="number" class="form-input" placeholder="Amara Okonkwo">
                 </div>
                 <div class="form-hint">Your proposed earnings per sale</div>
               </div>
               <div class="form-group">
                 <label class="form-label">Co-Authors</label>
-                <input id="f-coauthors" class="form-input" placeholder="D. Mensah, F. Eze…">
+                <input id="f-coauthors" class="form-input" placeholder="Enter Co Author">
                 <div class="form-hint">Comma-separated, onboarded only</div>
               </div>
             </div>
@@ -252,8 +257,7 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
             </div>
           </div>
         </div>
-
-        <button class="btn-primary" id="submit-btn" onclick="submitPublication()">
+        <button class="btn-primary" id="submit-btn" onclick="submitPublication()" style="opacity:0.4; pointer-events:none; cursor:not-allowed;">
           <span>Submit Publication Request</span><span>→</span>
         </button>
       </div>
@@ -322,8 +326,15 @@ function submitPublication() {
   const description = document.getElementById('f-description').value.trim();
   const author_amount = document.getElementById('f-author-amount').value;
 
-  if (!title || !faculty || !category || !description || !author_amount || !source_title) {
-    showToast('Please fill all required fields (*)', true); return;
+  const btn2 = document.getElementById('submit-btn');       // ← moved up
+  btn2.disabled = true;                                     // ← moved up
+  btn2.innerHTML = '<span>Submitting…</span>';              // ← moved up
+
+  if (!title || !faculty || !category || !description || !source_title) {
+    showToast('Please fill all required fields (*)', true);
+    btn2.disabled = false;                                  // ← re-enable on error
+    btn2.innerHTML = '<span>Submit Publication Request</span><span>→</span>';
+    return;
   }
 
   const btn = document.getElementById('submit-btn');
@@ -336,7 +347,7 @@ function submitPublication() {
       source_title, author: 'Dr. Amara Okonkwo', authorId: 'AUTH-0031',
       faculty, department: document.getElementById('f-department').value.trim(),
       category, accessModel: selectedAccess, description,
-      keywords: document.getElementById('f-keywords').value.trim(),
+      keywords: keywords.join(', '),
       coAuthors: coauthorsRaw ? coauthorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [],
       author_amount: Number(author_amount),
     });
@@ -345,10 +356,60 @@ function submitPublication() {
     document.querySelectorAll('#access-chips .chip').forEach((c,i) => c.classList.toggle('selected', i===0));
     selectedAccess = 'Open Access';
     loadSubmissions();
-    showToast('Publication request submitted — Press will review shortly');
+    showToast('Publication request submitted — Unilag Press will review shortly');
+    keywords = [];
+renderKeywords();
   }, 500);
 }
+function checkForm() {
+  const title = document.getElementById('f-title').value.trim();
+  const source_title = document.getElementById('f-source-title').value.trim();
+  const faculty = document.getElementById('f-faculty').value.trim();
+  const category = document.getElementById('f-category').value.trim();
+  const description = document.getElementById('f-description').value.trim();
 
+  const btn = document.getElementById('submit-btn');
+  const allFilled = title && source_title && faculty && category && description;
+
+  btn.style.opacity = allFilled ? '1' : '0.4';
+  btn.style.pointerEvents = allFilled ? 'auto' : 'none';
+  btn.style.cursor = allFilled ? 'pointer' : 'not-allowed';
+}
+
+['f-title', 'f-source-title', 'f-faculty', 'f-category', 'f-description'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkForm);
+});
+let keywords = [];
+
+document.getElementById('f-keywords-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = this.value.replace(/,/g, '').trim();
+    if (val && !keywords.includes(val)) {
+      keywords.push(val);
+      renderKeywords();
+    }
+    this.value = '';
+  } else if (e.key === 'Backspace' && this.value === '' && keywords.length) {
+    keywords.pop();
+    renderKeywords();
+  }
+});
+
+function renderKeywords() {
+  const container = document.getElementById('keyword-tags');
+  container.innerHTML = keywords.map((kw, i) => `
+    <span style="display:inline-flex;align-items:center;gap:5px;background:var(--brand-glow);border:1px solid rgba(81,112,255,.25);color:var(--brand-light);border-radius:20px;padding:3px 10px;font-size:12px;font-family:'DM Mono',monospace;white-space:nowrap;">
+      ${kw}
+      <span onclick="removeKeyword(${i})" style="cursor:pointer;opacity:.7;font-size:14px;line-height:1;">&times;</span>
+    </span>
+  `).join('');
+}
+
+function removeKeyword(i) {
+  keywords.splice(i, 1);
+  renderKeywords();
+}
 function showToast(msg, isErr=false) {
   const t = document.getElementById('toast');
   t.textContent = (isErr ? '⚠ ' : '✓ ') + msg;

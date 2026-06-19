@@ -7,7 +7,7 @@ const DB = {
         publications: [
           {
             id: 'PUB-001',
-            // ── AUTHOR FIELDS ──
+            // ── AUTHOR FIELDS (no pricing — press sets all amounts) ──
             title: 'Language Policy & Identity',
             subtitle: 'A Comparative African Study',
             source_title: 'African Linguistics Series Vol. 3',
@@ -20,7 +20,6 @@ const DB = {
             description: 'An exploration of how language policy shapes national identity across post-colonial African states.',
             keywords: 'language, identity, policy, Africa, post-colonial',
             coAuthors: [],
-            author_amount: 2800,
             // ── PRESS FIELDS ──
             press_catalog_id: 'ULP-LIN-0044',
             isbn: '978-000-1161',
@@ -37,7 +36,9 @@ const DB = {
             drm: true,
             cover_image: '',
             original_publication: '2026',
-            press_amount: 1200,
+            author_amount: 2800,        // set by press
+            press_amount: 1200,         // set by press
+            accumulated_amount: 4000,   // author_amount + press_amount, sent to bookshop
             pressNotes: 'Excellent peer-review scores. Ready for distribution.',
             // ── BOOKSHOP FIELDS ──
             bookshop_catalog_id: '',
@@ -74,7 +75,6 @@ const DB = {
             description: 'A comprehensive exploration of digital pedagogical practices across African higher education institutions.',
             keywords: 'digital, pedagogy, HE, Africa, blended learning',
             coAuthors: [],
-            author_amount: 3500,
             press_catalog_id: '',
             isbn: '',
             press_faculty: '',
@@ -90,7 +90,9 @@ const DB = {
             drm: true,
             cover_image: '',
             original_publication: '',
-            press_amount: null,
+            author_amount: null,        // set by press on approval
+            press_amount: null,         // set by press on approval
+            accumulated_amount: null,   // calculated on approval
             pressNotes: '',
             bookshop_catalog_id: '',
             language: '',
@@ -125,18 +127,20 @@ const DB = {
     const data = this._get();
     const pub = {
       id: `PUB-${String(data.nextId).padStart(3, '0')}`,
-      // author fields
       ...payload,
-      // press fields (blank)
+      // Press fields — all blank until press fills them in on approval
       press_catalog_id: '', isbn: '', press_faculty: '', press_department: '',
       press_description: '', total_num_pages: null, table_of_content: '',
       publisher: '', publication_date: '', edition: '', format: '', file_size: '',
-      drm: true, cover_image: '', original_publication: '', press_amount: null, pressNotes: '',
-      // bookshop fields (blank)
+      drm: true, cover_image: '', original_publication: '',
+      author_amount: null,      // press sets this
+      press_amount: null,       // press sets this
+      accumulated_amount: null, // auto-calculated on approval
+      pressNotes: '',
+      // Bookshop fields — blank until bookshop fills in
       bookshop_catalog_id: '', language: '', bs_keywords: '', identifiers: '',
       genre: '', categories: '', age_range: '', reading_level: '', rights: '',
       review_quotes: '', awards: '', bookshop_amount: null, final_sales_price: null, bookshopNotes: '',
-      // status
       status: 'author_pending',
       submittedAt: new Date().toISOString(),
       pressReviewedAt: null,
@@ -161,6 +165,8 @@ const DB = {
     const pub = data.publications.find(p => p.id === id);
     if (pub) {
       Object.assign(pub, pressFields);
+      // Accumulated = author_amount (set by press) + press_amount
+      pub.accumulated_amount = (Number(pressFields.author_amount) || 0) + (Number(pressFields.press_amount) || 0);
       pub.status = 'press_approved';
       pub.pressReviewedAt = new Date().toISOString();
     }
@@ -205,7 +211,13 @@ const DB = {
   },
 
   statusLabel(status) {
-    return { author_pending: 'Pending Press Review', press_review: 'Editorial Review in Progress', press_approved: 'Approved — Awaiting Bookshop', bookshop_live: 'Live on Storefront', rejected: 'Rejected' }[status] || status;
+    return {
+      author_pending: 'Pending Publisher Review',
+      press_review:   'Editorial Review in Progress',
+      press_approved: 'Approved — Awaiting Bookshop',
+      bookshop_live:  'Live on Storefront',
+      rejected:       'Rejected',
+    }[status] || status;
   },
 
   timeAgo(iso) {
