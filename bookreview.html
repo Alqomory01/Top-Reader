@@ -480,8 +480,8 @@ function renderDashboard() {
   const inbox=all.filter(p=>p.status==='press_approved');
   const live=all.filter(p=>p.status==='bookshop_live');
   document.getElementById('kpi-grid').innerHTML=`
-    <div class="kpi"><div class="kpi-label">Awaiting Publish</div><div class="kpi-value" style="color:var(--warm-gold)">${inbox.length}</div><div class="kpi-note">From Press inbox</div></div>
-    <div class="kpi"><div class="kpi-label">Live on Storefront</div><div class="kpi-value" style="color:var(--sage)">${live.length}</div><div class="kpi-note">Active listings</div></div>
+    <div class="kpi"><div class="kpi-label">Published</div><div class="kpi-value" style="color:var(--warm-gold)">${inbox.length}</div><div class="kpi-note">From Press inbox</div></div>
+    <div class="kpi"><div class="kpi-label">In Sales</div><div class="kpi-value" style="color:var(--sage)">${live.length}</div><div class="kpi-note">Active listings</div></div>
     <div class="kpi"><div class="kpi-label">All Publications</div><div class="kpi-value">${all.length}</div><div class="kpi-note">Total in system</div></div>
   `;
   const wrap=document.getElementById('dash-inbox-wrap');
