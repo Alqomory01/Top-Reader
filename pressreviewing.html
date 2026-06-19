@@ -408,13 +408,13 @@ function renderDashboard() {
 }
 
 function renderPublications() {
-  const all = DB.getPublications();
+  const all = DB.getPublications().filter(p => p.status !== 'press_approved' && p.status !== 'bookshop_live');
   document.getElementById('pub-count').textContent = `${all.length} total`;
   document.getElementById('pub-table-wrap').innerHTML = all.length===0 ? '<div class="empty">No publication requests yet.</div>' : buildTable(all.slice().reverse(), true);
 }
 
 function renderApproved() {
-  const pubs = DB.getPublications().filter(p=>['press_approved','bookshop_live'].includes(p.status));
+  const pubs = DB.getPublications().filter(p => p.status === 'press_approved');
   document.getElementById('approved-table-wrap').innerHTML = pubs.length===0 ? '<div class="empty">No approved publications yet.</div>' : buildTable(pubs, false);
 }
 
@@ -458,8 +458,7 @@ function buildTable(pubs, showActions) {
 function buildActions(p) {
   if (p.status==='author_pending') return `<div class="btn-group"><button class="btn accent" onclick="startReview('${p.id}')">Start Review</button><button class="btn green" onclick="openApprove('${p.id}')">Approve</button><button class="btn red" onclick="openReject('${p.id}')">Reject</button></div>`;
   if (p.status==='press_review') return `<div class="btn-group"><button class="btn green" onclick="openApprove('${p.id}')">Upload & Publish</button><button class="btn red" onclick="openReject('${p.id}')">Reject</button></div>`;
-  if (p.status==='press_approved') return `<span style="font-size:11.5px;color:var(--text3);font-family:'JetBrains Mono',monospace">→ Forwarded to Bookshop</span>`;
-  if (p.status==='bookshop_live') return `<span style="font-size:11.5px;color:var(--green)">🟢 Live on Storefront</span>`;
+  if (p.status==='press_approved'||p.status==='bookshop_live') return `<span style="font-size:11.5px;color:var(--text3);font-family:'JetBrains Mono',monospace">→ Forwarded to Bookshop</span>`;
   if (p.status==='rejected') return `<span style="font-size:11.5px;color:var(--red)">Rejected</span>`;
   return '—';
 }
