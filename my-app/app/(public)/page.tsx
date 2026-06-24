@@ -19,7 +19,7 @@ export default function Home(){
     <div>
       <h1 className="text-5xl font-bold leading-tight">
         The Digital Knowledge Hub for Research,
-        Learning & Publishing
+        Learning & Publishing, lets go
       </h1>
 
       <p className="mt-6 text-gray-600 max-w-lg">
