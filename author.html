@@ -53,8 +53,35 @@
   .step-item.active .step-label { color: #fff; font-weight: 500; }
   .step-item.done .step-label { color: var(--text); }
 
+  .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* Remuneration nav item */
+  .rem-nav-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 28px; cursor: pointer; transition: background 0.2s;
+  }
+  .rem-nav-item:hover { background: var(--surface2); }
+  .rem-nav-item.active { background: rgba(81,112,255,0.08); }
+  .rem-nav-icon {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: var(--muted); transition: all 0.2s;
+  }
+  .rem-nav-item.active .rem-nav-icon { color: var(--brand-light); }
+  .rem-nav-label { font-size: 0.875rem; color: var(--muted); font-weight: 500; }
+  .rem-nav-item.active .rem-nav-label { color: #fff; font-weight: 500; }
+
   /* MAIN */
-  .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px; }
+  .main { flex: 1; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: flex; flex: 1; }
+
+  /* WELCOME PANEL */
+  #panel-welcome {
+    align-items: center; justify-content: center; padding: 60px;
+  }
   .onboard-card {
     max-width: 540px; width: 100%; text-align: center;
     background: var(--surface); border: 1px solid var(--border);
@@ -89,207 +116,306 @@
   }
   .btn-start:hover { transform: translateY(-2px); box-shadow: 0 4px 40px rgba(81,112,255,0.55); }
 
-  /* =========================
-   TABLET RESPONSIVE
-========================= */
-@media (max-width: 992px) {
+  /* REMUNERATION PANEL */
+  #panel-remuneration {
+    flex-direction: column; padding: 48px 52px; overflow-y: auto;
+  }
+  .rem-header { margin-bottom: 32px; }
+  .rem-title { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .rem-subtitle { color: var(--muted); font-size: 0.9rem; }
 
-body {
-  flex-direction: column;
-}
+  .rem-summary-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .rem-sum-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 26px;
+  }
+  .rem-sum-card-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .rem-sum-card-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .rem-sum-card-value.naira { color: var(--brand-light); }
+  .rem-sum-card-note { font-size: 0.78rem; color: #4ade80; }
 
-.sidebar {
-  width: 100%;
-  border-right: none;
-  border-bottom: 1px solid var(--border);
-  padding: 24px 0;
-}
+  .rem-filters { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .rem-filter-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--muted); padding: 8px 18px; border-radius: 8px;
+    font-size: 0.82rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .rem-filter-btn:hover { border-color: var(--brand); color: var(--brand-light); }
+  .rem-filter-btn.active {
+    background: rgba(81,112,255,0.12); border-color: var(--brand);
+    color: var(--brand-light); font-weight: 500;
+  }
 
-.sidebar-logo {
-  padding: 0 24px 24px;
-  margin-bottom: 20px;
-}
+  .rem-table-wrap {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+  }
+  .rem-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .rem-table thead tr { border-bottom: 1px solid var(--border); }
+  .rem-table th {
+    text-align: left; padding: 14px 20px; color: var(--muted);
+    font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .rem-table td { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .rem-table tbody tr:last-child td { border-bottom: none; }
+  .rem-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .rem-earn { color: var(--brand-light); font-weight: 600; }
+  .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 6px;
+    font-size: 0.72rem; font-weight: 600; text-transform: capitalize;
+  }
+  .badge.paid { background: rgba(74,222,128,0.12); color: #4ade80; }
+  .badge.pending { background: rgba(251,191,36,0.12); color: #fbbf24; }
 
-.sidebar-heading {
-  padding: 0 24px 12px;
-}
+  .rem-empty { padding: 48px 20px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
-.steps-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  padding: 0 20px;
-}
+  /* RESPONSIVE */
+  @media (max-width: 992px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 24px 0; }
+    .sidebar-logo { padding: 0 24px 24px; margin-bottom: 20px; }
+    .sidebar-heading { padding: 0 24px 12px; }
+    .steps-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 20px; }
+    .step-item { padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface2); }
+    #panel-welcome { padding: 40px 24px; }
+    #panel-remuneration { padding: 32px 24px; }
+    .rem-summary-cards { grid-template-columns: 1fr 1fr; }
+  }
 
-.step-item {
-  padding: 14px 18px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface2);
-}
+  @media (max-width: 768px) {
+    .sidebar-logo { justify-content: center; text-align: center; }
+    .sidebar-heading { text-align: center; }
+    .steps-list { grid-template-columns: 1fr; padding: 0 16px; }
+    #panel-welcome { padding: 30px 16px; }
+    .onboard-card { padding: 40px 24px; border-radius: 18px; }
+    .illus { width: 90px; height: 90px; font-size: 2.5rem; margin-bottom: 24px; }
+    h2 { font-size: 1.5rem; }
+    .btn-start { width: 100%; padding: 14px 20px; }
+    #panel-remuneration { padding: 24px 16px; }
+    .rem-summary-cards { grid-template-columns: 1fr; }
+    .rem-table th, .rem-table td { padding: 12px 14px; }
+  }
 
-.main {
-  padding: 40px 24px;
-}
-
-.onboard-card {
-  max-width: 100%;
-}
-}
-
-
-/* =========================
- MOBILE RESPONSIVE
-========================= */
-@media (max-width: 768px) {
-
-body {
-  flex-direction: column;
-}
-
-.sidebar {
-  width: 100%;
-  padding: 20px 0;
-}
-
-.sidebar-logo {
-  justify-content: center;
-  text-align: center;
-}
-
-.sidebar-heading {
-  text-align: center;
-}
-
-.steps-list {
-  grid-template-columns: 1fr;
-  padding: 0 16px;
-}
-
-.step-item {
-  padding: 14px 16px;
-}
-
-.step-label {
-  font-size: 0.82rem;
-}
-
-.main {
-  padding: 30px 16px;
-}
-
-.onboard-card {
-  padding: 40px 24px;
-  border-radius: 18px;
-}
-
-.illus {
-  width: 90px;
-  height: 90px;
-  font-size: 2.5rem;
-  margin-bottom: 24px;
-}
-
-h2 {
-  font-size: 1.5rem;
-}
-
-.desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.btn-start {
-  width: 100%;
-  padding: 14px 20px;
-}
-}
-
-
-/* =========================
- SMALL MOBILE DEVICES
-========================= */
-@media (max-width: 480px) {
-
-.sidebar-logo {
-  flex-direction: column;
-  gap: 12px;
-}
-
-.logo-name {
-  font-size: 0.95rem;
-}
-
-.onboard-card {
-  padding: 32px 18px;
-}
-
-.illus {
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-
-h2 {
-  font-size: 1.3rem;
-}
-
-.tag {
-  font-size: 0.68rem;
-  padding: 5px 12px;
-}
-
-.desc {
-  font-size: 0.85rem;
-}
-
-.step-item {
-  gap: 10px;
-}
-
-.step-num {
-  width: 22px;
-  height: 22px;
-  font-size: 0.68rem;
-}
-}
+  @media (max-width: 480px) {
+    .rem-title { font-size: 1.3rem; }
+    .rem-sum-card-value { font-size: 1.4rem; }
+    .rem-table { font-size: 0.8rem; }
+  }
 </style>
 </head>
 <body>
+
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">TR</div>
     <span class="logo-name">TopReader</span>
   </div>
+
   <div class="sidebar-heading">Author Onboarding</div>
   <ul class="steps-list">
-    <li class="step-item active">
+    <li class="step-item active" onclick="showPanel('welcome')">
       <div class="step-num">1</div>
-      <span class="step-label"><a href="personalinfo.html" style="text-decoration: none; color:white">Personal Information</a></span>
+      <span class="step-label">Personal Information</span>
     </li>
-    <li class="step-item">
+    <li class="step-item" onclick="showPanel('welcome')">
       <div class="step-num">2</div>
-      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:white">Verification</a></span>
+      <span class="step-label">Verification</span>
     </li>
-    <li class="step-item">
+    <li class="step-item" onclick="showPanel('welcome')">
       <div class="step-num">3</div>
-      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:white">Author Studio</a></span>
+      <span class="step-label">Author Studio</span>
     </li>
-    <li class="step-item">
+    <li class="step-item" onclick="showPanel('welcome')">
       <div class="step-num">4</div>
-      <span class="step-label"><a href="authorreviewing.html" style="text-decoration: none; color:white;">Send publication request</a></span>
+      <span class="step-label">Send publication request</span>
     </li>
   </ul>
+
+  <hr class="sidebar-divider">
+
+  <div class="sidebar-heading">Earnings</div>
+  <div class="rem-nav-item active" id="remNavBtn" onclick="showPanel('remuneration')">
+    <div class="rem-nav-icon">₦</div>
+    <span class="rem-nav-label">Remuneration</span>
+  </div>
 </aside>
 
 <main class="main">
-  <div class="onboard-card">
-    <div class="illus">📋</div>
-    <div class="tag">Author Onboarding</div>
-    <h2>Let's get started!</h2>
-    <p class="desc">Please provide your basic information to create your author profile. This helps readers discover you and your published works.</p>
-    <button class="btn-start"><a href="personalinfo.html" style="text-decoration:none; color:white">Start Now</a></button>
+
+  <!-- Welcome / Onboarding Panel -->
+  <div class="panel" id="panel-welcome">
+    <div class="onboard-card">
+      <div class="illus">📋</div>
+      <div class="tag">Author Onboarding</div>
+      <h2>Let's get started!</h2>
+      <p class="desc">Please provide your basic information to create your author profile. This helps readers discover you and your published works.</p>
+      <button class="btn-start" onclick="showPanel('remuneration')">Start Now</button>
+    </div>
   </div>
+
+  <!-- Remuneration Panel -->
+  <div class="panel active" id="panel-remuneration">
+    <div class="rem-header">
+      <div class="rem-title">Remuneration</div>
+      <div class="rem-subtitle">Track your book sales and earnings in Naira</div>
+    </div>
+
+    <div class="rem-summary-cards">
+      <div class="rem-sum-card">
+        <div class="rem-sum-card-label">Total books sold</div>
+        <div class="rem-sum-card-value" id="totalBooksSold">0</div>
+        <div class="rem-sum-card-note" id="totalBooksPeriod">↑ This month</div>
+      </div>
+      <div class="rem-sum-card">
+        <div class="rem-sum-card-label">Total remuneration</div>
+        <div class="rem-sum-card-value naira" id="totalRemuneration">₦0</div>
+        <div class="rem-sum-card-note" id="totalRemunerationPeriod">↑ This month</div>
+      </div>
+    </div>
+
+    <div class="rem-filters">
+      <button class="rem-filter-btn" onclick="setFilter('day', this)">Today</button>
+      <button class="rem-filter-btn" onclick="setFilter('week', this)">This week</button>
+      <button class="rem-filter-btn active" onclick="setFilter('month', this)">This month</button>
+      <button class="rem-filter-btn" onclick="setFilter('year', this)">This year</button>
+      <button class="rem-filter-btn" onclick="setFilter('all', this)">All time</button>
+    </div>
+
+    <div class="rem-table-wrap">
+      <table class="rem-table">
+        <thead>
+          <tr>
+            <th>Book title</th>
+            <th>Units sold</th>
+            <th>Price / unit</th>
+            <th>Earnings</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="remTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
 </main>
+
+<script>
+  // ── DATA ──────────────────────────────────────────────────────────────────
+  const salesData = {
+    day: [
+      { title: 'The Lagos Chronicles', sold: 12, price: 1500, status: 'paid' },
+      { title: 'Echoes of Nile',        sold:  7, price: 1500, status: 'paid' },
+      { title: 'Midnight in Abuja',     sold:  3, price: 2000, status: 'pending' },
+    ],
+    week: [
+      { title: 'The Lagos Chronicles', sold:  84, price: 1500, status: 'paid' },
+      { title: 'Echoes of Nile',        sold:  51, price: 1500, status: 'paid' },
+      { title: 'Midnight in Abuja',     sold:  29, price: 2000, status: 'paid' },
+      { title: 'Rivers of Grace',       sold:  18, price: 1200, status: 'pending' },
+    ],
+    month: [
+      { title: 'The Lagos Chronicles', sold: 342, price: 1500, status: 'paid' },
+      { title: 'Echoes of Nile',        sold: 211, price: 1500, status: 'paid' },
+      { title: 'Midnight in Abuja',     sold: 119, price: 2000, status: 'paid' },
+      { title: 'Rivers of Grace',       sold:  88, price: 1200, status: 'paid' },
+      { title: 'The Silent Drum',       sold:  64, price: 1800, status: 'pending' },
+    ],
+    year: [
+      { title: 'The Lagos Chronicles', sold: 1240, price: 1500, status: 'paid' },
+      { title: 'Echoes of Nile',        sold:  890, price: 1500, status: 'paid' },
+      { title: 'Midnight in Abuja',     sold:  560, price: 2000, status: 'paid' },
+      { title: 'Rivers of Grace',       sold:  420, price: 1200, status: 'paid' },
+      { title: 'The Silent Drum',       sold:  310, price: 1800, status: 'paid' },
+      { title: 'Beyond the Savanna',    sold:  180, price: 2500, status: 'pending' },
+    ],
+    all: [
+      { title: 'The Lagos Chronicles', sold: 1520, price: 1500, status: 'paid' },
+      { title: 'Echoes of Nile',        sold: 1010, price: 1500, status: 'paid' },
+      { title: 'Midnight in Abuja',     sold:  620, price: 2000, status: 'paid' },
+      { title: 'Rivers of Grace',       sold:  490, price: 1200, status: 'paid' },
+      { title: 'The Silent Drum',       sold:  380, price: 1800, status: 'paid' },
+      { title: 'Beyond the Savanna',    sold:  227, price: 2500, status: 'pending' },
+      { title: 'Keeper of Stars',       sold:  100, price: 1500, status: 'pending' },
+    ],
+  };
+
+  const periodLabels = {
+    day:   'Today',
+    week:  'This week',
+    month: 'This month',
+    year:  'This year',
+    all:   'All time',
+  };
+
+  // ── HELPERS ───────────────────────────────────────────────────────────────
+  function fmtNaira(n) {
+    return '₦' + n.toLocaleString('en-NG');
+  }
+  function fmtNum(n) {
+    return n.toLocaleString('en-NG');
+  }
+
+  // ── RENDER TABLE ──────────────────────────────────────────────────────────
+  function renderTable(filter) {
+    const rows = salesData[filter] || [];
+    const tbody = document.getElementById('remTableBody');
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="rem-empty">No sales data available for this period.</td></tr>';
+      document.getElementById('totalBooksSold').textContent  = '0';
+      document.getElementById('totalRemuneration').textContent = '₦0';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(r => {
+      const earnings = r.sold * r.price;
+      return `
+        <tr>
+          <td>${r.title}</td>
+          <td>${fmtNum(r.sold)}</td>
+          <td>${fmtNaira(r.price)}</td>
+          <td class="rem-earn">${fmtNaira(earnings)}</td>
+          <td><span class="badge ${r.status}">${r.status}</span></td>
+        </tr>
+      `;
+    }).join('');
+
+    const totalSold  = rows.reduce((sum, r) => sum + r.sold, 0);
+    const totalEarn  = rows.reduce((sum, r) => sum + (r.sold * r.price), 0);
+    const label      = periodLabels[filter];
+
+    document.getElementById('totalBooksSold').textContent        = fmtNum(totalSold);
+    document.getElementById('totalRemuneration').textContent     = fmtNaira(totalEarn);
+    document.getElementById('totalBooksPeriod').textContent      = '↑ ' + label;
+    document.getElementById('totalRemunerationPeriod').textContent = '↑ ' + label;
+  }
+
+  // ── FILTER ────────────────────────────────────────────────────────────────
+  function setFilter(filter, btn) {
+    document.querySelectorAll('.rem-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable(filter);
+  }
+
+  // ── PANEL SWITCHER ────────────────────────────────────────────────────────
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+
+    // Update sidebar nav active states
+    document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.rem-nav-item').forEach(r => r.classList.remove('active'));
+
+    if (name === 'remuneration') {
+      document.getElementById('remNavBtn').classList.add('active');
+    } else {
+      const steps = document.querySelectorAll('.step-item');
+      if (steps.length) steps[0].classList.add('active');
+    }
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  renderTable('month');
+</script>
+
 </body>
 </html>
