@@ -214,8 +214,8 @@ const DB = {
     return {
       author_pending: 'Pending Publisher Review',
       press_review:   'Editorial Review in Progress',
-      press_approved: 'Approved — Awaiting Bookshop',
-      bookshop_live:  'Live on Storefront',
+      press_approved: 'Published',
+      bookshop_live:  'In Sales',
       rejected:       'Rejected',
     }[status] || status;
   },
