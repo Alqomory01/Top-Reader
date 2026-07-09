@@ -42,11 +42,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .content{padding:24px 30px;flex:1;}
 .view{display:none;} .view.active{display:block;}
 
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
 .kpi{background:var(--card-bg);border:1px solid var(--border);border-top:3px solid var(--warm-gold);padding:16px 20px;box-shadow:var(--shadow);}
 .kpi:nth-child(2){border-top-color:var(--rust);}
 .kpi:nth-child(3){border-top-color:var(--sage);}
-.kpi:nth-child(4){border-top-color:var(--blue);}
 .kpi-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
 .kpi-value{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;line-height:1;}
 .kpi-note{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:5px;}
@@ -69,8 +68,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .b-approved,.b-live{background:#d1edda;color:var(--green);border:1px solid #a3d4b0;}
 .b-review{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;}
 .b-rejected{background:#fce8e3;color:var(--red);border:1px solid #f0b8a8;}
-.b-discount{background:rgba(200,150,42,.14);color:var(--warm-gold);border:1px solid rgba(200,150,42,.35);}
-.b-nodiscount{background:var(--cream);color:var(--muted);border:1px solid var(--border);}
 [data-theme="dark"] .b-pending{background:#2a2000;color:#e0c060;border-color:#5a4800;}
 [data-theme="dark"] .b-approved,[data-theme="dark"] .b-live{background:#0a200a;color:#6aaa6a;border-color:#1a5a1a;}
 [data-theme="dark"] .b-review,[data-theme="dark"] .b-rejected{background:#220a00;color:#e06040;border-color:#5a1a00;}
@@ -81,7 +78,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .btn.publish:hover{background:#e0b040;}
 .btn.reject{background:#fce8e3;color:var(--red);border-color:#f0b8a8;}
 .btn.reject:hover{background:var(--red);color:#fff;}
-.btn.small{padding:4px 9px;font-size:.68rem;}
 .btn-group{display:flex;gap:6px;flex-wrap:wrap;}
 
 /* ── MODAL ── */
@@ -147,22 +143,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 
 .small-modal{max-width:460px;}
 
-/* ── SALES & REVENUE — pricing card (mirrors Press remuneration pattern) ── */
-.pricing-card{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--warm-gold);border-radius:2px;overflow:hidden;margin-bottom:18px;}
-.pricing-card-col{padding:14px 16px;background:var(--highlight);}
-.pricing-card-col+.pricing-card-col{border-left:1px solid var(--border);}
-.pricing-card-col.total{background:rgba(200,150,42,.12);}
-.pricing-card-lbl{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.pricing-card-val{font-size:1.05rem;font-weight:700;font-family:'Playfair Display',serif;}
-.pricing-card-note{font-size:.62rem;color:var(--muted);margin-top:3px;}
-.pricing-card-col.total .pricing-card-lbl,.pricing-card-col.total .pricing-card-val{color:var(--warm-gold);}
-
-.discount-cell{display:flex;align-items:center;gap:6px;}
-.discount-input{width:56px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:5px 6px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink);text-align:right;}
-.discount-input:focus{outline:none;border-color:var(--warm-gold);}
-.discount-suffix{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);}
-.strike{color:var(--muted);text-decoration:line-through;font-size:.68rem;}
-
 .toast{position:fixed;bottom:28px;right:28px;padding:12px 20px;border-radius:3px;font-size:.82rem;font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:999;display:flex;align-items:center;gap:8px;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.gold{background:var(--warm-gold);color:var(--ink);}
@@ -172,7 +152,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .empty{padding:30px;text-align:center;color:var(--muted);font-size:.82rem;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .panel{animation:fadeUp .4s ease both;}
-@media(max-width:900px){.kpi-grid{grid-template-columns:1fr 1fr;}.fg-grid,.fg-grid-3{grid-template-columns:1fr;}.press-info-grid{grid-template-columns:1fr 1fr;}.pricing-card{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.kpi-grid{grid-template-columns:1fr 1fr;}.fg-grid,.fg-grid-3{grid-template-columns:1fr;}.press-info-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -245,7 +225,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
       <div class="panel">
         <div class="panel-head"><div class="panel-title">Published Titles — Pricing Breakdown</div></div>
         <div id="rev-wrap" style="padding:0 22px"></div>
-        <div style="padding:11px 22px;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted)">ⓘ Set a discount (% off Final Sales Price) any time — Author, Press and Bookshop shares are each reduced by the same percentage, and the accumulated total updates automatically.</div>
       </div>
     </div>
 
@@ -393,7 +372,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
           </div>
         </div>
         <div class="price-summary-box" id="price-summary-box">Enter amounts above to see pricing breakdown.</div>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:8px">ⓘ Discounts aren't set here — once live, adjust them any time from Sales & Revenue.</div>
       </div>
 
     </div>
@@ -553,82 +531,41 @@ function renderStorefront() {
   const wrap=document.getElementById('storefront-wrap');
   if(!live.length){wrap.innerHTML='<div class="empty">No live listings yet. Publish books from Press Approvals Inbox.</div>';return;}
   wrap.innerHTML=`<table class="tbl">
-    <thead><tr><th>Title</th><th>Author</th><th>Language</th><th>Genre</th><th>Full Price</th><th>Discount</th><th>Price (after discount)</th><th>Status</th></tr></thead>
-    <tbody>${live.map(p=>{
-      const pr = DB.getPricing(p);
-      return `<tr>
+    <thead><tr><th>Title</th><th>Author</th><th>Language</th><th>Genre</th><th>Author Amt</th><th>Press Amt</th><th>BS Amt</th><th>Final Price</th><th>Status</th></tr></thead>
+    <tbody>${live.map(p=>`<tr>
       <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'—'}</div></td>
       <td>${p.author}</td>
       <td>${p.language||'—'}</td>
       <td>${p.genre||'—'}</td>
-      <td class="mono">${pr.fullPrice?'₦'+pr.fullPrice.toLocaleString():'—'}</td>
-      <td>${pr.discount>0?`<span class="badge b-discount">${pr.discount}% OFF</span>`:`<span class="badge b-nodiscount">No discount</span>`}</td>
-      <td class="mono" style="font-weight:700;color:var(--ink)">
-        ${pr.discount>0?`<span class="strike">₦${pr.fullPrice.toLocaleString()}</span> `:''}₦${pr.effectivePrice.toLocaleString()}
-      </td>
+      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--blue)">${p.bookshop_amount?'₦'+Number(p.bookshop_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="font-weight:700;color:var(--ink)">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
       <td><span class="badge b-live">In Sales</span></td>
-    </tr>`;
-    }).join('')}</tbody></table>`;
+    </tr>`).join('')}</tbody></table>`;
 }
 
 function renderRevenue() {
   const live=DB.getPublications().filter(p=>p.status==='bookshop_live');
-  const pricings = live.map(p=>DB.getPricing(p));
-  const discounted = pricings.filter(pr=>pr.discount>0);
-  const avgDiscount = discounted.length ? (discounted.reduce((s,pr)=>s+pr.discount,0)/discounted.length) : 0;
-
   document.getElementById('rev-kpi').innerHTML=`
     <div class="kpi"><div class="kpi-label">Live Titles</div><div class="kpi-value">${live.length}</div><div class="kpi-note">On storefront</div></div>
-    <div class="kpi"><div class="kpi-label">Avg Effective Price</div><div class="kpi-value">${pricings.length?'₦'+Math.floor(pricings.reduce((s,pr)=>s+pr.effectivePrice,0)/pricings.length).toLocaleString():'—'}</div><div class="kpi-note">After discount</div></div>
-    <div class="kpi"><div class="kpi-label">Titles Discounted</div><div class="kpi-value" style="color:var(--warm-gold)">${discounted.length}</div><div class="kpi-note">of ${live.length} live</div></div>
-    <div class="kpi"><div class="kpi-label">Avg Discount</div><div class="kpi-value" style="color:var(--rust)">${discounted.length?avgDiscount.toFixed(1)+'%':'—'}</div><div class="kpi-note">Across discounted titles</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Final Price</div><div class="kpi-value">${live.length?'₦'+Math.floor(live.reduce((s,p)=>s+(Number(p.final_sales_price)||0),0)/live.length).toLocaleString():'—'}</div><div class="kpi-note">Per title</div></div>
+    <div class="kpi"><div class="kpi-label">Avg BS Amount</div><div class="kpi-value">${live.length?'₦'+Math.floor(live.reduce((s,p)=>s+(Number(p.bookshop_amount)||0),0)/live.length).toLocaleString():'—'}</div><div class="kpi-note">Bookshop avg fee</div></div>
   `;
-
   const wrap=document.getElementById('rev-wrap');
   if(!live.length){wrap.innerHTML='<div class="empty">No live titles yet.</div>';return;}
-
   wrap.innerHTML=`<table class="tbl">
-    <thead><tr><th>Title</th><th>Author</th><th>Author Amt</th><th>Press Amt</th><th>Bookshop Amt</th><th>Full Price</th><th>Discount</th><th>Effective Price</th><th>Accumulated (all shares)</th><th>Published</th></tr></thead>
-    <tbody>${live.map(p=>{
-      const pr = DB.getPricing(p);
-      const accumEffective = pr.effectiveAuthor + pr.effectivePress + pr.effectiveBookshop;
-      return `<tr>
+    <thead><tr><th>Title</th><th>Author</th><th>Author Amt</th><th>Press Amt</th><th>Bookshop Amt</th><th>Final Price</th><th>Format</th><th>Published</th></tr></thead>
+    <tbody>${live.map(p=>`<tr>
       <td class="bold">${p.title}</td>
       <td>${p.author}</td>
-      <td class="mono" style="color:var(--green)">
-        ${pr.discount>0?`<span class="strike">₦${pr.author.toLocaleString()}</span><br>`:''}₦${pr.effectiveAuthor.toLocaleString()}
-      </td>
-      <td class="mono" style="color:var(--warm-gold)">
-        ${pr.discount>0?`<span class="strike">₦${pr.press.toLocaleString()}</span><br>`:''}₦${pr.effectivePress.toLocaleString()}
-      </td>
-      <td class="mono" style="color:var(--blue)">
-        ${pr.discount>0?`<span class="strike">₦${pr.bookshop.toLocaleString()}</span><br>`:''}₦${pr.effectiveBookshop.toLocaleString()}
-      </td>
-      <td class="mono">${pr.fullPrice?'₦'+pr.fullPrice.toLocaleString():'—'}</td>
-      <td>
-        <div class="discount-cell">
-          <input type="number" min="0" max="100" step="1" class="discount-input" id="disc-input-${p.id}" value="${pr.discount}">
-          <span class="discount-suffix">%</span>
-          <button class="btn small publish" onclick="setDiscount('${p.id}')">Apply</button>
-        </div>
-      </td>
-      <td class="mono" style="font-weight:700">
-        ${pr.discount>0?`<span class="strike">₦${pr.fullPrice.toLocaleString()}</span><br>`:''}₦${pr.effectivePrice.toLocaleString()}
-      </td>
-      <td class="mono" style="font-weight:600">₦${accumEffective.toLocaleString()}</td>
+      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="color:var(--blue)">${p.bookshop_amount?'₦'+Number(p.bookshop_amount).toLocaleString():'—'}</td>
+      <td class="mono" style="font-weight:700">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
+      <td>${p.format||'—'}</td>
       <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.publishedAt)}</td>
-    </tr>`;
-    }).join('')}</tbody></table>`;
-}
-
-function setDiscount(id) {
-  const input = document.getElementById('disc-input-' + id);
-  let val = Number(input.value);
-  if (isNaN(val) || val < 0) val = 0;
-  if (val > 100) val = 100;
-  DB.bookshopSetDiscount(id, val);
-  showToast(val > 0 ? `Discount set to ${val}%` : 'Discount removed', 'gold');
-  renderView(currentView);
+    </tr>`).join('')}</tbody></table>`;
 }
 
 // ── PUBLISH MODAL ──

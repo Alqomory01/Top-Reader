@@ -54,6 +54,7 @@ const DB = {
             awards: '',
             bookshop_amount: null,
             final_sales_price: null,
+            discount_percent: 0,        // % off final_sales_price, set/adjusted by bookshop anytime
             bookshopNotes: '',
             // ── STATUS ──
             status: 'press_approved',
@@ -107,6 +108,7 @@ const DB = {
             awards: '',
             bookshop_amount: null,
             final_sales_price: null,
+            discount_percent: 0,
             bookshopNotes: '',
             status: 'press_review',
             submittedAt: new Date(Date.now() - 1000*60*60*72).toISOString(),
@@ -140,7 +142,8 @@ const DB = {
       // Bookshop fields — blank until bookshop fills in
       bookshop_catalog_id: '', language: '', bs_keywords: '', identifiers: '',
       genre: '', categories: '', age_range: '', reading_level: '', rights: '',
-      review_quotes: '', awards: '', bookshop_amount: null, final_sales_price: null, bookshopNotes: '',
+      review_quotes: '', awards: '', bookshop_amount: null, final_sales_price: null,
+      discount_percent: 0, bookshopNotes: '',
       status: 'author_pending',
       submittedAt: new Date().toISOString(),
       pressReviewedAt: null,
@@ -195,6 +198,7 @@ const DB = {
     const pub = data.publications.find(p => p.id === id);
     if (pub) {
       Object.assign(pub, bsFields);
+      if (pub.discount_percent == null) pub.discount_percent = 0;
       pub.status = 'bookshop_live';
       pub.publishedAt = new Date().toISOString();
     }
@@ -208,6 +212,44 @@ const DB = {
     if (pub) { pub.status = 'press_review'; pub.bookshopNotes = notes || ''; }
     this._save(data);
     return pub;
+  },
+
+  // Bookshop sets/adjusts the discount (% off final_sales_price) at any time
+  // for a live title. Original amounts are never overwritten — the discount
+  // is layered on top and applied proportionally across all three shares.
+  bookshopSetDiscount(id, percent) {
+    const data = this._get();
+    const pub = data.publications.find(p => p.id === id);
+    if (pub) {
+      let d = Number(percent);
+      if (isNaN(d) || d < 0) d = 0;
+      if (d > 100) d = 100;
+      pub.discount_percent = d;
+    }
+    this._save(data);
+    return pub;
+  },
+
+  // Returns the full pricing breakdown for a publication, including the
+  // discount-adjusted ("effective") figures. Nothing here is persisted —
+  // it's computed fresh from author_amount / press_amount / bookshop_amount /
+  // final_sales_price / discount_percent every time it's called, so changing
+  // the discount later never loses the original baseline numbers.
+  getPricing(pub) {
+    const author   = Number(pub.author_amount)   || 0;
+    const press    = Number(pub.press_amount)    || 0;
+    const bookshop = Number(pub.bookshop_amount) || 0;
+    const fullPrice = Number(pub.final_sales_price) || 0;
+    const discount  = Number(pub.discount_percent) || 0;
+    const factor = 1 - (discount / 100);
+    const round2 = n => Math.round(n * 100) / 100;
+    return {
+      author, press, bookshop, fullPrice, discount,
+      effectivePrice:  round2(fullPrice * factor),
+      effectiveAuthor: round2(author * factor),
+      effectivePress:  round2(press * factor),
+      effectiveBookshop: round2(bookshop * factor),
+    };
   },
 
   statusLabel(status) {
