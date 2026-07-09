@@ -6,11 +6,19 @@
 <title>TopReader — Author Onboarding</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff; --brand-glow: rgba(81,112,255,0.18);
-    --surface: #0d0f14; --surface2: #131620; --border: rgba(255,255,255,0.07);
-    --text: #e8eaf0; --muted: #7a7f94;
-  }
+:root {
+  --bg: #f5f7fb;
+  --brand: #5170ff;
+  --brand-light: #5170ff;
+  --brand-glow: rgba(81,112,255,0.12);
+
+  --surface: #ffffff;
+  --surface2: #f2f4f8;
+  --border: #dbe3ef;
+
+  --text: #1f2937;
+  --muted: #6b7280;
+}
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; }
 
@@ -30,7 +38,7 @@
     font-size: 0.72rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif;
     box-shadow: 0 0 14px rgba(81,112,255,0.4);
   }
-  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: #fff; }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;color: var(--text); }
   .sidebar-heading { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 28px 12px; }
   .steps-list { list-style: none; }
   .step-item {
@@ -48,7 +56,7 @@
     transition: all 0.2s;
   }
   .step-item.done .step-num { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .step-item.active .step-num { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 12px rgba(81,112,255,0.5); }
+  .step-item.active .step-num { background: var(--brand); border-color: var(--brand); color: var(--text); box-shadow: 0 0 12px rgba(81,112,255,0.5); }
   .step-label { font-size: 0.875rem; color: var(--muted); }
   .step-item.active .step-label { color: #fff; font-weight: 500; }
   .step-item.done .step-label { color: var(--text); }
@@ -105,7 +113,7 @@
   }
   @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(81,112,255,0.25)} 50%{box-shadow:0 0 0 18px rgba(81,112,255,0)} }
   .tag { display: inline-block; background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.3); color: var(--brand-light); font-size: 0.75rem; padding: 5px 14px; border-radius: 100px; margin-bottom: 22px; letter-spacing: 0.04em; }
-  h2 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; line-height: 1.2; }
+  h2 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;  color: var(--text); margin-bottom: 14px; line-height: 1.2; }
   .desc { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 36px; max-width: 380px; margin-left: auto; margin-right: auto; }
   .btn-start {
     background: var(--brand); border: none; color: #fff;
@@ -121,7 +129,7 @@
     flex-direction: column; padding: 48px 52px; overflow-y: auto;
   }
   .rem-header { margin-bottom: 32px; }
-  .rem-title { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .rem-title { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;  color: var(--text); margin-bottom: 6px; }
   .rem-subtitle { color: var(--muted); font-size: 0.9rem; }
 
   .rem-summary-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
@@ -129,7 +137,7 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 26px;
   }
   .rem-sum-card-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-  .rem-sum-card-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .rem-sum-card-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
   .rem-sum-card-value.naira { color: var(--brand-light); }
   .rem-sum-card-note { font-size: 0.78rem; color: #4ade80; }
   .rem-sum-card-note.discount-note { color: #fbbf24; }
@@ -189,7 +197,7 @@
     margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
   }
   .rem-section-title {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; color: #fff;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--text);
     display: flex; align-items: center; gap: 10px;
   }
   .rem-section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -248,19 +256,19 @@
  <ul class="steps-list">
     <li class="step-item active">
       <div class="step-num">1</div>
-      <span class="step-label"><a href="personalinfo.html" style="text-decoration: none; color:white">Personal Information</a></span>
+      <span class="step-label"><a href="personalinfo.html" style="text-decoration: none; color:var(--text)">Personal Information</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">2</div>
-      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:white">Verification</a></span>
+      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:var(--text)">Verification</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">3</div>
-      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:white">Author Studio</a></span>
+      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:var(--text)">Author Studio</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">4</div>
-      <span class="step-label"><a href="authorreviewing.html" style="text-decoration: none; color:white;">Send publication request</a></span>
+      <span class="step-label"><a href="authorreviewing.html" style="text-decoration: none; color:var(--text);">Send publication request</a></span>
     </li>
   <div style="height:1px; background:var(--border); margin:16px 0;"></div>
   <div class="sidebar-heading">Earnings</div>
