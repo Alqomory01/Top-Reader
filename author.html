@@ -7,19 +7,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #030405; --brand: #5170ff; --brand-light: #7b8eff; --brand-glow: rgba(81,112,255,0.18);
-    --surface: #0d0f14; --surface2: #131620; --border: rgba(255,255,255,0.07);
-    --text: #e8eaf0; --muted: #7a7f94;
-  }
+  --bg: #f5f7fb;
+  --brand: #5170ff;
+  --brand-light: #3f5efb;
+  --brand-glow: rgba(81,112,255,0.12);
+
+  --surface: #ffffff;
+  --surface2: #f3f5fa;
+  --border: #e4e8f2;
+
+  --text: #1b1d23;
+  --muted: #6b7280;
+}
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; display: flex; }
+ body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+}
 
   /* SIDEBAR */
   .sidebar {
-    width: 260px; flex-shrink: 0;
-    background: var(--surface); border-right: 1px solid var(--border);
-    padding: 36px 0; display: flex; flex-direction: column;
-  }
+    width:260px;
+    flex-shrink:0;
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    box-shadow:2px 0 20px rgba(0,0,0,.05);
+}
+  .sidebar-link{
+    text-decoration: none;
+    color: inherit;
+}
   .sidebar-logo {
     display: flex; align-items: center; gap: 10px;
     padding: 0 28px 32px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
@@ -30,7 +50,12 @@
     font-size: 0.72rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif;
     box-shadow: 0 0 14px rgba(81,112,255,0.4);
   }
-  .logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: #fff; }
+ .logo-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text);
+}
   .sidebar-heading { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 28px 12px; }
   .steps-list { list-style: none; }
   .step-item {
@@ -50,17 +75,26 @@
   .step-item.done .step-num { background: var(--brand); border-color: var(--brand); color: #fff; }
   .step-item.active .step-num { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 12px rgba(81,112,255,0.5); }
   .step-label { font-size: 0.875rem; color: var(--muted); }
-  .step-item.active .step-label { color: #fff; font-weight: 500; }
+  .step-item.active .step-label {
+  color: var(--text);
+  font-weight: 600;
+}
   .step-item.done .step-label { color: var(--text); }
 
   /* MAIN */
   .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px; }
   .onboard-card {
-    max-width: 540px; width: 100%; text-align: center;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 24px; padding: 60px 56px;
-    position: relative; overflow: hidden;
-  }
+    max-width: 540px;
+    width: 100%;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 60px 56px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(15,23,42,.08);
+}
   .onboard-card::before {
     content: '';
     position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
@@ -78,7 +112,14 @@
   }
   @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(81,112,255,0.25)} 50%{box-shadow:0 0 0 18px rgba(81,112,255,0)} }
   .tag { display: inline-block; background: var(--brand-glow); border: 1px solid rgba(81,112,255,0.3); color: var(--brand-light); font-size: 0.75rem; padding: 5px 14px; border-radius: 100px; margin-bottom: 22px; letter-spacing: 0.04em; }
-  h2 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; line-height: 1.2; }
+  h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
   .desc { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 36px; max-width: 380px; margin-left: auto; margin-right: auto; }
   .btn-start {
     background: var(--brand); border: none; color: #fff;
@@ -184,10 +225,12 @@ body {
 }
 
 .illus {
-  width: 90px;
-  height: 90px;
-  font-size: 2.5rem;
-  margin-bottom: 24px;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 32px;
+  background: #eef2ff;
+  border: 1px solid #d7e1ff;
+  border-radius: 24px;
 }
 
 h2 {
@@ -265,19 +308,19 @@ h2 {
   <ul class="steps-list">
     <li class="step-item active">
       <div class="step-num">1</div>
-      <span class="step-label"><a href="personalinfo.html" style="text-decoration: none; color:white">Personal Information</a></span>
+      <span class="step-label"><a href="personalinfo.html" style="text-decoration: none; color:inherit">Personal Information</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">2</div>
-      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:white">Verification</a></span>
+      <span class="step-label"><a href="verification.html" style="text-decoration:none; color:inherit">Verification</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">3</div>
-      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:white">Author Studio</a></span>
+      <span class="step-label"><a href="authorstudio.html" style="text-decoration:none; color:inherit">Author Studio</a></span>
     </li>
     <li class="step-item">
       <div class="step-num">4</div>
-      <span class="step-label"><a href="authorreviewing.html" style="text-decoration: none; color:white;">Send publication request</a></span>
+      <span class="step-label"><a href="authorreviewing.html" style="text-decoration: none; color:inherit;">Send publication request</a></span>
     </li>
   <div style="height:1px; background:var(--border); margin:16px 0;"></div>
   <div class="sidebar-heading">Earnings</div>
