@@ -489,7 +489,7 @@ function submitPublication() {
   const faculty = document.getElementById('f-faculty').value.trim();
   const category = document.getElementById('f-category').value.trim();
   const description = document.getElementById('f-description').value.trim();
-  const author_amount = document.getElementById('f-author-amount').value;
+  // const author_amount = document.getElementById('f-author-amount').value;
 
   const btn2 = document.getElementById('submit-btn');       // ← moved up
   btn2.disabled = true;                                     // ← moved up
@@ -514,10 +514,11 @@ function submitPublication() {
       category, accessModel: selectedAccess, description,
       keywords: keywords.join(', '),
       coAuthors: coauthorsRaw ? coauthorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [],
-      author_amount: Number(author_amount),
+      // author_amount: Number(author_amount),
+      author_amount: 0,
     });
     btn.disabled = false; btn.innerHTML = '<span>Submit Publication Request</span><span>→</span>';
-    ['f-title','f-subtitle','f-source-title','f-faculty','f-department','f-category','f-description','f-keywords','f-coauthors','f-author-amount'].forEach(id => { document.getElementById(id).value = ''; });
+    ['f-title','f-subtitle','f-source-title','f-faculty','f-department','f-category','f-description','f-coauthors',].forEach(id => { document.getElementById(id).value = ''; });
     document.querySelectorAll('#access-chips .chip').forEach((c,i) => c.classList.toggle('selected', i===0));
     selectedAccess = 'Open Access';
     loadSubmissions();
@@ -554,7 +555,7 @@ function checkForm() {
 ['f-title', 'f-source-title', 'f-faculty', 'f-category', 'f-description'].forEach(id => {
   document.getElementById(id).addEventListener('input', checkForm);
 });
-// ['f-title','f-subtitle','f-source-title','f-faculty','f-department','f-category','f-description','f-keywords','f-author-amount'].forEach(id => { document.getElementById(id).value = ''; });
+// ['f-title','f-subtitle','f-source-title','f-faculty','f-department','f-category','f-description',].forEach(id => { document.getElementById(id).value = ''; });
 // coAuthors = [];
 // renderCoAuthorList();
 let keywords = [];
