@@ -179,15 +179,19 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
               </div>
             </div>
             <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Faculty <span class="req">*</span></label>
-                <input id="f-faculty" class="form-input" placeholder="e.g. Social Sciences">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Department</label>
-                <input id="f-department" class="form-input" placeholder="e.g. Geography">
-              </div>
-            </div>
+  <div class="form-group">
+    <label class="form-label">Faculty <span class="req">*</span></label>
+    <select id="f-faculty" class="form-select">
+      <option value="">Select faculty</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Department</label>
+    <select id="f-department" class="form-select" disabled>
+      <option value="">Select faculty first</option>
+    </select>
+  </div>
+</div>
             <div class="form-group">
               <label class="form-label">Category / Subject Area <span class="req">*</span></label>
               <input id="f-category" class="form-input" placeholder="e.g. Urban Studies, Climate, Africa">
@@ -290,6 +294,53 @@ nav{flex:1;padding:14px 12px;overflow-y:auto;}
 
 <script src="db.js"></script>
 <script>
+
+  const FACULTIES = [
+  { name: 'Architecture', departments: ['Architecture', 'Landscape Architecture and Urban Design', 'Interior Architecture and Design'] },
+  { name: 'Arts', departments: ['English', 'European Languages and Integration Studies', 'History and Strategic Studies', 'Linguistics, African and Asian Studies', 'Philosophy', 'Religious Studies'] },
+  { name: 'Basic Clinical Sciences', departments: ['Anatomic and Molecular Pathology', 'Haematology and Blood Transfusion', 'Medical Microbiology and Parasitology', 'Clinical Pathology', 'Clinical Pharmacology'] },
+  { name: 'Basic Medical Sciences', departments: ['Anatomy', 'Physiology', 'Medical Biochemistry', 'Pharmacology, Therapeutics and Toxicology'] },
+  { name: 'Clinical Sciences', departments: ['Anaesthesia', 'Community Health and Primary Care', 'Medicine', 'Obstetrics and Gynaecology', 'Ophthalmology', 'Paediatrics', 'Psychiatry', 'Radiation Biology, Radiotherapy and Radiodiagnosis', 'Surgery'] },
+  { name: 'Communication and Media Studies', departments: ['Mass Communication', 'Public Relations and Advertising', 'Journalism, Broadcasting and Media Studies'] },
+  { name: 'Computing and Informatics', departments: ['Computer Science', 'Intelligent Systems and Robotics', 'Cybersecurity and Software Engineering'] },
+  { name: 'Creative Arts', departments: ['Music and Sound Production', 'Theatre Arts and Film Studies', 'Fine and Applied Arts'] },
+  { name: 'Dental Sciences', departments: ['Child Dental Health', 'Oral and Maxillofacial Pathology/Biology', 'Oral and Maxillofacial Surgery', 'Preventive Dentistry', 'Restorative Dentistry'] },
+  { name: 'Education', departments: ['Adult Education', 'Arts Education', 'Educational Foundations', 'Educational Management', 'Human Kinetics and Health Education', 'Science Education', 'Social Sciences Education', 'Technology and Vocational Education'] },
+  { name: 'Engineering', departments: ['Biomedical Engineering', 'Chemical Engineering', 'Petroleum and Gas Engineering', 'Civil and Environmental Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering', 'Metallurgical and Materials Engineering', 'Surveying and Geoinformatics', 'Systems Engineering'] },
+  { name: 'Environmental Sciences', departments: ['Building', 'Estate Management', 'Quantity Surveying', 'Urban and Regional Planning'] },
+  { name: 'Health Professions', departments: ['Medical Laboratory Science', 'Nursing Science', 'Physiotherapy', 'Radiography'] },
+  { name: 'Law', departments: ['Commercial and Industrial Law', 'Jurisprudence and International Law', 'Private and Property Law', 'Public Law'] },
+  { name: 'Life Sciences', departments: ['Biochemistry', 'Botany', 'Cell Biology and Genetics', 'Marine Science', 'Microbiology', 'Zoology', 'Fisheries and Aquaculture'] },
+  { name: 'Management Sciences', departments: ['Accounting', 'Actuarial Science and Insurance', 'Business Administration', 'Employment Relations and Human Resource Management', 'Finance'] },
+  { name: 'Pharmacy', departments: ['Clinical Pharmacy and Biopharmacy', 'Pharmaceutical Chemistry', 'Pharmaceutical Microbiology and Biotechnology', 'Pharmaceutics and Pharmaceutical Technology', 'Pharmacognosy'] },
+  { name: 'Physical and Earth Sciences', departments: ['Chemistry', 'Geosciences', 'Mathematics', 'Physics', 'Statistics'] },
+  { name: 'Social Sciences', departments: ['Economics', 'Geography', 'Library and Information Science', 'Political Science', 'Psychology', 'Social Work', 'Sociology'] },
+];
+
+function populateFacultySelect() {
+  const select = document.getElementById('f-faculty');
+  select.innerHTML = '<option value="">Select faculty</option>' +
+    FACULTIES.map(f => `<option value="${f.name}">${f.name}</option>`).join('');
+}
+
+function onFacultyChange() {
+  const facultyName = document.getElementById('f-faculty').value;
+  const deptSelect = document.getElementById('f-department');
+  const faculty = FACULTIES.find(f => f.name === facultyName);
+
+  if (!faculty) {
+    deptSelect.innerHTML = '<option value="">Select faculty first</option>';
+    deptSelect.disabled = true;
+    return;
+  }
+
+  deptSelect.disabled = false;
+  deptSelect.innerHTML = '<option value="">Select department</option>' +
+    faculty.departments.map(d => `<option value="${d}">${d}</option>`).join('');
+}
+
+populateFacultySelect();
+document.getElementById('f-faculty').addEventListener('change', onFacultyChange);
 let selectedAccess = 'Open Access';
 document.querySelectorAll('#access-chips .chip').forEach(c => {
   c.addEventListener('click', () => {
