@@ -339,74 +339,74 @@ const MOCK_AVAILABLE_AUTHORS = ['Dr. Ngozi Adeyemi', 'Prof. Chidi Okafor', 'Dr. 
 // coAuthors is now a list of full records, not just names — each entry
 // carries what that co-author needs to be paid directly:
 // { name, bankName, accountNumber, accountName, amount }
-let coAuthors = [];
+// let coAuthors = [];
 
-function populateCoAuthorSelect() {
-  const select = document.getElementById('ca-name');
-  select.innerHTML = '<option value="">Select co-author</option>' +
-    MOCK_AVAILABLE_AUTHORS.map(n => `<option value="${n}">${n}</option>`).join('');
-}
+// function populateCoAuthorSelect() {
+//   const select = document.getElementById('ca-name');
+//   select.innerHTML = '<option value="">Select co-author</option>' +
+//     MOCK_AVAILABLE_AUTHORS.map(n => `<option value="${n}">${n}</option>`).join('');
+// }
 
-function addCoAuthor() {
-  const name = document.getElementById('ca-name').value;
-  const bankName = document.getElementById('ca-bank-name').value.trim();
-  const accountNumber = document.getElementById('ca-account-number').value.trim();
-  const accountName = document.getElementById('ca-account-name').value.trim();
-  const amount = document.getElementById('ca-amount').value;
-  const errorEl = document.getElementById('ca-error');
-  errorEl.style.display = 'none';
+// function addCoAuthor() {
+//   const name = document.getElementById('ca-name').value;
+//   const bankName = document.getElementById('ca-bank-name').value.trim();
+//   const accountNumber = document.getElementById('ca-account-number').value.trim();
+//   const accountName = document.getElementById('ca-account-name').value.trim();
+//   const amount = document.getElementById('ca-amount').value;
+//   const errorEl = document.getElementById('ca-error');
+//   errorEl.style.display = 'none';
 
-  if (!name || !bankName || !accountNumber || !accountName || !amount) {
-    errorEl.textContent = 'Fill in all co-author fields before adding.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (!/^\d{10}$/.test(accountNumber)) {
-    errorEl.textContent = 'Account number must be 10 digits.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (Number(amount) <= 0) {
-    errorEl.textContent = 'Amount must be greater than zero.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (coAuthors.some(c => c.name === name)) {
-    errorEl.textContent = `${name} has already been added.`;
-    errorEl.style.display = 'block';
-    return;
-  }
+//   if (!name || !bankName || !accountNumber || !accountName || !amount) {
+//     errorEl.textContent = 'Fill in all co-author fields before adding.';
+//     errorEl.style.display = 'block';
+//     return;
+//   }
+//   if (!/^\d{10}$/.test(accountNumber)) {
+//     errorEl.textContent = 'Account number must be 10 digits.';
+//     errorEl.style.display = 'block';
+//     return;
+//   }
+//   if (Number(amount) <= 0) {
+//     errorEl.textContent = 'Amount must be greater than zero.';
+//     errorEl.style.display = 'block';
+//     return;
+//   }
+//   if (coAuthors.some(c => c.name === name)) {
+//     errorEl.textContent = `${name} has already been added.`;
+//     errorEl.style.display = 'block';
+//     return;
+//   }
 
-  coAuthors.push({ name, bankName, accountNumber, accountName, amount: Number(amount) });
-  renderCoAuthorList();
+//   coAuthors.push({ name, bankName, accountNumber, accountName, amount: Number(amount) });
+//   renderCoAuthorList();
 
-  ['ca-name', 'ca-bank-name', 'ca-account-number', 'ca-account-name', 'ca-amount'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-}
+//   ['ca-name', 'ca-bank-name', 'ca-account-number', 'ca-account-name', 'ca-amount'].forEach(id => {
+//     document.getElementById(id).value = '';
+//   });
+// }
 
-function removeCoAuthor(i) {
-  coAuthors.splice(i, 1);
-  renderCoAuthorList();
-}
+// function removeCoAuthor(i) {
+//   coAuthors.splice(i, 1);
+//   renderCoAuthorList();
+// }
 
-function renderCoAuthorList() {
-  const list = document.getElementById('coauthor-list');
-  if (!coAuthors.length) { list.innerHTML = ''; return; }
-  list.innerHTML = coAuthors.map((c, i) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
-      <div>
-        <div style="font-size:13px;font-weight:600;">${c.name}</div>
-        <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">
-          ${c.bankName} • ${c.accountNumber} • ${c.accountName} • ₦${Number(c.amount).toLocaleString()}
-        </div>
-      </div>
-      <span onclick="removeCoAuthor(${i})" style="cursor:pointer;color:var(--red);font-size:14px;">&times;</span>
-    </div>
-  `).join('');
-}
+// function renderCoAuthorList() {
+//   const list = document.getElementById('coauthor-list');
+//   if (!coAuthors.length) { list.innerHTML = ''; return; }
+//   list.innerHTML = coAuthors.map((c, i) => `
+//     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+//       <div>
+//         <div style="font-size:13px;font-weight:600;">${c.name}</div>
+//         <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">
+//           ${c.bankName} • ${c.accountNumber} • ${c.accountName} • ₦${Number(c.amount).toLocaleString()}
+//         </div>
+//       </div>
+//       <span onclick="removeCoAuthor(${i})" style="cursor:pointer;color:var(--red);font-size:14px;">&times;</span>
+//     </div>
+//   `).join('');
+// }
 
-populateCoAuthorSelect();
+// populateCoAuthorSelect();
 
 
   const FACULTIES = [
