@@ -292,8 +292,8 @@ nav{flex:1;padding:12px 10px;}
     <div id="p-manuscript-status" style="font-size:11px;color:var(--text3);margin-top:6px"></div>
   </div>
 </div>
-      
-       <!-- SECTION: Press Notes -->
+
+      <!-- SECTION: Press Notes -->
       <div class="modal-section">
         <div class="modal-section-title">📝 Press Notes</div>
         <div class="form-grid g1">
@@ -396,14 +396,14 @@ function renderRemuneration() {
       <tbody>${pubs.map(p=>`<tr>
         <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'ISBN pending'}</div></td>
         <td>${p.author}</td>
-        <td style="font-family:'JetBrains Mono',monospace;color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
-        <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'Set by Bookshop'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'Set by Bookshop'}</td>
         <td style="font-family:'JetBrains Mono',monospace;color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
         <td style="font-family:'JetBrains Mono',monospace;color:var(--purple)">${p.final_sales_price?'₦'+Number(p.final_sales_price).toLocaleString():'—'}</td>
         <td><span class="badge b-${p.status}">${DB.statusLabel(p.status)}</span></td>
       </tr>`).join('')}</tbody>
     </table>
-    <div style="padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">ⓘ Accumulated total = Author Amount + Press Amount. Bookshop adds their margin to set the final retail price.</div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">ⓘ Accumulated total = Author Amount + Press Amount, set by the Bookshop team during their review. Bookshop then adds their own margin to set the final retail price.</div>
   `;
 }
 
@@ -461,9 +461,6 @@ function openApprove(id) {
   document.getElementById('p-file-size').value = p.file_size||'';
   document.getElementById('p-toc').value = p.table_of_content||'';
   document.getElementById('p-cover').value = p.cover_image||'';
-  // Pricing: prefill from what press previously set (blank on first open)
-  document.getElementById('p-author-amount').value = p.author_amount||'';
-  document.getElementById('p-press-amount').value = p.press_amount||'';
   document.getElementById('p-notes').value = p.pressNotes||'';
 
   drmEnabled = p.drm !== false;
@@ -478,7 +475,6 @@ function openApprove(id) {
   } else {
     statusEl.textContent = '';
   }
-  updatePricingSummary();
   openModal('approve-modal');
 }
 let manuscriptData = null; // { name, size, dataUrl }
@@ -528,16 +524,6 @@ function handleManuscriptUpload(input) {
   };
   reader.readAsDataURL(file);
 }
-function updatePricingSummary() {
-  const authorAmt = Number(document.getElementById('p-author-amount').value)||0;
-  const pressAmt  = Number(document.getElementById('p-press-amount').value)||0;
-  const total = authorAmt + pressAmt;
-
-  document.getElementById('p-accumulated').value = total > 0 ? total : '';
-  document.getElementById('pc-author').textContent = '₦' + authorAmt.toLocaleString();
-  document.getElementById('pc-press').textContent  = '₦' + pressAmt.toLocaleString();
-  document.getElementById('pc-total').textContent  = '₦' + total.toLocaleString();
-}
 
 function toggleDRM(btn) {
   drmEnabled = !drmEnabled;
@@ -549,21 +535,17 @@ function confirmApprove() {
   const required = [
     ['p-catalog-id','Press Catalog ID'], ['p-isbn','ISBN'],
     ['p-publisher','Publisher'], ['p-pub-date','Publication Date'],
-    ['p-pages','Total Pages'], ['p-format','Format'],
-    ['p-author-amount','Author Amount'], ['p-press-amount','Press Amount']
+    ['p-pages','Total Pages'], ['p-format','Format']
   ];
   for (const [id, label] of required) {
     if (!document.getElementById(id).value.trim()) { showToast(`${label} is required`, true); return; }
   }
-    // NEW — require a manuscript unless one already exists on this pub
+    // Require a manuscript unless one already exists on this pub
   const existing = DB.getPub(activePubId);
   if (!manuscriptData && !existing.manuscript_file) {
     showToast('Please upload the manuscript PDF', true);
     return;
   }
-
-  const authorAmt = Number(document.getElementById('p-author-amount').value);
-  const pressAmt  = Number(document.getElementById('p-press-amount').value);
 
   const pressFields = {
     press_catalog_id:     document.getElementById('p-catalog-id').value.trim(),
@@ -581,9 +563,6 @@ function confirmApprove() {
     table_of_content:     document.getElementById('p-toc').value.trim(),
     cover_image:          document.getElementById('p-cover').value.trim(),
     drm:                  drmEnabled,
-    author_amount:        authorAmt,   // press sets the author's amount
-    press_amount:         pressAmt,    // press sets their own amount
-    accumulated_amount:   authorAmt + pressAmt,  // total sent to bookshop
     pressNotes:           document.getElementById('p-notes').value.trim(),
      manuscript_file:      manuscriptData || existing.manuscript_file,
   };

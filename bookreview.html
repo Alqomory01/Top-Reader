@@ -230,7 +230,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
           <span id="inbox-count" style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)"></span>
         </div>
         <div id="inbox-wrap" style="padding:0 22px"></div>
-        <div style="padding:11px 22px;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted)">ⓘ Publications approved by Press. Add bookshop metadata and set final retail pricing before publishing.</div>
+        <div style="padding:11px 22px;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted)">ⓘ Publications approved by Press. Add bookshop metadata and set author, press, and bookshop pricing before publishing.</div>
       </div>
     </div>
 
@@ -370,8 +370,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         </div>
       </div>
 
-      
-       <!-- Pricing -->
+      <!-- Pricing -->
       <div class="modal-section">
         <div class="modal-section-title">💰 Pricing — Author, Press & Bookshop Amounts</div>
         <div class="fg-grid-3">
@@ -415,8 +414,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         <div class="price-summary-box" id="price-summary-box">Enter amounts above to see pricing breakdown.</div>
         <div style="font-size:.7rem;color:var(--muted);margin-top:8px">ⓘ Discounts aren't set here — once live, adjust them any time from Sales & Revenue.</div>
       </div>
- 
-    </div>
 
     </div>
     <div class="modal-footer">
@@ -554,14 +551,11 @@ function renderInbox() {
 
 function buildInboxTable(pubs) {
   return `<table class="tbl">
-    <thead><tr><th>Title</th><th>Author</th><th>Format</th><th>Author Amt</th><th>Press Amt</th><th>Accumulated</th><th>Approved</th><th>Action</th></tr></thead>
+    <thead><tr><th>Title</th><th>Author</th><th>Format</th><th>Approved</th><th>Action</th></tr></thead>
     <tbody>${pubs.map(p=>`<tr>
       <td><div class="bold">${p.title}</div><div class="sub">${p.isbn||'ISBN pending'} · ${p.faculty}</div></td>
       <td>${p.author}</td>
       <td>${p.format||'—'}</td>
-      <td class="mono" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</td>
-      <td class="mono" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</td>
-      <td class="mono" style="color:var(--blue);font-weight:600">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</td>
       <td class="mono" style="font-size:.66rem;color:var(--muted)">${DB.timeAgo(p.pressReviewedAt)}</td>
       <td><div class="btn-group">
         <button class="btn publish" onclick="openPublish('${p.id}')">Approve for Sale</button>
@@ -665,11 +659,7 @@ function openPublish(id) {
     Format: ${p.format||'—'} · Pages: ${p.total_num_pages||'—'} · DRM: ${p.drm?'Yes':'No'} · Edition: ${p.edition||'—'}<br>
     Publisher: ${p.publisher||'—'} · Date: ${p.publication_date||'—'} · ISBN: ${p.isbn||'—'}<br>
     ${p.pressNotes?'<em>Press notes: '+p.pressNotes+'</em><br>':''}
-    <div class="press-info-grid">
-      <div class="press-info-item"><div class="pil">Author Amount</div><div class="piv" style="color:var(--green)">${p.author_amount?'₦'+Number(p.author_amount).toLocaleString():'—'}</div></div>
-      <div class="press-info-item"><div class="pil">Press Amount</div><div class="piv" style="color:var(--warm-gold)">${p.press_amount?'₦'+Number(p.press_amount).toLocaleString():'—'}</div></div>
-      <div class="press-info-item"><div class="pil">Accumulated (excl. Bookshop)</div><div class="piv" style="color:var(--blue)">${p.accumulated_amount?'₦'+Number(p.accumulated_amount).toLocaleString():'—'}</div></div>
-    </div>
+    <div style="font-size:.7rem;color:var(--muted);margin-top:8px">ⓘ Author, Press and Bookshop amounts are set below by Bookshop.</div>
   `;
 
   // Prefill fields
@@ -683,6 +673,8 @@ function openPublish(id) {
   document.getElementById('b-rights').value=p.rights||'';
   document.getElementById('b-review-quotes').value=p.review_quotes||'';
   document.getElementById('b-awards').value=p.awards||'';
+  document.getElementById('b-author-amount').value=p.author_amount||'';
+  document.getElementById('b-press-amount').value=p.press_amount||'';
   document.getElementById('b-bs-amount').value=p.bookshop_amount||'';
   document.getElementById('b-final-price').value=p.final_sales_price||'';
 
@@ -695,17 +687,15 @@ function openPublish(id) {
   }
 
   // Clear all previous errors
-  ['b-catalog-id','b-language','b-genre','b-bs-amount','b-final-price'].forEach(id => clearError(id));
+  ['b-catalog-id','b-language','b-genre','b-author-amount','b-press-amount','b-bs-amount','b-final-price'].forEach(id => clearError(id));
 
   updatePriceSummary();
   openModal('publish-modal');
 }
 
 function updatePriceSummary() {
-  if (!activePubId) return;
-  const p=DB.getPub(activePubId);
-  const aAmt=Number(p?p.author_amount:0)||0;
-  const pAmt=Number(p?p.press_amount:0)||0;
+  const aAmt=Number(document.getElementById('b-author-amount').value)||0;
+  const pAmt=Number(document.getElementById('b-press-amount').value)||0;
   const bAmt=Number(document.getElementById('b-bs-amount').value)||0;
   const final=Number(document.getElementById('b-final-price').value)||0;
   const subtotal=aAmt+pAmt+bAmt;
@@ -725,6 +715,8 @@ function confirmPublish() {
     ['b-catalog-id', 'Catalog ID is required'],
     ['b-language',   'Language is required'],
     ['b-genre',      'Genre is required'],
+    ['b-author-amount','Author amount is required'],
+    ['b-press-amount','Press amount is required'],
     ['b-bs-amount',  'Bookshop amount is required'],
     ['b-final-price','Final sales price is required'],
   ];
@@ -747,6 +739,10 @@ function confirmPublish() {
     return;
   }
 
+  const authorAmt = Number(document.getElementById('b-author-amount').value);
+  const pressAmt  = Number(document.getElementById('b-press-amount').value);
+  const bsAmt     = Number(document.getElementById('b-bs-amount').value);
+
   DB.bookshopPublish(activePubId,{
     bookshop_catalog_id: document.getElementById('b-catalog-id').value.trim(),
     language:            document.getElementById('b-language').value,
@@ -759,7 +755,10 @@ function confirmPublish() {
     rights:              document.getElementById('b-rights').value.trim(),
     review_quotes:       document.getElementById('b-review-quotes').value.trim(),
     awards:              document.getElementById('b-awards').value.trim(),
-    bookshop_amount:     Number(document.getElementById('b-bs-amount').value),
+    author_amount:       authorAmt,
+    press_amount:        pressAmt,
+    accumulated_amount:  authorAmt + pressAmt,
+    bookshop_amount:     bsAmt,
     final_sales_price:   Number(document.getElementById('b-final-price').value),
     bookshopNotes: '',
   });
