@@ -292,66 +292,17 @@ nav{flex:1;padding:12px 10px;}
     <div id="p-manuscript-status" style="font-size:11px;color:var(--text3);margin-top:6px"></div>
   </div>
 </div>
-      <!-- SECTION: Press Pricing -->
+      
+       <!-- SECTION: Press Notes -->
       <div class="modal-section">
-        <div class="modal-section-title">💰 Pricing — Author & Press Amounts</div>
-
-        <div class="form-grid">
-          <!-- Author Amount (editable — press confirms or overrides) -->
-          <div class="f-group">
-            <label class="f-label">Author Amount (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap">
-              <span class="price-prefix">₦</span>
-              <input id="p-author-amount" type="number" class="f-input" placeholder="e.g. 2800" oninput="updatePricingSummary()">
-            </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px">Amount allocated to the author per sale</div>
-          </div>
-
-          <!-- Press Amount -->
-          <div class="f-group">
-            <label class="f-label">Press Amount (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap">
-              <span class="price-prefix">₦</span>
-              <input id="p-press-amount" type="number" class="f-input" placeholder="e.g. 1200" oninput="updatePricingSummary()">
-            </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px">Press fee per sale</div>
-          </div>
-
-          <!-- Accumulated total (read-only, sent to bookshop) -->
-          <div class="f-group">
-            <label class="f-label">Accumulated Total (₦) — sent to Bookshop</label>
-            <div class="price-wrap">
-              <span class="price-prefix">₦</span>
-              <input id="p-accumulated" type="number" class="f-input" placeholder="Auto-calculated" readonly>
-            </div>
-            <div style="font-size:11px;color:var(--accent);margin-top:4px">Author + Press · Bookshop adds their margin on top</div>
-          </div>
-
-          <!-- Press Notes -->
+        <div class="modal-section-title">📝 Press Notes</div>
+        <div class="form-grid g1">
           <div class="f-group">
             <label class="f-label">Press Notes</label>
             <textarea id="p-notes" class="f-input" rows="2" placeholder="Notes for bookshop or author…"></textarea>
           </div>
         </div>
-
-        <!-- Live pricing breakdown card -->
-        <div class="pricing-card" id="pricing-card">
-          <div class="pricing-card-col">
-            <div class="pricing-card-lbl">Author Amount</div>
-            <div class="pricing-card-val" id="pc-author" style="color:var(--green)">₦0</div>
-            <div class="pricing-card-note">Author's cut per sale</div>
-          </div>
-          <div class="pricing-card-col">
-            <div class="pricing-card-lbl">Press Amount</div>
-            <div class="pricing-card-val" id="pc-press" style="color:var(--accent)">₦0</div>
-            <div class="pricing-card-note">Press fee per sale</div>
-          </div>
-          <div class="pricing-card-col total">
-            <div class="pricing-card-lbl">Accumulated Total → Bookshop</div>
-            <div class="pricing-card-val" id="pc-total">₦0</div>
-            <div class="pricing-card-note">Bookshop adds their margin to set retail price</div>
-          </div>
-        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">ⓘ Pricing (Author Amount, Press Amount, Bookshop Amount) is set later by the Bookshop team during their review.</div>
       </div>
 
     </div>

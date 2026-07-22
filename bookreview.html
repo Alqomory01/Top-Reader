@@ -370,10 +370,29 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         </div>
       </div>
 
-      <!-- Pricing -->
+      
+       <!-- Pricing -->
       <div class="modal-section">
-        <div class="modal-section-title">💰 Bookshop Pricing</div>
-        <div class="fg-grid">
+        <div class="modal-section-title">💰 Pricing — Author, Press & Bookshop Amounts</div>
+        <div class="fg-grid-3">
+          <div class="fg">
+            <label class="f-label">Author Amount (₦) <span class="f-req">*</span></label>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="b-author-amount" type="number" class="f-input" placeholder="e.g. 2800" oninput="updatePriceSummary();clearError('b-author-amount')">
+            </div>
+            <div class="f-error-msg" id="err-b-author-amount">Author amount is required</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:3px">Amount allocated to the author per sale</div>
+          </div>
+          <div class="fg">
+            <label class="f-label">Press Amount (₦) <span class="f-req">*</span></label>
+            <div class="price-wrap">
+              <span class="price-prefix">₦</span>
+              <input id="b-press-amount" type="number" class="f-input" placeholder="e.g. 1200" oninput="updatePriceSummary();clearError('b-press-amount')">
+            </div>
+            <div class="f-error-msg" id="err-b-press-amount">Press amount is required</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:3px">Press fee per sale</div>
+          </div>
           <div class="fg">
             <label class="f-label">Bookshop Amount (₦) <span class="f-req">*</span></label>
             <div class="price-wrap">
@@ -383,19 +402,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
             <div class="f-error-msg" id="err-b-bs-amount">Bookshop amount is required</div>
             <div style="font-size:.7rem;color:var(--muted);margin-top:3px">Bookshop fee per sale</div>
           </div>
-          <div class="fg">
-            <label class="f-label">Final Sales Price (₦) <span class="f-req">*</span></label>
-            <div class="price-wrap">
-              <span class="price-prefix">₦</span>
-              <input id="b-final-price" type="number" class="f-input" placeholder="e.g. 5800" oninput="updatePriceSummary();clearError('b-final-price')">
-            </div>
-            <div class="f-error-msg" id="err-b-final-price">Final sales price is required</div>
-            <div style="font-size:.7rem;color:var(--muted);margin-top:3px">What students pay</div>
+        </div>
+        <div class="fg" style="margin-top:12px">
+          <label class="f-label">Final Sales Price (₦) <span class="f-req">*</span></label>
+          <div class="price-wrap">
+            <span class="price-prefix">₦</span>
+            <input id="b-final-price" type="number" class="f-input" placeholder="e.g. 5800" oninput="updatePriceSummary();clearError('b-final-price')">
           </div>
+          <div class="f-error-msg" id="err-b-final-price">Final sales price is required</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:3px">What students pay</div>
         </div>
         <div class="price-summary-box" id="price-summary-box">Enter amounts above to see pricing breakdown.</div>
         <div style="font-size:.7rem;color:var(--muted);margin-top:8px">ⓘ Discounts aren't set here — once live, adjust them any time from Sales & Revenue.</div>
       </div>
+ 
+    </div>
 
     </div>
     <div class="modal-footer">
