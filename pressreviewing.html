@@ -276,6 +276,22 @@ nav{flex:1;padding:12px 10px;}
         <div class="f-group" style="margin-top:14px"><label class="f-label">Cover Image URL</label><input id="p-cover" class="f-input" placeholder="https://… or leave blank"></div>
       </div>
 
+      <!-- SECTION: Manuscript Upload -->
+<div class="modal-section">
+  <div class="modal-section-title">📄 Manuscript (PDF)</div>
+  <div class="f-group">
+    <label class="f-label">Upload Manuscript <span class="f-req">*</span></label>
+    <input
+      id="p-manuscript"
+      type="file"
+      accept="application/pdf"
+      class="f-input"
+      onchange="handleManuscriptUpload(this)"
+      style="padding:7px 13px;"
+    >
+    <div id="p-manuscript-status" style="font-size:11px;color:var(--text3);margin-top:6px"></div>
+  </div>
+</div>
       <!-- SECTION: Press Pricing -->
       <div class="modal-section">
         <div class="modal-section-title">💰 Pricing — Author & Press Amounts</div>
@@ -503,11 +519,64 @@ function openApprove(id) {
   const toggle = document.getElementById('p-drm-toggle');
   toggle.className = 'toggle' + (drmEnabled?' on':'');
   document.getElementById('p-drm-label').textContent = drmEnabled ? 'DRM Enabled' : 'DRM Disabled';
-
+  document.getElementById('p-manuscript').value = '';
+  const statusEl = document.getElementById('p-manuscript-status');
+  if (p.manuscript_file) {
+    statusEl.textContent = `Current file: ${p.manuscript_file.name}`;
+    statusEl.style.color = 'var(--text3)';
+  } else {
+    statusEl.textContent = '';
+  }
   updatePricingSummary();
   openModal('approve-modal');
 }
+let manuscriptData = null; // { name, size, dataUrl }
+const MAX_MANUSCRIPT_MB = 8; // keep well under localStorage quota
 
+function handleManuscriptUpload(input) {
+  const file = input.files[0];
+  const statusEl = document.getElementById('p-manuscript-status');
+
+  if (!file) {
+    manuscriptData = null;
+    statusEl.textContent = '';
+    return;
+  }
+
+  if (file.type !== 'application/pdf') {
+    showToast('Please upload a PDF file', true);
+    input.value = '';
+    manuscriptData = null;
+    statusEl.textContent = '';
+    return;
+  }
+
+  const sizeMB = file.size / (1024 * 1024);
+  if (sizeMB > MAX_MANUSCRIPT_MB) {
+    showToast(`File too large (${sizeMB.toFixed(1)}MB). Max ${MAX_MANUSCRIPT_MB}MB.`, true);
+    input.value = '';
+    manuscriptData = null;
+    statusEl.textContent = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    manuscriptData = {
+      name: file.name,
+      size: file.size,
+      dataUrl: e.target.result, // base64
+    };
+    statusEl.textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) ready to upload`;
+    statusEl.style.color = 'var(--green)';
+  };
+  reader.onerror = () => {
+    showToast('Failed to read file', true);
+    manuscriptData = null;
+    statusEl.textContent = '';
+  };
+  reader.readAsDataURL(file);
+}
 function updatePricingSummary() {
   const authorAmt = Number(document.getElementById('p-author-amount').value)||0;
   const pressAmt  = Number(document.getElementById('p-press-amount').value)||0;
@@ -535,6 +604,12 @@ function confirmApprove() {
   for (const [id, label] of required) {
     if (!document.getElementById(id).value.trim()) { showToast(`${label} is required`, true); return; }
   }
+    // NEW — require a manuscript unless one already exists on this pub
+  const existing = DB.getPub(activePubId);
+  if (!manuscriptData && !existing.manuscript_file) {
+    showToast('Please upload the manuscript PDF', true);
+    return;
+  }
 
   const authorAmt = Number(document.getElementById('p-author-amount').value);
   const pressAmt  = Number(document.getElementById('p-press-amount').value);
@@ -559,6 +634,7 @@ function confirmApprove() {
     press_amount:         pressAmt,    // press sets their own amount
     accumulated_amount:   authorAmt + pressAmt,  // total sent to bookshop
     pressNotes:           document.getElementById('p-notes').value.trim(),
+     manuscript_file:      manuscriptData || existing.manuscript_file,
   };
 
   DB.pressApprove(activePubId, pressFields);
