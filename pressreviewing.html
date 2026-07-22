@@ -437,6 +437,8 @@ function startReview(id) { DB.pressStartReview(id); showToast('Moved to Editoria
 
 function openApprove(id) {
   activePubId = id; drmEnabled = true;
+  manuscriptData = null;
+  manuscriptFileObject = null; // NEW
   const p = DB.getPub(id);
   document.getElementById('modal-author-info').innerHTML = `
     <strong>${p.title}</strong>${p.subtitle?' — '+p.subtitle:''}<br>
@@ -477,8 +479,8 @@ function openApprove(id) {
   }
   openModal('approve-modal');
 }
-let manuscriptData = null; // { name, size, dataUrl }
-const MAX_MANUSCRIPT_MB = 8; // keep well under localStorage quota
+let manuscriptData = null;        // { name, size, uploadedAt } — safe to persist
+let manuscriptFileObject = null;  // actual File — memory only, not saved
 
 function handleManuscriptUpload(input) {
   const file = input.files[0];
@@ -486,6 +488,7 @@ function handleManuscriptUpload(input) {
 
   if (!file) {
     manuscriptData = null;
+    manuscriptFileObject = null;
     statusEl.textContent = '';
     return;
   }
@@ -494,35 +497,20 @@ function handleManuscriptUpload(input) {
     showToast('Please upload a PDF file', true);
     input.value = '';
     manuscriptData = null;
+    manuscriptFileObject = null;
     statusEl.textContent = '';
     return;
   }
 
   const sizeMB = file.size / (1024 * 1024);
-  if (sizeMB > MAX_MANUSCRIPT_MB) {
-    showToast(`File too large (${sizeMB.toFixed(1)}MB). Max ${MAX_MANUSCRIPT_MB}MB.`, true);
-    input.value = '';
-    manuscriptData = null;
-    statusEl.textContent = '';
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    manuscriptData = {
-      name: file.name,
-      size: file.size,
-      dataUrl: e.target.result, // base64
-    };
-    statusEl.textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) ready to upload`;
-    statusEl.style.color = 'var(--green)';
+  manuscriptFileObject = file;
+  manuscriptData = {
+    name: file.name,
+    size: file.size,
+    uploadedAt: new Date().toISOString(),
   };
-  reader.onerror = () => {
-    showToast('Failed to read file', true);
-    manuscriptData = null;
-    statusEl.textContent = '';
-  };
-  reader.readAsDataURL(file);
+  statusEl.textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) selected`;
+  statusEl.style.color = 'var(--green)';
 }
 
 function toggleDRM(btn) {
@@ -564,7 +552,7 @@ function confirmApprove() {
     cover_image:          document.getElementById('p-cover').value.trim(),
     drm:                  drmEnabled,
     pressNotes:           document.getElementById('p-notes').value.trim(),
-     manuscript_file:      manuscriptData || existing.manuscript_file,
+    manuscript_file:      manuscriptData || existing.manuscript_file,
   };
 
   DB.pressApprove(activePubId, pressFields);
